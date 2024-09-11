@@ -1,10 +1,8 @@
 # PeakSat OBC Software
 
 This repo hosts the software that will be running on the PeakSat satellite.
-[![PeakSat Logo](Address "PeakSat Logo")]([https://github.com/PeakSat/OBC_Software/blob/main/readme_logo/peaksat_patch_full_2x.png] "PeakSat Logo")
 ------------
 Initial setup was done using the [minimal-dev-setup](https://github.com/PeakSat/minimal-dev-setup/tree/master "minimal-dev-setup").
-
 
 ------------
 
