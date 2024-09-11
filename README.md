@@ -18,8 +18,8 @@ Make sure you have the following tools installed and on your PATH
 | OpenOCD (openocd -v)                  | 0.12.0      |
 | Adoptium OpenJDK (java -version)      | >= 8        |
 
-####Step 1: Clone the repo
-####Step 2: Execute the following commands
+###Step 1: Clone the repo
+###Step 2: Execute the following commands
 ```shell
 conan config install ./config/
 ```
@@ -40,16 +40,16 @@ harmony
 ```
 Deviating from this order will just cause Conan to throw an error of missing
 dependencies.
-####Step 3: Build
+###Step 3: Build
 ```shell
 conan build . -pr=baremetal-samv71-armv7
 ```
 The resulting binary should be at `build/Debug/OBC_software.elf`
-####Step 4: Upload the software
+###Step 4: Upload the software
 ```shell
 openocd -f  "atmel_samv71_xplained_ultra.cfg" -c "program build/Debug/OBC_software.elf reset"
 ```
-####Attaching a debugger
+###Attaching a debugger
 OpenOCD automatically opens a debug server to which you can connect using
 GDB if needed, as follows:
 ```shell
@@ -61,9 +61,9 @@ Within GDB, run the following command to connect:
 ------------
 ###VS Code Integration
 Instructions to build and debug the project using the VSCode IDE. Complete steps 1-3 from the previous section and continue with the following.
-####Step 1: Install VS Code 
+###Step 1: Install VS Code 
 [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")
-####Step 2: Install necessary plugins
+###Step 2: Install necessary plugins
 ```
 Cortex-Debug
 CMake
