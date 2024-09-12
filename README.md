@@ -28,7 +28,7 @@ This will add a new Conan profile, named `baremetal-samv71-armv7`. The profile
 includes global compiler and CMake settings necessary for building working code
 for the SAMV71 platform.
 ```shell
-conan create ./conan/recipes/<package-name> -pr=baremetal-samv71-armv7
+conan create ./recipes/<package-name> -pr=baremetal-samv71-armv7
 ```
 where `package-name` is the package's directory name. The correct order for
 installation (higher on the list = first):
