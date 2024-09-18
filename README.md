@@ -21,7 +21,6 @@ Make sure you have the following tools installed and on your PATH
 
 ### Step 1: Clone the repo
 ### Step 2: Execute the following commands
-> **_NOTE:_**  If you are on windows you can run the install_packages.bat file to skip steps 2 and 3.
 ```shell
 conan config install ./config/
 ```
