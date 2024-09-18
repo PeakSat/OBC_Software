@@ -72,3 +72,62 @@ CMake
 CMake Tools
 ```
 Using the side panel on the IDE, make the project, build and upload it using an STLink.
+
+------------
+## Configuring the MCU
+
+The Harmony setup includes the Microchip Harmony Configurator (MHC) tool for
+adjusting settings and generating peripheral drivers. **MHC needs Java**
+installed and in your PATH to work. If your Java setting is incorrect, CMake
+will notify you with an error.
+
+To launch it, use
+```shell
+cd build/Debug \
+ninja mcu_config
+```
+
+This MHC instance is under the control of CMake, and can only be used by issuing
+this command. 
+
+To create a new configuration, follow this workflow:
+1. Click `File -> New Configuration`. Even if editing existing settings, always
+create a new configuration.
+2. No need to set Location/Project Name/Configuration Name, they don't really
+matter in this case. 
+3. Select `ATSAMV71Q21B` under `Target Device`. The supporting files for other
+devices are missing and thus will not work. Make sure this is correct; otherwise
+you have to start the process all over.
+4. Click `Finish`. On the `Configuration Database Setup` click `Launch`.
+5. Configure away.
+6. Click `File -> Save Configuration` (the disk icon), then `File -> Export`. At
+the Export dialog, check all checkboxes and specify a folder where you'll get
+your settings. **Always save before exporting**, otherwise you won't get files
+back.
+
+To edit an existing configuration, follow Steps 1-4, then click `File -> Import`
+and specify the directory of your exported configuration files. When done, save
+and export back.
+
+**CAUTION**: Do NOT use the code generation feature, it will not work and cause
+MHC to hang. Generation will be done automatically by CMake whenever needed.
+
+### Generating peripheral driver code
+
+The Harmony package includes a helper script for MHC, which can be found under
+`./conan/recipes/harmony/cmake/MHCHelper.cmake`. This script is implicitly
+included after calling `find_package(Harmony)` and generates the code using
+MHC at configure time.
+
+In your CMakeLists.txt, add this:
+```cmake
+add_harmony_config(
+        MCU_MODEL ATSAMV71Q21B
+        YAML_FILES <list of MHC-exported yml files>
+)
+```
+
+You can use the generated code by linking in your executable the targets:
+- `Harmony::PeripheralDrivers`: generated peripheral drivers.
+- `Harmony::Interrupts` : interrupt handler code
+- `Harmony::SysInit`: the SYS_Initialize() function that does the clock init.
