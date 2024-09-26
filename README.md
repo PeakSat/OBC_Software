@@ -3,7 +3,7 @@
 In this repository is where all of the OBC EQM Software is housed. This is the final version that will be used on the satellite.
 The software runs on the Microchip ATSAMV71Q21B Microcontroller Unit, which is a 32-bit ARM Cortex-M7 core.
 
-![alt text](https://github.com/PeakSat/OBC_Software/blob/main/readme_logo/peaksat_patch_full_2x.png?raw=true)
+![peaksat_logo](https://github.com/PeakSat/OBC_Software/blob/main/media/peaksat_logo.png)
 
 ------------
 
@@ -22,7 +22,7 @@ Make sure you have the following tools installed and on your PATH.
 
 ### Step 1: Clone the repo
    ```shell
-   git clone git@gitlab.com:.git
+   git clone git@github.com:PeakSat/OBC_Software.git
    cd obc-eqm-software
    ```
 ### Step 2: Execute the following commands
