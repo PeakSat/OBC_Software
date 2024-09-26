@@ -1,14 +1,16 @@
 # PeakSat OBC Software
 
-This repo hosts the software that will be running on the PeakSat satellite.
+In this repository is where all of the OBC EQM Software is housed. This is the final version that will be used on the satellite.
+The software runs on the Microchip ATSAMV71Q21B Microcontroller Unit, which is a 32-bit ARM Cortex-M7 core.
+
 ![alt text](https://github.com/PeakSat/OBC_Software/blob/main/readme_logo/peaksat_patch_full_2x.png?raw=true)
-------------
-Initial setup was done using the [minimal-dev-setup](https://github.com/PeakSat/minimal-dev-setup/tree/master "minimal-dev-setup").
 
 ------------
 
-## Build and Upload software
-Make sure you have the following tools installed and on your PATH
+## Build
+
+The dependencies of this repository are managed through the [conan](https://conan.io/) package manager.
+Make sure you have the following tools installed and on your PATH.
 
 | **Tool**                              | **Version** |
 |---------------------------------------|-------------|
@@ -17,38 +19,43 @@ Make sure you have the following tools installed and on your PATH
 | Ninja   (ninja --version)             | 1.12.1      |
 | Conan   (conan -v)                    | 2.5.0       |
 | OpenOCD (openocd -v)                  | 0.12.0      |
-| Adoptium OpenJDK (java -version)      | >= 8        |
 
 ### Step 1: Clone the repo
+   ```shell
+   git clone git@gitlab.com:.git
+   cd obc-eqm-software
+   ```
 ### Step 2: Execute the following commands
+1. (If you haven't already) create a conan profile for your system:
+   ```shell
+   conan profile detect
+   ```
+2. Download all dependencies and build the project through conan:
+   ```shell
+   conan install . --output-folder=cmake-build-debug --build="*" -u -pr conan-arm-profile
+   ```
+3. Download all submodules:
+   ```shell
+   conan source .
+   ```
+4. Add CMake flags:
+   ```shell
+   cmake -B cmake-build-debug/build/Debug -DCMAKE_TOOLCHAIN_FILE="cmake-build-debug/build/Debug/generators/conan_toolchain.cmake" -DCMAKE_CXX_COMPILER="arm-none-eabi-g++" -DCMAKE_C_COMPILER="arm-none-eabi-gcc" -DCMAKE_BUILD_TYPE=Debug .
+   ```
+5. Build the project:
+   ```shell
+   cd cmake-build-debug/build/Debug
+   ninja
+   ```
+------------
+
+## Uploading the software
+
+After Building the software the resulting binary should be at `cmake-build-debug/build/Debug/OBC_software.elf`
+
+Upload the software using the following command.
 ```shell
-conan config install ./config/
-```
-This will add a new Conan profile, named `baremetal-samv71-armv7`. The profile
-includes global compiler and CMake settings necessary for building working code
-for the SAMV71 platform.
-```shell
-conan create ./recipes/<package-name> -pr=baremetal-samv71-armv7
-```
-where `package-name` is the package's directory name. The correct order for
-installation (higher on the list = first):
-```
-cmsis
-samv71-dfp
-harmony-csp
-harmony-mhc
-harmony
-```
-Deviating from this order will just cause Conan to throw an error of missing
-dependencies.
-### Step 3: Build
-```shell
-conan build . -pr=baremetal-samv71-armv7
-```
-The resulting binary should be at `build/Debug/OBC_software.elf`
-### Step 4: Upload the software
-```shell
-openocd -f  "atmel_samv71_xplained_ultra.cfg" -c "program build/Debug/OBC_software.elf reset"
+openocd -f  "atmel_samv71_xplained_ultra.cfg" -c "program cmake-build-debug/build/Debug/OBC_software.elf reset"
 ```
 ### Attaching a debugger
 OpenOCD automatically opens a debug server to which you can connect using
@@ -60,73 +67,3 @@ Within GDB, run the following command to connect:
 `target extended-remote localhost:3333`
 
 ------------
-## VS Code Integration
-Instructions to build and debug the project using the VSCode IDE. Complete steps 1-3 from the previous section and continue with the following.
-### Step 1: Install VS Code 
-[Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")
-### Step 2: Install necessary plugins
-```
-Cortex-Debug
-CMake
-CMake Tools
-```
-Using the side panel on the IDE, make the project, build and upload it using an STLink.
-
-------------
-## Configuring the MCU
-
-The Harmony setup includes the Microchip Harmony Configurator (MHC) tool for
-adjusting settings and generating peripheral drivers. **MHC needs Java**
-installed and in your PATH to work. If your Java setting is incorrect, CMake
-will notify you with an error.
-
-To launch it, use
-```shell
-cd build/Debug \
-ninja mcu_config
-```
-
-This MHC instance is under the control of CMake, and can only be used by issuing
-this command. 
-
-To create a new configuration, follow this workflow:
-1. Click `File -> New Configuration`. Even if editing existing settings, always
-create a new configuration.
-2. No need to set Location/Project Name/Configuration Name, they don't really
-matter in this case. 
-3. Select `ATSAMV71Q21B` under `Target Device`. The supporting files for other
-devices are missing and thus will not work. Make sure this is correct; otherwise
-you have to start the process all over.
-4. Click `Finish`. On the `Configuration Database Setup` click `Launch`.
-5. Configure away.
-6. Click `File -> Save Configuration` (the disk icon), then `File -> Export`. At
-the Export dialog, check all checkboxes and specify a folder where you'll get
-your settings. **Always save before exporting**, otherwise you won't get files
-back.
-
-To edit an existing configuration, follow Steps 1-4, then click `File -> Import`
-and specify the directory of your exported configuration files. When done, save
-and export back.
-
-**CAUTION**: Do NOT use the code generation feature, it will not work and cause
-MHC to hang. Generation will be done automatically by CMake whenever needed.
-
-### Generating peripheral driver code
-
-The Harmony package includes a helper script for MHC, which can be found under
-`./conan/recipes/harmony/cmake/MHCHelper.cmake`. This script is implicitly
-included after calling `find_package(Harmony)` and generates the code using
-MHC at configure time.
-
-In your CMakeLists.txt, add this:
-```cmake
-add_harmony_config(
-        MCU_MODEL ATSAMV71Q21B
-        YAML_FILES <list of MHC-exported yml files>
-)
-```
-
-You can use the generated code by linking in your executable the targets:
-- `Harmony::PeripheralDrivers`: generated peripheral drivers.
-- `Harmony::Interrupts` : interrupt handler code
-- `Harmony::SysInit`: the SYS_Initialize() function that does the clock init.

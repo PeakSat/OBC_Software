@@ -21,7 +21,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "${workspaceRoot}/build/Debug"  // Uses the binaryDir from your preset
+                "${workspaceRoot}/cmake-build-debug/build/Debug"  // Uses the binaryDir from your preset
             ],
             "group": {
                 "kind": "build",
@@ -38,7 +38,7 @@
 			"command": "openocd",
 			"args": [
 				"-f", "${workspaceRoot}/atmel_samv71_xplained_ultra.cfg",
-				"-c", "program C:/Users/tats/Desktop/PeakSat/OBC_Software/build/Debug/OBC_software.elf verify reset exit"
+				"-c", "program C:/Users/tats/Desktop/OBC-EQM-Software-crystall_clock/cmake-build-debug/build/Debug/OBC_software.elf exit"
 			],
 			"group": "none",
             "dependsOn": "Build Firmware (Ninja)"
