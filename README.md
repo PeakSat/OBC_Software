@@ -41,7 +41,7 @@ Make sure you have the following tools installed and on your PATH.
    ```
 4. Add CMake flags:
    ```shell
-   cmake -B cmake-build-debug/build/Debug -DCMAKE_TOOLCHAIN_FILE="cmake-build-debug/build/Debug/generators/conan_toolchain.cmake" -DCMAKE_CXX_COMPILER="arm-none-eabi-g++" -DCMAKE_C_COMPILER="arm-none-eabi-gcc" -DCMAKE_BUILD_TYPE=Debug .
+   cmake -G Ninja -B cmake-build-debug/build/Debug -DCMAKE_TOOLCHAIN_FILE="cmake-build-debug/build/Debug/generators/conan_toolchain.cmake" -DCMAKE_CXX_COMPILER="arm-none-eabi-g++" -DCMAKE_C_COMPILER="arm-none-eabi-gcc" -DCMAKE_BUILD_TYPE=Debug .
    ```
 5. Build the project:
    ```shell
