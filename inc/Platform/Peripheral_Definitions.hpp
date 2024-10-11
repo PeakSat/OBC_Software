@@ -7,6 +7,7 @@
 #define MCP9808_TWI_PORT 1
 
 #define UART_PERIPHERAL_REGISTER UART0_REGS->UART_THR
+#define UART_Initialize UART0_Initialize
 
 #define OBC_EQM_LCL
 

@@ -370,7 +370,7 @@ void GMAC_Q5_Handler               ( void );
 #define __ARCH_ARM_CORTEX_M                1
 
 /* CMSIS includes */
-#include "core_cm7.h"
+#include    "core_cm7.h"
 #if defined USE_CMSIS_INIT
 #include "system_samv71.h"
 #endif /* USE_CMSIS_INIT */
