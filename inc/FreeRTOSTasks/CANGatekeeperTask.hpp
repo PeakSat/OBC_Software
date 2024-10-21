@@ -2,7 +2,7 @@
 
 #include "CAN/ApplicationLayer.hpp"
 #include "CAN/Frame.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "queue.h"
 #include "Platform/Peripheral_Definitions.hpp"
 #include "CAN/TPProtocol.hpp"
@@ -70,10 +70,7 @@ private:
     static inline uint8_t incomingMFQueueStorageArea[CAN::FrameQueueSize * sizeof(CAN::Frame)];
 
 
-
-    const static inline uint16_t TaskStackDepth = 1300;
-
-    StackType_t taskStack[TaskStackDepth]{};
+    StackType_t taskStack[CANGatekeeperTaskStack]{};
 
     CAN::Driver::ActiveBus ActiveBus = CAN::Driver::ActiveBus::Main;
 
@@ -216,7 +213,7 @@ public:
 
     void createTask() {
         taskHandle = xTaskCreateStatic(vClassTask < CANGatekeeperTask > , this->TaskName, CANGatekeeperTask::TaskStackDepth, this,
-                                       tskIDLE_PRIORITY + 2, this->taskStack, &(this->taskBuffer));
+                                       CANGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 

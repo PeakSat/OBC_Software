@@ -5,15 +5,13 @@
 #pragma once
 
 #include "RS422/RS422_Driver.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class PayloadTestTask : public Task {
 private:
 
 public:
-    const static inline uint16_t TaskStackDepth = 3000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[PayloadTestTaskStack];
 
     void execute();
 
@@ -24,7 +22,7 @@ public:
      */
     void createTask() {
         xTaskCreateStatic(vClassTask < PayloadTestTask > , this->TaskName, PayloadTestTask::TaskStackDepth, this,
-                          tskIDLE_PRIORITY + 1, this->taskStack, &(this->taskBuffer));
+                          PayloadTestTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 

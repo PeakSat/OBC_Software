@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "MCP9808.hpp"
 
 /**
@@ -32,9 +32,7 @@ private:
      */
     etl::array<float, NumberOfTemperatureSensors> ambientTemperature = {0, 0};
 
-    const static inline uint16_t TaskStackDepth = 2000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[AmbientTemperatureTaskStack];
 
 public:
     void execute();
@@ -44,7 +42,7 @@ public:
     void createTask() {
         taskHandle = xTaskCreateStatic(vClassTask < AmbientTemperatureTask > , this->TaskName,
                                        AmbientTemperatureTask::TaskStackDepth, this,
-                                       tskIDLE_PRIORITY + 1, this->taskStack,
+                                       AmbientTemperatureTaskPriority, this->taskStack,
                                        &(this->taskBuffer));
     }
 

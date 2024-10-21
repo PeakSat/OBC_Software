@@ -1,14 +1,12 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class TimeKeepingTask : public Task {
 private:
     const uint16_t DelayMs = 1100;
 
-    const static inline uint16_t TaskStackDepth = 2000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[TimeKeepingTaskStack];
 
 public:
     void execute();
@@ -39,7 +37,7 @@ public:
 
     void createTask() {
         xTaskCreateStatic(vClassTask<TimeKeepingTask>, this->TaskName, TimeKeepingTask::TaskStackDepth, this,
-                          tskIDLE_PRIORITY + 2, this->taskStack, &(this->taskBuffer));
+                          TimeKeepingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 
 };

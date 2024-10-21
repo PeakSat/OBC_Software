@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 /**
  * FreeRTOS task for periodically printing the value of the internal temperature sensor.
@@ -9,9 +9,7 @@ class MCUTemperatureTask : public Task {
 private:
     const uint16_t delayMs = 65000;
 
-    const static inline uint16_t TaskStackDepth = 1000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[MCUTemperatureTaskStack];
 
 public:
     void execute();
@@ -20,7 +18,7 @@ public:
 
     void createTask() {
         xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTask::TaskStackDepth, this,
-                          tskIDLE_PRIORITY + 1, this->taskStack, &(this->taskBuffer));
+                          MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 
 };

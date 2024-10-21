@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "NANDFlash.h"
 
 
@@ -8,9 +8,7 @@ class NANDTask : public Task {
 private:
     const uint16_t DelayMs = 12000;
 
-    const static inline uint16_t TaskStackDepth = 5000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[NANDTaskStack];
 
 public:
     void execute();
@@ -21,7 +19,7 @@ public:
 
     void createTask() {
         nandTaskHandle = xTaskCreateStatic(vClassTask<NANDTask>, this->TaskName,
-                                           NANDTask::TaskStackDepth, this, tskIDLE_PRIORITY + 1, this->taskStack,
+                                           NANDTask::TaskStackDepth, this, NANDTaskPriority, this->taskStack,
                                            &(this->taskBuffer));
     }
 

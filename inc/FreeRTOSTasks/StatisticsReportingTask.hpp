@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class StatisticsReportingTask : public Task {
 public:
@@ -9,9 +9,7 @@ public:
      */
     void execute();
 
-    const static inline uint16_t TaskStackDepth = 2000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[StatisticsReportingTaskStack];
 
     StatisticsReportingTask() : Task("StatisticsReporting") {}
 
@@ -20,7 +18,7 @@ public:
      */
     void createTask() {
         xTaskCreateStatic(vClassTask<StatisticsReportingTask>, this->TaskName,
-                          StatisticsReportingTask::TaskStackDepth, this, tskIDLE_PRIORITY + 1,
+                          StatisticsReportingTask::TaskStackDepth, this, StatisticsReportingTaskPriority,
                           this->taskStack, &(this->taskBuffer));
     }
 };

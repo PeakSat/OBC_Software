@@ -1,13 +1,12 @@
 #ifndef ECSS_SERVICES_TimeBasedSchedulingTask_HPP
 #define ECSS_SERVICES_TimeBasedSchedulingTask_HPP
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class TimeBasedSchedulingTask : public Task {
 public:
-    const static inline uint16_t TaskStackDepth = 2500;
 
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[TimeBasedSchedulingTaskStack];
 
     void execute();
 
@@ -20,7 +19,7 @@ public:
         this->taskHandle = xTaskCreateStatic(vClassTask<TimeBasedSchedulingTask>,
                                              this->TaskName,
                                              TimeBasedSchedulingTask::TaskStackDepth,
-                                             this, tskIDLE_PRIORITY + 2,
+                                             this, TimeBasedSchedulingTaskPriority,
                                              this->taskStack,
                                              &(this->taskBuffer));
     }

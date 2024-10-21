@@ -38,7 +38,7 @@
 			"command": "openocd",
 			"args": [
 				"-f", "${workspaceRoot}/atmel_samv71_xplained_ultra.cfg",
-				"-c", "program C:/Users/tats/Desktop/OBC-EQM-Software-crystall_clock/cmake-build-debug/build/Debug/OBC_software.elf exit"
+				"-c", "program C:/Users/tats/Desktop/PeakSat/PeakSat_SW/OBC/OBC_Software/cmake-build-debug/build/Debug/OBC_software.elf exit"
 			],
 			"group": "none",
             "dependsOn": "Build Firmware (Ninja)"

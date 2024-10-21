@@ -1,7 +1,7 @@
 #pragma once
 
 #include "COBS.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "queue.h"
 #include "Peripheral_Definitions.hpp"
 
@@ -18,9 +18,28 @@ private:
 
     uint8_t ucQueueStorageArea[UARTQueueSize * sizeof(etl::string<LOGGER_MAX_MESSAGE_SIZE>)];
 
-    const static inline uint16_t TaskStackDepth = 2000;
+    StackType_t taskStack[UARTGatekeeperTaskStack];
 
-    StackType_t taskStack[TaskStackDepth];
+    /**
+     * This variable is used to store a task handle for a UART gatekeeper task.
+     * The uartGatekeeperTaskHandle and the task notification mechanism are used to coordinate
+     * and synchronize the UART gatekeeper task with the completion of the XDMAC transfer.
+     * It allows the UART gatekeeper task to efficiently wait for and respond to these events
+     * without continuously polling for their completion.
+     */
+    inline static TaskHandle_t uartGatekeeperTaskHandle = nullptr;
+
+    /**
+     * This variable is used to store the status of a Direct Memory Access (DMA) transaction event
+     * in order to check for errors during the XDMAC transfer.
+     */
+    inline static XDMAC_TRANSFER_EVENT dmaTransactionStatus = XDMAC_TRANSFER_NONE;
+
+    /**
+     * This variable is used to store the maximum time the task should wait for the notification in ticks.
+     * The number 1000ms was considered a good value arbitrarily
+     */
+    TickType_t maxDelay = pdMS_TO_TICKS(1000);
 
     /**
      * This variable is used to store a task handle for a UART gatekeeper task.
@@ -65,7 +84,11 @@ public:
     void createTask() {
         uartGatekeeperTaskHandle = xTaskCreateStatic(vClassTask < UARTGatekeeperTask > , this->TaskName,
                                                      UARTGatekeeperTask::TaskStackDepth, this,
+<<<<<<< Updated upstream
                                                      tskIDLE_PRIORITY + 2, this->taskStack, &(this->taskBuffer));
+=======
+                                                     UARTGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
+>>>>>>> Stashed changes
     }
 };
 
