@@ -29,11 +29,7 @@ void UARTGatekeeperTask::execute() {
         if (ulTaskNotifyTake(pdTRUE, maxDelay) != pdTRUE || (dmaTransactionStatus == XDMAC_TRANSFER_ERROR)) {
             LOG_DEBUG << "XDMAC transfer error, restarting...";
             XDMAC_Initialize();
-<<<<<<< Updated upstream
-            UART_Initialize();
-=======
             // UART_Initialize();
->>>>>>> Stashed changes
         }
     }
 }

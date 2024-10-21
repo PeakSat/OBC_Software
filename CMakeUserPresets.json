@@ -1,9 +1,0 @@
-{
-    "version": 4,
-    "vendor": {
-        "conan": {}
-    },
-    "include": [
-        "/home/ktsoupos/CLionProjects/PeakSAT_OBC_Software/cmake-build-debug/build/Debug/generators/CMakePresets.json"
-    ]
-}
