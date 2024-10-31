@@ -21,6 +21,7 @@
 #include "NANDTask.hpp"
 #include "MRAMTask.hpp"
 #include "PayloadTestTask.hpp"
+#include "TestTask.hpp"
 // Task Header files end
 
 #define IDLE_TASK_SIZE 1400
@@ -43,31 +44,33 @@ extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    nandTask.emplace();
+    // nandTask.emplace();
     payloadTestTask.emplace();
-    canGatekeeperTask.emplace();
-    canTestTask.emplace();
-    housekeepingTask.emplace();
+    // canGatekeeperTask.emplace();
+    // canTestTask.emplace();
+    // housekeepingTask.emplace();
     tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     ambientTemperatureTask.emplace();
-    mramTask.emplace();
+    // mramTask.emplace();
     timeKeepingTask.emplace();
+    TestTask.emplace();
     watchdogTask.emplace();
     
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    nandTask->createTask();
+    // nandTask->createTask();
     payloadTestTask->createTask();
-    canGatekeeperTask->createTask();
-    canTestTask->createTask();
-    housekeepingTask->createTask();
+    // canGatekeeperTask->createTask();
+    // canTestTask->createTask();
+    // housekeepingTask->createTask();
     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
-    mramTask->createTask();
+    // mramTask->createTask();
     timeKeepingTask->createTask();
+    TestTask->createTask();
     watchdogTask->createTask();    
     __enable_irq();
 

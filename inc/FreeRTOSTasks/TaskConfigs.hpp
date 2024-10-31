@@ -9,14 +9,20 @@ const BaseType_t HousekeepingTaskPriority       =   tskIDLE_PRIORITY+1;
 const BaseType_t MCUTemperatureTaskPriority     =   tskIDLE_PRIORITY+1;
 const BaseType_t MRAMTaskPriority               =   tskIDLE_PRIORITY+2;
 const BaseType_t NANDTaskPriority               =   tskIDLE_PRIORITY+1;
-const BaseType_t PayloadTestTaskPriority        =   tskIDLE_PRIORITY+1;
+const BaseType_t PayloadTestTaskPriority        =   tskIDLE_PRIORITY+3;
 const BaseType_t StatisticsReportingTaskPriority=   tskIDLE_PRIORITY+1;
-const BaseType_t TCHandlingTaskPriority         =   tskIDLE_PRIORITY+1;
+const BaseType_t TCHandlingTaskPriority         =   tskIDLE_PRIORITY+3;
 const BaseType_t TimeBasedSchedulingTaskPriority=   tskIDLE_PRIORITY+2;
 const BaseType_t TimeKeepingTaskPriority        =   tskIDLE_PRIORITY+2;
-const BaseType_t UARTGatekeeperTaskPriority     =   tskIDLE_PRIORITY+3;
+const BaseType_t UARTGatekeeperTaskPriority     =   tskIDLE_PRIORITY+2;
 const BaseType_t WatchdogTaskPriority           =   configMAX_PRIORITIES-1;
 
+const BaseType_t TestTaskPriority               =   tskIDLE_PRIORITY+1;
+
+/**
+* The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
+* architecture with 4 byte stack, assigning 100 to the usStackDepth argument, will allocate 4x100=400 bytes.
+*/
 
 const uint16_t AmbientTemperatureTaskStack  =   2000;
 const uint16_t CANGatekeeperTaskStack       =   1300;
@@ -32,3 +38,5 @@ const uint16_t TimeBasedSchedulingTaskStack =   2500;
 const uint16_t TimeKeepingTaskStack         =   2000;
 const uint16_t UARTGatekeeperTaskStack      =   2000;
 const uint16_t WatchdogTaskStack            =   1000;
+
+const uint16_t TestTaskStack                =   2000;
