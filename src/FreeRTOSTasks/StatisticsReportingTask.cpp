@@ -2,7 +2,7 @@
 
 void StatisticsReportingTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
-    auto &parameterStatistics = Services.parameterStatistics;
+    auto& parameterStatistics = Services.parameterStatistics;
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     while (true) {

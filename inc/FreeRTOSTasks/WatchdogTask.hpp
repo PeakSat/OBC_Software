@@ -23,8 +23,6 @@ public:
         xTaskCreateStatic(vClassTask<WatchdogTask>, this->TaskName, WatchdogTask::TaskStackDepth, this,
                           WatchdogTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<WatchdogTask> watchdogTask;
-

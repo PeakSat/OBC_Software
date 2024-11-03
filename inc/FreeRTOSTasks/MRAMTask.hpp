@@ -12,7 +12,7 @@ private:
 
     MRAM mram{SMC::NCS0};
 
-    LCL &mramLCL = LCLDefinitions::lclArray[LCLDefinitions::MRAM];
+    LCL& mramLCL = LCLDefinitions::lclArray[LCLDefinitions::MRAM];
 
     uint32_t areYouAliveAddress = 0;
 
@@ -27,8 +27,8 @@ public:
 
     void createTask() {
         mramTaskHandle = xTaskCreateStatic(vClassTask<MRAMTask>, this->TaskName,
-                          MRAMTask::TaskStackDepth, this, MRAMTaskPriority, this->taskStack,
-                          &(this->taskBuffer));
+                                           MRAMTask::TaskStackDepth, this, MRAMTaskPriority, this->taskStack,
+                                           &(this->taskBuffer));
     }
 
     bool isMRAMAlive();

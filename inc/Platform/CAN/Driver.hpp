@@ -50,25 +50,27 @@ namespace CAN {
         /**
          * An area of memory the HAL uses to house incoming/outgoing buffers for the peripheral.
          */
-        static inline uint8_t mcan0MessageRAM[MCAN0_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned (32))) __attribute__((section (".ram_nocache")));
+        static inline uint8_t mcan0MessageRAM[MCAN0_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned(32))) __attribute__((section(".ram_nocache")));
 
         /**
          * An area of memory the HAL uses to house incoming/outgoing buffers for the peripheral.
          */
-        static inline uint8_t mcan1MessageRAM[MCAN1_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned (32))) __attribute__((section (".ram_nocache")));
+        static inline uint8_t mcan1MessageRAM[MCAN1_MESSAGE_RAM_CONFIG_SIZE] __attribute__((aligned(32))) __attribute__((section(".ram_nocache")));
 
         /**
          * Possible states for the peripheral, to be used as arguments in the callback functions.
          */
         enum AppStates : uint8_t {
-            Receive, Transmit,
+            Receive,
+            Transmit,
         };
 
         /**
          * The available buses to use.
          */
         enum ActiveBus : uint8_t {
-            Redundant = 0x0, Main = 0x1
+            Redundant = 0x0,
+            Main = 0x1
         };
 
         /**
@@ -157,7 +159,7 @@ namespace CAN {
          * Logs messages that are in the Rx buffer
          * @param rxBuf The RX Buffer that the messages are stored
          */
-        static void logMessage(const MCAN_RX_BUFFER &rxBuf, ActiveBus incomingBus);
+        static void logMessage(const MCAN_RX_BUFFER& rxBuf, ActiveBus incomingBus);
 
         /**
          * Decodes the data length code to get the largest expected size of the message.
@@ -204,15 +206,15 @@ namespace CAN {
          * Immediately ends a CAN Message
          * @param message The message to be sent.
          */
-        static void send(const CAN::Frame &message);
+        static void send(const CAN::Frame& message);
 
         /**
          * Converts an MCAN_RX_BUFFER object into a CAN::Frame.
          * @param rxBuffer The incoming buffer.
          * @return A CAN::Frame.
          */
-        static CAN::Frame getFrame(const MCAN_RX_BUFFER &rxBuffer);
+        static CAN::Frame getFrame(const MCAN_RX_BUFFER& rxBuffer);
     };
-}
+} // namespace CAN
 
 #endif //OBC_SOFTWARE_CANDRIVER_H

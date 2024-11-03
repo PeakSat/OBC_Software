@@ -38,7 +38,7 @@ namespace CAN {
     inline const PIO_PIN CAN_SILENT_1 = CAN_SILENT_1_PIN;
 
     inline const PIO_PIN CAN_SILENT_2 = CAN_SILENT_2_PIN;
-}
+} // namespace CAN
 
 /**
  * Used to control COBS Encoding for Log Messages in the UART Gatekeeper task.

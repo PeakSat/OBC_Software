@@ -8,7 +8,7 @@ void NANDTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
     MT29F mt29f(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
 
-    LCL &nandLCL = LCLDefinitions::lclArray[LCLDefinitions::NANDFlash];
+    LCL& nandLCL = LCLDefinitions::lclArray[LCLDefinitions::NANDFlash];
 
     nandLCL.enableLCL();
 
@@ -108,7 +108,7 @@ void NANDTask::execute() {
                 failedTries++;
             }
         }
-//        /* ERASE */
+        //        /* ERASE */
         uint8_t block = writePosition / 1105920;
         for (failedTries = 0; failedTries < 3;) {
             uint8_t success = mt29f.eraseBlock(0, block);
@@ -149,9 +149,9 @@ void NANDTask::execute() {
                 failedTries++;
             }
         }
-//        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
-//        vTaskResume(MRAMTask::mramTaskHandle);
-//        vTaskSuspend(NULL);
+        //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
+        //        vTaskResume(MRAMTask::mramTaskHandle);
+        //        vTaskSuspend(NULL);
 
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }

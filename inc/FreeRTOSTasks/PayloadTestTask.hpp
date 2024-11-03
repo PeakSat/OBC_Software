@@ -9,7 +9,6 @@
 
 class PayloadTestTask : public Task {
 private:
-
 public:
     StackType_t taskStack[PayloadTestTaskStack];
 
@@ -21,10 +20,9 @@ public:
      * Create freeRTOS Task
      */
     void createTask() {
-        xTaskCreateStatic(vClassTask < PayloadTestTask > , this->TaskName, PayloadTestTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<PayloadTestTask>, this->TaskName, PayloadTestTask::TaskStackDepth, this,
                           PayloadTestTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 
 inline std::optional<PayloadTestTask> payloadTestTask;
-

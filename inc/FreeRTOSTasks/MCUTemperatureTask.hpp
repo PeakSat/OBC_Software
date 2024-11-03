@@ -20,7 +20,6 @@ public:
         xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTask::TaskStackDepth, this,
                           MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<MCUTemperatureTask> mcuTemperatureTask;

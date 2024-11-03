@@ -16,13 +16,12 @@ namespace CAN::Application {
     /**
      * Entity that maps subsystem names to strings for use in logging functions.
      */
-    inline etl::map<NodeIDs, String <LogSource::MaximumLettersInSubsystemName>, LogSource::NumberOfLogSources> nodeIdToString = {
-            {OBC,         "OBC"},
-            {COMMS,       "COMMS"},
-            {ADCS,        "ADCS"},
-            {SU,          "SU"},
-            {ExternalMCU, "External"}
-    };
+    inline etl::map<NodeIDs, String<LogSource::MaximumLettersInSubsystemName>, LogSource::NumberOfLogSources> nodeIdToString = {
+        {OBC, "OBC"},
+        {COMMS, "COMMS"},
+        {ADCS, "ADCS"},
+        {SU, "SU"},
+        {ExternalMCU, "External"}};
 
     /**
      * CAN-TP message IDs, as specified in DDJF_OBDH.
@@ -54,7 +53,10 @@ namespace CAN::Application {
      * The available Event Report Types, for an Event Report CAN-TP Message.
      */
     enum EventReportType : uint8_t {
-        Informative = 0x0, LowSeverity = 0x1, MediumSeverity = 0x2, HighSeverity = 0x3
+        Informative = 0x0,
+        LowSeverity = 0x1,
+        MediumSeverity = 0x2,
+        HighSeverity = 0x3
     };
 
     /**
@@ -117,7 +119,7 @@ namespace CAN::Application {
      * @param parameterIDs The IDs of the parameters to be sent.
      */
     void createSendParametersMessage(NodeIDs destinationAddress, bool isMulticast,
-                                     const etl::array<uint16_t, TPMessageMaximumArguments> &parameterIDs,
+                                     const etl::array<uint16_t, TPMessageMaximumArguments>& parameterIDs,
                                      bool isISR);
 
     /**
@@ -127,7 +129,7 @@ namespace CAN::Application {
      * @param parameterIDs The IDs of the parameters to be requested.
      */
     void createRequestParametersMessage(NodeIDs destinationAddress, bool isMulticast,
-                                        const etl::array<uint16_t, TPMessageMaximumArguments> &parameterIDs,
+                                        const etl::array<uint16_t, TPMessageMaximumArguments>& parameterIDs,
                                         bool isISR);
 
     /**
@@ -139,8 +141,8 @@ namespace CAN::Application {
      * @TODO This map should be changed to accommodate arguments of differing types, not just uint64_t
      * */
     void createPerformFunctionMessage(NodeIDs destinationAddress, bool isMulticast,
-                                      const etl::string<FunctionIdSize> &functionId,
-                                      const etl::map<uint8_t, uint64_t, TPMessageMaximumArguments> &arguments,
+                                      const etl::string<FunctionIdSize>& functionId,
+                                      const etl::map<uint8_t, uint64_t, TPMessageMaximumArguments>& arguments,
                                       bool isISR);
 
     /**
@@ -152,7 +154,7 @@ namespace CAN::Application {
      * @param payload An array of the event data.
      */
     void createEventReportMessage(NodeIDs destinationAddress, bool isMulticast, EventReportType type, uint16_t eventID,
-                                  const Message &eventData, bool isISR);
+                                  const Message& eventData, bool isISR);
 
     /**
      * Creates an ECSS-E-ST-70-41C Services TM/TC packet to be sent. After creation the packet is split into CAN-TP
@@ -161,7 +163,7 @@ namespace CAN::Application {
      * @param isMulticast Whether the message is to be sent to a multicast group.
      * @param message An ECSS Message.
      */
-    void createPacketMessage(NodeIDs destinationAddress, bool isMulticast, const etl::string<128> &incomingMessage, Message::PacketType packetType, bool isISR);
+    void createPacketMessage(NodeIDs destinationAddress, bool isMulticast, const etl::string<128>& incomingMessage, Message::PacketType packetType, bool isISR);
 
     /**
      * Creates a CCSDS packet to be sent. After creation the packet is split into CAN-TP
@@ -171,7 +173,7 @@ namespace CAN::Application {
      * @param message An ECSS Message.
      */
     void
-    createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message &message, bool isISR);
+    createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message& message, bool isISR);
 
     /**
      * Sends a Log CAN-TP Message as described in DDJF_OBDH.
@@ -179,36 +181,36 @@ namespace CAN::Application {
      * @param isMulticast Whether the message is to be sent to a multicast group.
      * @param log A LogEntry to be sent.
      */
-    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize> &log,
+    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
                           bool isISR);
 
     /**
      * Parses an incoming non-TP frame for the appropriate response.
      * @param message The incoming CAN::Frame.
      */
-    void parseMessage(const CAN::Frame &message);
+    void parseMessage(const CAN::Frame& message);
 
     /**
      * Parses an incoming Send Parameters Message and updates the according parameters
      * @param message An incoming TPMessage
      */
-    void parseSendParametersMessage(TPMessage &message);
+    void parseSendParametersMessage(TPMessage& message);
 
     /**
      * Parses an incoming Request Parameters Message and sends the according parameters back, if they exist.
      * @param message An incoming TPMessage
      */
-    void parseRequestParametersMessage(TPMessage &message);
+    void parseRequestParametersMessage(TPMessage& message);
 
     /**
      * Parses an incoming TM Packet and logs it.
      * @param message An incoming TMPacket
      */
-    void parseTMMessage(TPMessage &message);
+    void parseTMMessage(TPMessage& message);
 
     /**
      * Parses an incoming TC Packet and executes it.
      * @param message An incoming TCPacket
      */
-    void parseTCMessage(TPMessage &message);
-}
+    void parseTCMessage(TPMessage& message);
+} // namespace CAN::Application

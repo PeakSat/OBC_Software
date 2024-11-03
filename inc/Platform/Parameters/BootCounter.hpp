@@ -45,4 +45,4 @@ namespace BootCounter {
      * If the counter limit is reached, the registers are cleared.
      */
     void incrementBootCounter();
-}
+} // namespace BootCounter
