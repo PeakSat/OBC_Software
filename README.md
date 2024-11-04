@@ -67,6 +67,8 @@ arm-none-eabi-gdb /path/to/compiled/binary_with_symbols.elf
 Within GDB, run the following command to connect:
 `target extended-remote localhost:3333`
 
+------------
+
 ## Developer Setup
 This repository uses `pre-commit` to automatically detect and fix code style inconsistencies. To set it up:
 ```sh
