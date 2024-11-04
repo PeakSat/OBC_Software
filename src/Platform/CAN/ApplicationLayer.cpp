@@ -66,7 +66,7 @@ namespace CAN::Application {
     }
 
     void createSendParametersMessage(NodeIDs destinationAddress, bool isMulticast,
-                                     const etl::array<uint16_t, TPMessageMaximumArguments> &parameterIDs, bool isISR) {
+                                     const etl::array<uint16_t, TPMessageMaximumArguments>& parameterIDs, bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         message.appendUint8(MessageIDs::SendParameters);
@@ -75,11 +75,9 @@ namespace CAN::Application {
             if (Services.parameterManagement.getParameter(parameterID)) {
                 message.append(parameterID);
                 Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
-            }
-            else if (parameterID == 0 ) {
+            } else if (parameterID == 0) {
                 continue;
-            }
-            else {
+            } else {
                 LOG_ERROR << "Requested parameter that doesn't exist! ID: " << parameterID;
             }
         }
@@ -88,7 +86,7 @@ namespace CAN::Application {
     }
 
     void createRequestParametersMessage(NodeIDs destinationAddress, bool isMulticast,
-                                        const etl::array<uint16_t, TPMessageMaximumArguments> &parameterIDs,
+                                        const etl::array<uint16_t, TPMessageMaximumArguments>& parameterIDs,
                                         bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
@@ -115,8 +113,8 @@ namespace CAN::Application {
     }
 
     void createPerformFunctionMessage(NodeIDs destinationAddress, bool isMulticast,
-                                      const etl::string<FunctionIdSize> &functionId,
-                                      const etl::map<uint8_t, uint64_t, TPMessageMaximumArguments> &arguments,
+                                      const etl::string<FunctionIdSize>& functionId,
+                                      const etl::map<uint8_t, uint64_t, TPMessageMaximumArguments>& arguments,
                                       bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
@@ -135,7 +133,7 @@ namespace CAN::Application {
     }
 
     void createEventReportMessage(NodeIDs destinationAddress, bool isMulticast, EventReportType type, uint16_t eventID,
-                                  const Message &eventData, bool isISR) {
+                                  const Message& eventData, bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         message.appendUint8(MessageIDs::EventReport);
@@ -146,7 +144,7 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void createPacketMessage(NodeIDs destinationAddress, bool isMulticast, const etl::string<128> &incomingMessage, Message::PacketType packetType, bool isISR) {
+    void createPacketMessage(NodeIDs destinationAddress, bool isMulticast, const etl::string<128>& incomingMessage, Message::PacketType packetType, bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         if (packetType == Message::TM) {
@@ -161,7 +159,7 @@ namespace CAN::Application {
     }
 
     void
-    createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message &incomingMessage, bool isISR) {
+    createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message& incomingMessage, bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         auto ccsdsMessage = MessageParser::compose(incomingMessage);
@@ -172,7 +170,7 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize> &log,
+    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
                           bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
@@ -182,18 +180,18 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void parseMessage(const CAN::Frame &message) {
+    void parseMessage(const CAN::Frame& message) {
         uint32_t id = filterMessageID(message.id);
         if (id == Heartbeat) {
-//            registerHeartbeat();
+            //            registerHeartbeat();
         } else if (id == BusSwitchover) {
             switchBus(static_cast<Driver::ActiveBus>(message.data[0]));
         } else if (id == UTCTime) {
-//            registerUTCTime();
+            //            registerUTCTime();
         }
     }
 
-    void parseSendParametersMessage(TPMessage &message) {
+    void parseSendParametersMessage(TPMessage& message) {
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == SendParameters, ErrorHandler::UnknownMessageType)) {
             return;
@@ -223,7 +221,7 @@ namespace CAN::Application {
         }
     }
 
-    void parseRequestParametersMessage(TPMessage &message) {
+    void parseRequestParametersMessage(TPMessage& message) {
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == RequestParameters, ErrorHandler::UnknownMessageType)) {
             return;
@@ -238,7 +236,7 @@ namespace CAN::Application {
         createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, true);
     }
 
-    void parseTMMessage(TPMessage &message) {
+    void parseTMMessage(TPMessage& message) {
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == TMPacket, ErrorHandler::UnknownMessageType)) {
             return;
@@ -249,7 +247,7 @@ namespace CAN::Application {
         LOG_DEBUG << logString.c_str();
     }
 
-    void parseTCMessage(TPMessage &message) {
+    void parseTCMessage(TPMessage& message) {
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == TCPacket, ErrorHandler::UnknownMessageType)) {
             return;
@@ -259,4 +257,4 @@ namespace CAN::Application {
 
         MessageParser::execute(teleCommand);
     }
-}
+} // namespace CAN::Application

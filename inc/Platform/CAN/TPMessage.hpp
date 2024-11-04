@@ -11,16 +11,16 @@ namespace CAN {
         struct IdInfo {
             NodeIDs sourceAddress;
             NodeIDs destinationAddress;
-            bool isMulticast: 1;
+            bool isMulticast : 1;
         };
 
         IdInfo idInfo = {};
 
         TPMessage() = default;
 
-        TPMessage(IdInfo _idInfo) : idInfo(_idInfo) {};
+        TPMessage(IdInfo _idInfo) : idInfo(_idInfo){};
 
-        TPMessage(IdInfo _idInfo, bool _isResponse) : idInfo(_idInfo) {};
+        TPMessage(IdInfo _idInfo, bool _isResponse) : idInfo(_idInfo){};
 
         /**
          * Decodes the ID of a CAN-TP Message, and sets the idInfo field of the current message.
@@ -49,4 +49,4 @@ namespace CAN {
             return id;
         }
     };
-}
+} // namespace CAN

@@ -25,7 +25,6 @@ public:
                           this, HousekeepingTaskPriority, this->taskStack,
                           &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<HousekeepingTask> housekeepingTask;

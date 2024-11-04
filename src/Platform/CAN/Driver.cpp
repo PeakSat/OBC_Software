@@ -150,7 +150,7 @@ void CAN::Driver::mcan1RxFifo1Callback(uint8_t numberOfMessages, uintptr_t conte
     }
 }
 
-void CAN::Driver::send(const CAN::Frame &message) {
+void CAN::Driver::send(const CAN::Frame& message) {
     using namespace CAN;
 
     memset(&Driver::txFifo, 0, MCAN1_TX_FIFO_BUFFER_ELEMENT_SIZE);
@@ -171,7 +171,7 @@ void CAN::Driver::send(const CAN::Frame &message) {
     }
 }
 
-void CAN::Driver::logMessage(const MCAN_RX_BUFFER &rxBuf, ActiveBus incomingBus) {
+void CAN::Driver::logMessage(const MCAN_RX_BUFFER& rxBuf, ActiveBus incomingBus) {
     auto message = String<ECSSMaxStringSize>("CAN Message: ");
     if (incomingBus == Main) {
         message.append("MCAN0 ");
@@ -192,7 +192,7 @@ void CAN::Driver::logMessage(const MCAN_RX_BUFFER &rxBuf, ActiveBus incomingBus)
     LOG_INFO << message.c_str();
 }
 
-CAN::Frame CAN::Driver::getFrame(const MCAN_RX_BUFFER &rxBuffer) {
+CAN::Frame CAN::Driver::getFrame(const MCAN_RX_BUFFER& rxBuffer) {
     CAN::Frame frame;
     const uint8_t messageLength = convertDlcToLength(rxBuffer.dlc);
 

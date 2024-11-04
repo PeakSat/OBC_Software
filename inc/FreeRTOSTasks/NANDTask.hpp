@@ -22,7 +22,6 @@ public:
                                            NANDTask::TaskStackDepth, this, NANDTaskPriority, this->taskStack,
                                            &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<NANDTask> nandTask;

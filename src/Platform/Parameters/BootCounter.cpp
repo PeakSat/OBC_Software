@@ -22,4 +22,4 @@ namespace BootCounter {
         setRegisters();
         GPBRWrite(BootCounterRegister, GPBRRead(BootCounterRegister) + 1);
     }
-}
+} // namespace BootCounter

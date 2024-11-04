@@ -30,8 +30,8 @@
 static StaticTask_t xIdleTaskTCBBuffer;
 static StackType_t xIdleStack[IDLE_TASK_SIZE];
 
-extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer,
-                                              uint32_t *pulIdleTaskStackSize) {
+extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer, StackType_t** ppxIdleTaskStackBuffer,
+                                              uint32_t* pulIdleTaskStackSize) {
     *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
     *ppxIdleTaskStackBuffer = &xIdleStack[0];
     *pulIdleTaskStackSize = IDLE_TASK_SIZE;
@@ -54,7 +54,7 @@ extern "C" void main_cpp() {
     mramTask.emplace();
     timeKeepingTask.emplace();
     watchdogTask.emplace();
-    
+
 
     __disable_irq();
     uartGatekeeperTask->createTask();
@@ -68,7 +68,7 @@ extern "C" void main_cpp() {
     ambientTemperatureTask->createTask();
     mramTask->createTask();
     timeKeepingTask->createTask();
-    watchdogTask->createTask();    
+    watchdogTask->createTask();
     __enable_irq();
 
     vTaskStartScheduler();
@@ -80,4 +80,3 @@ extern "C" void main_cpp() {
 
     return;
 }
-

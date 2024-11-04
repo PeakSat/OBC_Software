@@ -5,7 +5,6 @@
 
 class CANTestTask : public Task {
 private:
-
 public:
     StackType_t taskStack[CANTestTaskStack];
 
@@ -17,7 +16,7 @@ public:
      * Create freeRTOS Task
      */
     void createTask() {
-        xTaskCreateStatic(vClassTask < CANTestTask > , this->TaskName, CANTestTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<CANTestTask>, this->TaskName, CANTestTask::TaskStackDepth, this,
                           CANTestTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };

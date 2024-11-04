@@ -2,7 +2,7 @@
 
 void TimeBasedSchedulingTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
-    auto &timeBasedScheduling = Services.timeBasedScheduling;
+    auto& timeBasedScheduling = Services.timeBasedScheduling;
 
     TickType_t xLastWakeTime = xTaskGetTickCount();
 

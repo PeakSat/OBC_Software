@@ -1,13 +1,13 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
+    "version": "2.0.0",
+    "tasks": [
+        {
             "label": "Configure Firmware (CMake Preset)",
             "type": "shell",
             "command": "cmake",
             "args": [
                 "--preset",
-                "Preset_OBC"  // Matches the preset name in your CMakePresets.json
+                "Preset_OBC" // Matches the preset name in your CMakePresets.json
             ],
             "problemMatcher": [],
             "group": {
@@ -15,33 +15,35 @@
                 "isDefault": true
             }
         },
-		{
+        {
             "label": "Build Firmware (Ninja)",
             "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
-                "${workspaceRoot}/cmake-build-debug/build/Debug"  // Uses the binaryDir from your preset
+                "${workspaceRoot}/cmake-build-debug/build/Debug" // Uses the binaryDir from your preset
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": [
-                "$gcc"  // Optional: this helps VS Code catch and display compiler errors
+                "$gcc" // Optional: this helps VS Code catch and display compiler errors
             ],
             "dependsOn": "Configure Firmware (CMake Preset)"
         },
-		{
-			"label": "Flash firmware",
-			"type": "shell",
-			"command": "openocd",
-			"args": [
-				"-f", "${workspaceRoot}/atmel_samv71_xplained_ultra.cfg",
-				"-c", "program C:/Users/tats/Desktop/PeakSat/PeakSat_SW/OBC/OBC_Software/cmake-build-debug/build/Debug/OBC_software.elf exit"
-			],
-			"group": "none",
+        {
+            "label": "Flash firmware",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-f",
+                "${workspaceRoot}/atmel_samv71_xplained_ultra.cfg",
+                "-c",
+                "program C:/Users/tats/Desktop/PeakSat/PeakSat_SW/OBC/OBC_Software/cmake-build-debug/build/Debug/OBC_software.elf exit"
+            ],
+            "group": "none",
             "dependsOn": "Build Firmware (Ninja)"
-		}
-	]
+        }
+    ]
 }

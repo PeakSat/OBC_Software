@@ -36,9 +36,9 @@ namespace CAN {
 
         Frame() = default;
 
-        Frame(uint32_t id) : id(id) {};
+        Frame(uint32_t id) : id(id){};
 
-        Frame(uint32_t id, const etl::array<uint8_t, MaxDataLength> &data) : id(id), data(data) {};
+        Frame(uint32_t id, const etl::array<uint8_t, MaxDataLength>& data) : id(id), data(data){};
 
         /**
          * Zeroes out the current frame. Use this if you're using a single static object in a recurring function.
@@ -48,4 +48,4 @@ namespace CAN {
             data.fill(0);
         }
     };
-}
+} // namespace CAN
