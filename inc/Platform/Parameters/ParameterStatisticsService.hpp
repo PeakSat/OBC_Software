@@ -20,4 +20,4 @@ namespace ParameterStatistics {
      * Service
      */
     inline etl::array<Statistic, NumOfStatistics> statistics = {};
-}
+} // namespace ParameterStatistics

@@ -56,12 +56,12 @@ public:
      * If the queue is full, the string is not added to the queue and is lost.
      * @param message the etl::string to be added in the queue of the UART Gatekeeper task.
      */
-    void addToQueue(const etl::string<LOGGER_MAX_MESSAGE_SIZE> &message) {
+    void addToQueue(const etl::string<LOGGER_MAX_MESSAGE_SIZE>& message) {
         xQueueSendToBack(xUartQueue, &message, 0);
     }
 
     void createTask() {
-        uartGatekeeperTaskHandle = xTaskCreateStatic(vClassTask < UARTGatekeeperTask > , this->TaskName,
+        uartGatekeeperTaskHandle = xTaskCreateStatic(vClassTask<UARTGatekeeperTask>, this->TaskName,
                                                      UARTGatekeeperTask::TaskStackDepth, this,
                                                      UARTGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
     }

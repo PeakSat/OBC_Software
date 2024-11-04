@@ -62,11 +62,11 @@ void PayloadTestTask::execute() {
 
     while (true) {
 
-//        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        if(sendPayloadMessage(payloadMessage, 512)){
-            LOG_DEBUG<<"Sent 512 bytes payload message";
-        }else{
-            LOG_DEBUG<<"Unable to send payload message";
+        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        if (sendPayloadMessage(payloadMessage, 512)) {
+            LOG_DEBUG << "Sent 512 bytes payload message";
+        } else {
+            LOG_DEBUG << "Unable to send payload message";
         }
 
         if(xQueueReceive(messageQueueHandle, static_cast<void *>(&messageOut), 0)==pdTRUE){
@@ -77,7 +77,7 @@ void PayloadTestTask::execute() {
         }
         
 
-//        LOG_DEBUG << "Runtime exit: " << this->TaskName;
+        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

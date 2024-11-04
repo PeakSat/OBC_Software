@@ -5,7 +5,6 @@
 
 class TimeBasedSchedulingTask : public Task {
 public:
-
     StackType_t taskStack[TimeBasedSchedulingTaskStack];
 
     void execute();

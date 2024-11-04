@@ -21,12 +21,12 @@
  *
  */
 
-void enterLowPowerModeRS422(){
+void enterLowPowerModeRS422() {
     PIO_PinWrite(PAYLOAD_RX_ENABLE_PIN, true);
     PIO_PinWrite(PAYLOAD_TX_ENABLE_PIN, false);
 }
 
-bool sendPayloadStatus(){
+bool sendPayloadStatus() {
     return UART2_TransmitComplete();
 }
 
@@ -46,12 +46,12 @@ void transparentModeRS422(){
     PIO_PinWrite(PAYLOAD_TX_ENABLE_PIN, true);
 }
 
-bool sendPayloadMessage(uint8_t* msg, size_t msg_size){
+bool sendPayloadMessage(uint8_t* msg, size_t msg_size) {
     bool status = false;
 
-    if(sendPayloadStatus()){
+    if (sendPayloadStatus()) {
+        PIO_PinWrite(PAYLOAD_TX_ENABLE_PIN, true);
         status = UART2_Write(msg, msg_size);
     }
     return status;
 }
-

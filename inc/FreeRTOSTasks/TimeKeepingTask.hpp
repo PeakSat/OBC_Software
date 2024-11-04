@@ -20,13 +20,13 @@ public:
      * This function sets the epoch time.
      * @param dateTime is a tm struct witch keeps the time from MCU.
      */
-    void setEpoch(tm &dateTime);
+    void setEpoch(tm& dateTime);
 
     /**
      * This function sets the AcubeSAT's time parameters using a tm struct.
      * @param dateTime is a tm struct witch keeps the time from MCU.
      */
-    void setTimePlatformParameters(tm &dateTime);
+    void setTimePlatformParameters(tm& dateTime);
 
     /**
      * This function prints the on-board time.
@@ -39,7 +39,6 @@ public:
         xTaskCreateStatic(vClassTask<TimeKeepingTask>, this->TaskName, TimeKeepingTask::TaskStackDepth, this,
                           TimeKeepingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<TimeKeepingTask> timeKeepingTask;

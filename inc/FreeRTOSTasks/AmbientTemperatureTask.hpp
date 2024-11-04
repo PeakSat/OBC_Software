@@ -19,7 +19,7 @@ private:
      * The I2C addresses of the sensors based on the pin configuration of the physical devices
      */
     inline static constexpr etl::array<uint8_t, NumberOfTemperatureSensors>
-            SensorI2CAddress = {0, 1};
+        SensorI2CAddress = {0, 1};
 
     /**
      * The driver for the MCP9808 temperature sensor
@@ -40,12 +40,11 @@ public:
     AmbientTemperatureTask() : Task("ExternalTemperatureSensors") {}
 
     void createTask() {
-        taskHandle = xTaskCreateStatic(vClassTask < AmbientTemperatureTask > , this->TaskName,
+        taskHandle = xTaskCreateStatic(vClassTask<AmbientTemperatureTask>, this->TaskName,
                                        AmbientTemperatureTask::TaskStackDepth, this,
                                        AmbientTemperatureTaskPriority, this->taskStack,
                                        &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<AmbientTemperatureTask> ambientTemperatureTask;

@@ -3,11 +3,11 @@
 
 using namespace CAN;
 
-void TPProtocol::processSingleFrame(const CAN::Frame &message) {
+void TPProtocol::processSingleFrame(const CAN::Frame& message) {
     TPMessage tpMessage;
     tpMessage.decodeId(message.id);
 
-    if (not (tpMessage.idInfo.isMulticast or tpMessage.idInfo.destinationAddress == NodeID)) {
+    if (not(tpMessage.idInfo.isMulticast or tpMessage.idInfo.destinationAddress == NodeID)) {
         return;
     }
 
@@ -52,14 +52,14 @@ void TPProtocol::processMultipleFrames() {
         }
     }
 
-    if (not (message.idInfo.isMulticast or message.idInfo.destinationAddress == NodeID)) {
+    if (not(message.idInfo.isMulticast or message.idInfo.destinationAddress == NodeID)) {
         return;
     }
 
     parseMessage(message);
 }
 
-void TPProtocol::parseMessage(TPMessage &message) {
+void TPProtocol::parseMessage(TPMessage& message) {
     uint8_t messageType = static_cast<Application::MessageIDs>(message.data[0]);
     switch (messageType) {
         case CAN::Application::SendParameters:
@@ -85,14 +85,12 @@ void TPProtocol::parseMessage(TPMessage &message) {
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             LOG_DEBUG << "Received ping from " << senderName.c_str();
             CAN::Application::sendPongMessage();
-        }
-            break;
+        } break;
         case CAN::Application::Pong: {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             LOG_DEBUG << "Received pong from " << senderName.c_str();
-        }
-            break;
+        } break;
         case CAN::Application::LogMessage: {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
@@ -101,22 +99,21 @@ void TPProtocol::parseMessage(TPMessage &message) {
             logSource.append(": ");
             auto logData = String<ECSSMaxMessageSize>(message.data + 1, message.dataSize - 1);
             LOG_DEBUG << logSource.c_str() << logData.c_str();
-        }
-            break;
+        } break;
         default:
-            LOG_INFO<<"CAN Message of Unknown type";
+            LOG_INFO << "CAN Message of Unknown type";
             // ErrorHandler::reportInternalError(ErrorHandler::UnknownMessageType);
             break;
     }
 }
 
-void TPProtocol::createCANTPMessage(const TPMessage &message, bool isISR) {
+void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     size_t messageSize = message.dataSize;
     uint32_t id = message.encodeId();
     // Data fits in a Single Frame
     if (messageSize <= UsableDataLength) {
         etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {
-                static_cast<uint8_t>(((Single << 6) & 0xFF) | (messageSize & 0b111111))};
+            static_cast<uint8_t>(((Single << 6) & 0xFF) | (messageSize & 0b111111))};
         for (size_t idx = 0; idx < messageSize; idx++) {
             data.at(idx + 1) = message.data[idx];
         }

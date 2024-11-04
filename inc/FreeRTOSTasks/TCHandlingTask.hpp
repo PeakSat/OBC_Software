@@ -74,7 +74,6 @@ public:
         xTaskCreateStatic(vClassTask<TCHandlingTask>, this->TaskName, TCHandlingTask::TaskStackDepth, this,
                           TCHandlingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<TCHandlingTask> tcHandlingTask;
