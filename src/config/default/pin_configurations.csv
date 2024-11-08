@@ -63,7 +63,7 @@
 74,PD17,CAN_SILENT_2,GPIO,Out,High,No,Disabled,No,No,Disabled,Low
 75,PA9,OBC_UART_RX,UART0_URXD0,n/a,n/a,No,Disabled,No,No,Disabled,Low
 76,PC28,MEM_A10,EBI_A10,n/a,n/a,No,Disabled,No,No,Disabled,Low
-77,PA4,I2C_SCK_PANELS,TWIHS0_TWCK0,n/a,n/a,No,Disabled,No,No,Disabled,Low
+77,PA4,I2C_PANELS_SCK,TWIHS0_TWCK0,n/a,n/a,No,Disabled,No,No,Disabled,Low
 78,PD16,PAYLOAD_TX_ENABLE,GPIO,Out,Low,No,Disabled,No,No,Disabled,Low
 79,PB6,MCU_SWDIO,ICE_TMS/SWDIO,n/a,n/a,No,Disabled,No,No,Disabled,Low
 82,PC8,MEM_MRAM_WR_ENABLE,EBI_NWR0/NWE,n/a,n/a,No,Disabled,No,No,Disabled,Low
@@ -73,7 +73,7 @@
 88,PD13,,Available,In,,,,,,,
 89,PB7,MCU_SWCLK,ICE_TCK/SWDCLK,n/a,n/a,No,Disabled,No,No,Disabled,Low
 90,PC10,MEM_NAND_WR_ENABLE,EBI_NANDWE,n/a,n/a,No,Disabled,No,No,Disabled,Low
-91,PA3,,Available,In,,,,,,,
+91,PA3,I2C_PANELS_SDA,TWIHS0_TWD0,n/a,n/a,No,Disabled,No,No,Disabled,Low
 92,PD12,CAN_TX_2,MCAN1_CANTX1,n/a,n/a,No,Disabled,No,No,Disabled,Low
 93,PA2,,Available,In,,,,,,,
 94,PC11,MEM_MRAM_OUT_ENABLE,EBI_NRD,n/a,n/a,No,Disabled,No,No,Disabled,Low

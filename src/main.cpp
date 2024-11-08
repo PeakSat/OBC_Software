@@ -21,6 +21,7 @@
 #include "NANDTask.hpp"
 #include "MRAMTask.hpp"
 #include "PayloadTestTask.hpp"
+#include "TestTask.hpp"
 // Task Header files end
 
 #define IDLE_TASK_SIZE 1400
@@ -53,6 +54,7 @@ extern "C" void main_cpp() {
     ambientTemperatureTask.emplace();
     mramTask.emplace();
     timeKeepingTask.emplace();
+    TestTask.emplace();
     watchdogTask.emplace();
 
 
@@ -68,7 +70,9 @@ extern "C" void main_cpp() {
     ambientTemperatureTask->createTask();
     mramTask->createTask();
     timeKeepingTask->createTask();
-    watchdogTask->createTask();
+    TestTask->createTask();
+    watchdogTask->createTask();    
+
     __enable_irq();
 
     vTaskStartScheduler();

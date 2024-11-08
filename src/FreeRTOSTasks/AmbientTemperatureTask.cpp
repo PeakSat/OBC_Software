@@ -1,5 +1,6 @@
 #include "AmbientTemperatureTask.hpp"
 
+
 void AmbientTemperatureTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
     uint8_t numberOfDisconnectedSensors = 0;
@@ -17,8 +18,8 @@ void AmbientTemperatureTask::execute() {
         vTaskSuspend(taskHandle);
     }
 
+
     while (true) {
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         for (uint8_t sensorCounter = 0; sensorCounter < NumberOfTemperatureSensors; sensorCounter++) {
             if (not sensors[sensorCounter].isDeviceConnected()) {
                 LOG_ERROR << "Temperature sensor with address " << sensors[sensorCounter].getI2CUserAddress()

@@ -12,6 +12,12 @@
 
 void enterLowPowerModeRS422();
 
+void sendModeRS422();
+
+void receiveModeRS422();
+
+void transparentModeRS422();
+
 bool sendPayloadMessage(uint8_t* msg, size_t msg_size);
 
 bool sendPayloadStatus();

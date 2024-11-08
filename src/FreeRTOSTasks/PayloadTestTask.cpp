@@ -3,11 +3,62 @@
 //
 
 #include "PayloadTestTask.hpp"
+#include <definitions.h>
+#include "task.h"
+#include "Logger.hpp"
 #include "RS422/Payload_Message.hpp"
+#include "TestTask.hpp"
+
+PayloadTestTask::PayloadTestTask() : Task("Payload Test") {
+    messageQueueHandle = xQueueCreateStatic(TCQueueCapacity, sizeof(etl::string<20>),
+                                            messageQueueStorageArea,
+                                            &messageQueue);
+    configASSERT(messageQueueHandle);
+
+    UART2_ReadCallbackRegister([](uintptr_t object) -> void {
+        PayloadTestTask* task = reinterpret_cast<PayloadTestTask*>(object);
+
+        if (UART2_ReadCountGet() == 0) {
+            task->uart_err = UART2_ErrorGet();
+        } else {
+            task->ingress();
+        }
+
+        UART2_Read(&(task->byteIn), sizeof(this->byteIn));
+    },
+                               reinterpret_cast<uintptr_t>(this));
+
+    UART2_Read(&byteIn, sizeof(byteIn));
+}
+
+void PayloadTestTask::resetInput() {
+    new (&(PayloadTestTask::savedMessage)) etl::string<20>;
+}
+
+void PayloadTestTask::ingress() {
+    BaseType_t higherPriorityTaskWoken = pdFALSE;
+
+    if (savedMessage.full()) {
+        resetInput();
+    }
+
+    if (byteIn == MessageEndDelimiter) {
+        xQueueSendToBackFromISR(messageQueueHandle, static_cast<void*>(&savedMessage), &higherPriorityTaskWoken);
+        resetInput();
+    } else {
+        savedMessage.push_back(byteIn);
+    }
+
+    if (higherPriorityTaskWoken) {
+        portYIELD_FROM_ISR(higherPriorityTaskWoken);
+    }
+}
+
 
 void PayloadTestTask::execute() {
 
     LOG_DEBUG << "Runtime init: " << this->TaskName;
+    transparentModeRS422();
 
     while (true) {
 
@@ -18,7 +69,12 @@ void PayloadTestTask::execute() {
             LOG_DEBUG << "Unable to send payload message";
         }
 
-        enterLowPowerModeRS422();
+        if (xQueueReceive(messageQueueHandle, static_cast<void*>(&messageOut), 0) == pdTRUE) {
+            messageOut.repair();
+            LOG_DEBUG << "Payload message:";
+            LOG_DEBUG << messageOut.c_str();
+        }
+
 
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(5000));

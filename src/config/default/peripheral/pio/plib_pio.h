@@ -377,9 +377,9 @@
 #define MEM_A10_Get()               ((PIOC_REGS->PIO_PDSR >> 28U) & 0x1U)
 #define MEM_A10_PIN                  PIO_PIN_PC28
 
-/*** Macros for I2C_SCK_PANELS pin ***/
-#define I2C_SCK_PANELS_Get()               ((PIOA_REGS->PIO_PDSR >> 4U) & 0x1U)
-#define I2C_SCK_PANELS_PIN                  PIO_PIN_PA4
+/*** Macros for I2C_PANELS_SCK pin ***/
+#define I2C_PANELS_SCK_Get()               ((PIOA_REGS->PIO_PDSR >> 4U) & 0x1U)
+#define I2C_PANELS_SCK_PIN                  PIO_PIN_PA4
 
 /*** Macros for PAYLOAD_TX_ENABLE pin ***/
 #define PAYLOAD_TX_ENABLE_Set()               (PIOD_REGS->PIO_SODR = ((uint32_t)1U<<16U))
@@ -409,6 +409,10 @@
 /*** Macros for MEM_NAND_WR_ENABLE pin ***/
 #define MEM_NAND_WR_ENABLE_Get()               ((PIOC_REGS->PIO_PDSR >> 10U) & 0x1U)
 #define MEM_NAND_WR_ENABLE_PIN                  PIO_PIN_PC10
+
+/*** Macros for I2C_PANELS_SDA pin ***/
+#define I2C_PANELS_SDA_Get()               ((PIOA_REGS->PIO_PDSR >> 3U) & 0x1U)
+#define I2C_PANELS_SDA_PIN                  PIO_PIN_PA3
 
 /*** Macros for CAN_TX_2 pin ***/
 #define CAN_TX_2_Get()               ((PIOD_REGS->PIO_PDSR >> 12U) & 0x1U)
