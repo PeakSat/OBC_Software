@@ -71,6 +71,7 @@ include_directories(lib/Peripherals/NANDFlash/inc)
 include_directories(lib/Peripherals/NANDFlash/MT29F_Nand_Driver_Micron)
 include_directories(lib/Peripherals/NANDFlash/src)
 include_directories(lib/Peripherals/COBS)
+include_directories(lib/Peripherals/ADM)
 
 file(GLOB_RECURSE DRIVER_SOURCES "lib/Peripherals/MCP9808/*.cpp" "lib/Peripherals/LCL/*.cpp"
         "lib/Peripherals/NANDFlash/*.cpp")

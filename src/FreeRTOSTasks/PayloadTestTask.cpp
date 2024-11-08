@@ -7,7 +7,6 @@
 #include "task.h"
 #include "Logger.hpp"
 #include "RS422/Payload_Message.hpp"
-#include "adm_driver.hpp"
 #include "TestTask.hpp"
 
 PayloadTestTask::PayloadTestTask() : Task("Payload Test") {
@@ -17,7 +16,7 @@ PayloadTestTask::PayloadTestTask() : Task("Payload Test") {
     configASSERT(messageQueueHandle);
 
     UART2_ReadCallbackRegister([](uintptr_t object) -> void {
-        PayloadTestTask *task = reinterpret_cast<PayloadTestTask * >(object);
+        PayloadTestTask* task = reinterpret_cast<PayloadTestTask*>(object);
 
         if (UART2_ReadCountGet() == 0) {
             task->uart_err = UART2_ErrorGet();
@@ -26,13 +25,14 @@ PayloadTestTask::PayloadTestTask() : Task("Payload Test") {
         }
 
         UART2_Read(&(task->byteIn), sizeof(this->byteIn));
-    }, reinterpret_cast<uintptr_t>(this));
+    },
+                               reinterpret_cast<uintptr_t>(this));
 
     UART2_Read(&byteIn, sizeof(byteIn));
 }
 
 void PayloadTestTask::resetInput() {
-    new(&(PayloadTestTask::savedMessage)) etl::string<20>;
+    new (&(PayloadTestTask::savedMessage)) etl::string<20>;
 }
 
 void PayloadTestTask::ingress() {
@@ -43,7 +43,7 @@ void PayloadTestTask::ingress() {
     }
 
     if (byteIn == MessageEndDelimiter) {
-        xQueueSendToBackFromISR(messageQueueHandle, static_cast<void *>(&savedMessage), &higherPriorityTaskWoken);
+        xQueueSendToBackFromISR(messageQueueHandle, static_cast<void*>(&savedMessage), &higherPriorityTaskWoken);
         resetInput();
     } else {
         savedMessage.push_back(byteIn);
@@ -69,13 +69,12 @@ void PayloadTestTask::execute() {
             LOG_DEBUG << "Unable to send payload message";
         }
 
-        if(xQueueReceive(messageQueueHandle, static_cast<void *>(&messageOut), 0)==pdTRUE){
+        if (xQueueReceive(messageQueueHandle, static_cast<void*>(&messageOut), 0) == pdTRUE) {
             messageOut.repair();
-            storeMsgADM((char*) messageOut.c_str(), messageOut.length());
-            xTaskNotify(TestTask->TestTaskHandle, 0, eNoAction);
-            LOG_DEBUG<<"Notified TestTask for incoming message";
+            LOG_DEBUG << "Payload message:";
+            LOG_DEBUG << messageOut.c_str();
         }
-        
+
 
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(5000));
