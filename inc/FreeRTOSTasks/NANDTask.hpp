@@ -6,7 +6,7 @@
 
 class NANDTask : public Task {
 private:
-    const uint16_t DelayMs = 12000;
+    const uint16_t DelayMs = 5000;
 
     StackType_t taskStack[NANDTaskStack];
 
