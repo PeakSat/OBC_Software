@@ -27,9 +27,9 @@ void CANTestTask::execute() {
         }
 
 
-        //        xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
+                xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
 
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }

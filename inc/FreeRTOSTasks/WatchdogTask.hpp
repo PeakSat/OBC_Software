@@ -10,7 +10,7 @@ private:
      * @see config/default/peripheral/wdt.c for the specific configuration.
      * Do not change this value, without also modifying the value in Harmony configurator.
      */
-    const uint16_t WatchdogWindow = 10000;
+    const uint16_t WatchdogWindow = 14000;
 
     StackType_t taskStack[WatchdogTaskStack];
 

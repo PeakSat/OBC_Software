@@ -192,9 +192,9 @@ void NANDTask::execute() {
         }
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
 
-        //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
-        //        vTaskResume(MRAMTask::mramTaskHandle);
-        //        vTaskSuspend(NULL);
+//                LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
+                vTaskResume(MRAMTask::mramTaskHandle);
+                vTaskSuspend(NULL);
 
         
     }

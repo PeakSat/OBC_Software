@@ -23,7 +23,7 @@ bool MRAMTask::isMRAMAlive() {
 
 void MRAMTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
-    //    vTaskSuspend(NULL);
+    vTaskSuspend(NULL);
 
     mramLCL.enableLCL();
 
@@ -67,9 +67,9 @@ void MRAMTask::execute() {
             randomValueOffset = 0;
         }
 
-        //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
-        //        vTaskResume(NANDTask::nandTaskHandle);
-        //        vTaskSuspend(NULL);
+                LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
+                vTaskResume(NANDTask::nandTaskHandle);
+                vTaskSuspend(NULL);
 
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }
