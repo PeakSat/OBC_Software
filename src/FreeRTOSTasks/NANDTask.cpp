@@ -3,6 +3,7 @@
 #include <etl/String.hpp>
 #include "LCLDefinitions.hpp"
 #include "MRAMTask.hpp"
+#include "mutex_Handler.h"
 
 etl::array<uint8_t, 500> test_data = {
     76, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109, 32, 100, 111, 108, 111, 114, 32, 115, 105, 116, 32, 97, 109, 101, 116, 44, 32, 99, 111, 110, 115, 101, 99, 116, 101, 116, 117, 114, 32,
@@ -20,7 +21,7 @@ etl::array<uint8_t, 500> test_data = {
     105, 110, 97, 114, 32, 99, 111, 110, 115, 101, 113, 117, 97};
 
 bool singleByteRWTest(MT29F nand_module){
-    LOG_DEBUG<<"NAND Single byte R/W test";
+    //LOG_DEBUG<<"NAND Single byte R/W test";
     uint8_t data = 'A';
     uint32_t address_pos = (uint32_t) rand();
     // LOG_DEBUG<<"Writing to: "<<address_pos;
@@ -30,7 +31,7 @@ bool singleByteRWTest(MT29F nand_module){
         return false;
     }
     data = 0;
-    LOG_DEBUG<<"Reading from the same address";
+    //LOG_DEBUG<<"Reading from the same address";
     error = nand_module.readNAND(0, &data, address_pos);
     if(error != MT29F_Errno::NONE){
         LOG_DEBUG<<"Read operation returned error-code: "<<error;
@@ -44,13 +45,14 @@ bool singleByteRWTest(MT29F nand_module){
 }
 
 bool singlePageRWTest(MT29F nand_module){
-    LOG_DEBUG<<"NAND 500 byte R/W test (single page)";
+    //LOG_DEBUG<<"NAND 500 byte R/W test (single page)";
     // Page = 8640 bytes
-    uint32_t address_pos = (8640 * 10) + 10;
+    uint32_t selected_page = rand()%(4096*128);
+    uint32_t address_pos = (8640 * selected_page) + 10;
     // Address position is 10 bytes after the start of the page so 500 bytes of data
     // will fit in a single page
     
-    // LOG_DEBUG<<"Writing to: "<<address_pos;
+    LOG_DEBUG<<"Testing page: "<<selected_page;
     etl::span<uint8_t> data_span(test_data.data(), test_data.size());
     MT29F_Errno error = nand_module.writeNAND((uint8_t) 0, address_pos, data_span);
     if(error != MT29F_Errno::NONE){
@@ -76,13 +78,14 @@ bool singlePageRWTest(MT29F nand_module){
 }
 
 bool crossPageRWTest(MT29F nand_module){
-    LOG_DEBUG<<"NAND 500 byte R/W test (cross page)";
+    //LOG_DEBUG<<"NAND 500 byte R/W test (cross page)";
     // Page = 8640 bytes
-    uint32_t address_pos = (8640 * 15) - 200;
+    uint32_t selected_page = rand()%(4096*128);
+    uint32_t address_pos = (8640 * selected_page) - 200;
     // Address position is 200 bytes before the end of the page so 500 bytes of data
     // wont fit in a single page
     
-    // LOG_DEBUG<<"Writing to: "<<address_pos;
+    LOG_DEBUG<<"Testing pages: "<<selected_page<<", "<<selected_page+1;
     etl::span<uint8_t> data_span(test_data.data(), test_data.size());
     MT29F_Errno error = nand_module.writeNAND((uint8_t) 0, address_pos, data_span);
     if(error != MT29F_Errno::NONE){
@@ -108,14 +111,15 @@ bool crossPageRWTest(MT29F nand_module){
 }
 
 bool blockEraseTest(MT29F nand_module){
-    LOG_DEBUG<<"NAND Block Erase test";
+    // LOG_DEBUG<<"NAND Block Erase test";
     // Block = PageSize*128
-    uint16_t selected_block = 150;
+    uint16_t selected_block = rand()%4096;
     uint32_t block_start_address = 8640 * 128 * selected_block;
     uint32_t next_block_start_address = 8640 * 128 * (selected_block+1);
     // Write to 10 addresses inside the selected block, then erase the block and check if the data is erased
     // LOG_DEBUG<<"Writing to random addresses inside a block";
 
+    // LOG_DEBUG<<"Testing block: "<<selected_block;
     uint32_t addresses[10];
     uint8_t data = 'A';
     for(uint8_t i=0; i<10; i++){
@@ -145,10 +149,38 @@ bool blockEraseTest(MT29F nand_module){
     return true;
 }
 
-void NANDTask::execute() {
-    vTaskDelay(pdMS_TO_TICKS(DelayMs));
+void testNANDmodule(MT29F nand_module){
+    if(!singleByteRWTest(nand_module)){
+        //LOG_DEBUG<<"NAND Single byte RW test FAILED";
+    }else{
+        // LOG_DEBUG<<"NAND Single byte RW test SUCCEDED";
+    }
 
+    if(!singlePageRWTest(nand_module)){
+        // LOG_DEBUG<<"NAND 500 byte RW (single page) test FAILED";
+    }else{
+        // LOG_DEBUG<<"NAND 500 byte RW (single page) test SUCCEDED";
+    }
+
+    if(!crossPageRWTest(nand_module)){
+        // LOG_DEBUG<<"NAND 500 byte RW (cross page) test FAILED";
+    }else{
+        // LOG_DEBUG<<"NAND 500 byte RW (cross page) test SUCCEDED";
+    }
+
+    if(!blockEraseTest(nand_module)){
+        // LOG_DEBUG<<"NAND Block Erase test FAILED";
+    }else{
+        // LOG_DEBUG<<"NAND Block Erase test SUCCEDED";
+    }
+
+}
+
+void NANDTask::execute() {
+    
     MT29F mt29f(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
+    // MT29F mt29f_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
+
     LCL& nandLCL = LCLDefinitions::lclArray[LCLDefinitions::NANDFlash];
     nandLCL.enableLCL();
 
@@ -164,38 +196,29 @@ void NANDTask::execute() {
         // Error handler logic
     }
 
-    
+    // if(mt29f_b.resetNAND()!=MT29F_Errno::NONE){
+    //     LOG_DEBUG<<"Error reseting NAND";
+    //     mt29f_b.errorHandler(mt29f_b.resetNAND());
+    // }
+
+
+    // if(mt29f_b.isNANDAlive()){
+    //     LOG_DEBUG<<"NAND ID correct";
+    // }else{
+    //     LOG_DEBUG<<"NAND ID Error";
+    //     // Error handler logic
+    // }
+
     while (true) {
-        
-        if(!singleByteRWTest(mt29f)){
-            LOG_DEBUG<<"NAND Single byte RW test FAILED";
-        }else{
-            LOG_DEBUG<<"NAND Single byte RW test SUCCEDED";
-        }
+        testNANDmodule(mt29f);
+        // testNANDmodule(mt29f_b);
+        // LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
 
-        if(!singlePageRWTest(mt29f)){
-            LOG_DEBUG<<"NAND 500 byte RW (single page) test FAILED";
-        }else{
-            LOG_DEBUG<<"NAND 500 byte RW (single page) test SUCCEDED";
-        }
+        UBaseType_t highWatermarkNAD = uxTaskGetStackHighWaterMark(NULL);
+        LOG_DEBUG<<"NAND Watermark: "<<highWatermarkNAD;
 
-        if(!crossPageRWTest(mt29f)){
-            LOG_DEBUG<<"NAND 500 byte RW (cross page) test FAILED";
-        }else{
-            LOG_DEBUG<<"NAND 500 byte RW (cross page) test SUCCEDED";
-        }
-
-        if(!blockEraseTest(mt29f)){
-            LOG_DEBUG<<"NAND Block Erase test FAILED";
-        }else{
-            LOG_DEBUG<<"NAND Block Erase test SUCCEDED";
-        }
-        vTaskDelay(pdMS_TO_TICKS(DelayMs));
-
-//                LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
-                vTaskResume(MRAMTask::mramTaskHandle);
-                vTaskSuspend(NULL);
-
-        
+        // vTaskResume(MRAMTask::mramTaskHandle);
+        // vTaskSuspend(NULL);
+        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

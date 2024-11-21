@@ -5,6 +5,7 @@
 #include "task.h"
 #include "definitions.h"
 #include "OBC_Definitions.hpp"
+#include "FreeRTOSHandlers.hpp"
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -40,40 +41,41 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
 
 #endif
 
+
 extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
     nandTask.emplace();
-     payloadTestTask.emplace();
-     canGatekeeperTask.emplace();
-     canTestTask.emplace();
-     housekeepingTask.emplace();
-     tcHandlingTask.emplace();
-     mcuTemperatureTask.emplace();
+    payloadTestTask.emplace();
+    // canGatekeeperTask.emplace();
+    // canTestTask.emplace();
+    housekeepingTask.emplace();
+    // tcHandlingTask.emplace();
+    mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
-     mramTask.emplace();
-     timeKeepingTask.emplace();
-     TestTask.emplace();
-     watchdogTask.emplace();
+    // mramTask.emplace();
+    timeKeepingTask.emplace();
+    // TestTask.emplace();
+    watchdogTask.emplace();
 
 
-    __disable_irq();
+    // __disable_irq();
     uartGatekeeperTask->createTask();
-    nandTask->createTask();
-     payloadTestTask->createTask();
-     canGatekeeperTask->createTask();
-     canTestTask->createTask();
-     housekeepingTask->createTask();
-     tcHandlingTask->createTask();
-     mcuTemperatureTask->createTask();
+    // nandTask->createTask();
+    payloadTestTask->createTask();
+    // canGatekeeperTask->createTask();
+    // canTestTask->createTask();
+    housekeepingTask->createTask();
+    // tcHandlingTask->createTask();
+    mcuTemperatureTask->createTask();
     // ambientTemperatureTask->createTask();
-     mramTask->createTask();
-     timeKeepingTask->createTask();
-     TestTask->createTask();
+    // mramTask->createTask();
+    timeKeepingTask->createTask();
+    // TestTask->createTask();
     watchdogTask->createTask();
 
-    __enable_irq();
+    // __enable_irq();
 
     vTaskStartScheduler();
 

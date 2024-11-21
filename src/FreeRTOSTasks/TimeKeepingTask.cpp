@@ -12,6 +12,8 @@ void TimeKeepingTask::execute() {
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
+        UBaseType_t highWatermarkTKP = uxTaskGetStackHighWaterMark(NULL);
+        LOG_DEBUG<<"Timekeeping Watermark: "<<highWatermarkTKP;
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }
 }

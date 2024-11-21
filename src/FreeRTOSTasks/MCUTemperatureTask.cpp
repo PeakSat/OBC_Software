@@ -1,7 +1,7 @@
 #include "MCUTemperatureTask.hpp"
 
 void MCUTemperatureTask::execute() {
-    LOG_DEBUG << "Runtime init: " << this->TaskName;
+    // LOG_DEBUG << "Runtime init: " << this->TaskName;
 
     while (true) {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
@@ -13,6 +13,9 @@ void MCUTemperatureTask::execute() {
             (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
         CommonParameters::mcuTemperature.setValue(MCUtemperature);
+
+        UBaseType_t highWatermarkMTM = uxTaskGetStackHighWaterMark(NULL);
+        LOG_DEBUG<<"MCU temp Watermark: "<<highWatermarkMTM;
 
         //        LOG_DEBUG << "Runtime exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(delayMs));
