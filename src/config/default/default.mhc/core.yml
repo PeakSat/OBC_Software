@@ -4197,13 +4197,6 @@ children:
       children:
       - type: User
         attributes: {value: 'true'}
-  - type: Boolean
-    attributes: {id: SYSTICK_BUSY}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: core, value: 'true'}
   - type: String
     attributes: {id: SYSTICK_CLOCK_FREQUENCY}
     children:
