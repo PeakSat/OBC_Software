@@ -67,9 +67,6 @@ void MRAMTask::execute() {
             randomValueOffset = 0;
         }
 
-        UBaseType_t highWatermarkMRM = uxTaskGetStackHighWaterMark(NULL);
-        LOG_DEBUG<<"MRAM Watermark: "<<highWatermarkMRM;
-
         vTaskResume(NANDTask::nandTaskHandle);
         vTaskSuspend(NULL);
 

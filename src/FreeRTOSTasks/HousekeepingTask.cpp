@@ -13,8 +13,6 @@ void HousekeepingTask::execute() {
         nextCollection = housekeeping.reportPendingStructures(xTaskGetTickCount(), timeBeforeDelay, nextCollection);
         timeBeforeDelay = xTaskGetTickCount();
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
-        UBaseType_t highWatermarkHSK = uxTaskGetStackHighWaterMark(NULL);
-        LOG_DEBUG<<"Housekeeping Watermark: "<<highWatermarkHSK;
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(nextCollection));
     }
 }

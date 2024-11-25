@@ -14,9 +14,6 @@ void MCUTemperatureTask::execute() {
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
         CommonParameters::mcuTemperature.setValue(MCUtemperature);
 
-        UBaseType_t highWatermarkMTM = uxTaskGetStackHighWaterMark(NULL);
-        LOG_DEBUG<<"MCU temp Watermark: "<<highWatermarkMTM;
-
         //        LOG_DEBUG << "Runtime exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }

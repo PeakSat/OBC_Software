@@ -3,6 +3,8 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 void main_cpp();
 
 #ifdef __cplusplus

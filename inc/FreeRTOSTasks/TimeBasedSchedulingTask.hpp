@@ -17,7 +17,7 @@ public:
     void createTask() {
         this->taskHandle = xTaskCreateStatic(vClassTask<TimeBasedSchedulingTask>,
                                              this->TaskName,
-                                             TimeBasedSchedulingTask::TaskStackDepth,
+                                             TimeBasedSchedulingTaskStack,
                                              this, TimeBasedSchedulingTaskPriority,
                                              this->taskStack,
                                              &(this->taskBuffer));

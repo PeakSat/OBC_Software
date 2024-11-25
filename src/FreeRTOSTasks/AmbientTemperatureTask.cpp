@@ -32,8 +32,6 @@ void AmbientTemperatureTask::execute() {
         CommonParameters::boardTemperature1.setValue(ambientTemperature[0]);
         CommonParameters::boardTemperature2.setValue(ambientTemperature[1]);
         //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
-        UBaseType_t highWatermarkATM = uxTaskGetStackHighWaterMark(NULL);
-        LOG_DEBUG<<"Ambient temperature Watermark: "<<highWatermarkATM;
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }
 }
