@@ -36,7 +36,7 @@ namespace BootCounter {
      * @see incrementBootCounter
      */
     inline const uint16_t BootCounterLimit = 1000;
-}
+} // namespace BootCounter
 
 /**
  * Number of bytes used for the basic time units of the CUC header for the RTC transform
@@ -68,13 +68,17 @@ namespace LogSource {
      * The subsystem to be used, if no other source is defined using the stream operator.
      */
     extern String<MaximumLettersInSubsystemName> currentSubsystem;
-}
+} // namespace LogSource
 
 namespace CAN {
     /**
      * CAN Nodes, as specified in DDJF_OBDH.
      */
     enum NodeIDs : uint8_t {
-        OBC = 0x0, COMMS = 0x1, ADCS = 0x2, SU = 0x3, ExternalMCU = 0x4
+        OBC = 0x0,
+        COMMS = 0x1,
+        ADCS = 0x2,
+        SU = 0x3,
+        ExternalMCU = 0x4
     };
-}
+} // namespace CAN

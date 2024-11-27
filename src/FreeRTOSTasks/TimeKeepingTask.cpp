@@ -7,13 +7,12 @@ void TimeKeepingTask::execute() {
     RTC_TimeSet(&dateTime);
 
     while (true) {
-//        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         RTC_TimeGet(&dateTime);
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
-//        LOG_DEBUG << "Runtime exit: " << this->TaskName;
+        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
-        
     }
 }
 
@@ -34,13 +33,13 @@ void TimeKeepingTask::printOnBoardTime() {
     LOG_DEBUG << printTime.data();
 }
 
-void TimeKeepingTask::setTimePlatformParameters(tm &dateTime) {
+void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
     UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
     Time::DefaultCUC timeCUC(timeUTC);
     CommonParameters::time.setValue(timeCUC);
 }
 
-void TimeKeepingTask::setEpoch(tm &dateTime) {
+void TimeKeepingTask::setEpoch(tm& dateTime) {
     dateTime.tm_sec = EpochTime.tm_sec;
     dateTime.tm_min = EpochTime.tm_min;
     dateTime.tm_hour = EpochTime.tm_hour;

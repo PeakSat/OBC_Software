@@ -28,16 +28,16 @@ public:
      * @tparam T A class with an `execute()` function that represent the state of a FreeRTOS task
      * @param pvParameters This argument is passed by FreeRTOS and should contain a pointer to the Task object
      */
-    template<class T>
-    static void vClassTask(void *pvParameters) {
-        (static_cast<T *>(pvParameters))->execute();
+    template <class T>
+    static void vClassTask(void* pvParameters) {
+        (static_cast<T*>(pvParameters))->execute();
     }
 
 public:
     /**
      * Name of each task.
      */
-    const char *TaskName;
+    const char* TaskName;
 
     /**
      * Handle of each FreeRTOS task.
@@ -50,5 +50,5 @@ public:
      */
     const uint16_t TaskStackDepth = 1000;
 
-    Task(const char *TaskName) : TaskName(TaskName) {}
+    Task(const char* TaskName) : TaskName(TaskName) {}
 };

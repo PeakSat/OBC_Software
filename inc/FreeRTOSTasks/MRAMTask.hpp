@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "MR4A08BUYS45.hpp"
 #include "LCLDefinitions.hpp"
 
@@ -8,13 +8,11 @@ class MRAMTask : public Task {
 private:
     const uint16_t DelayMs = 15000;
 
-    const static inline uint16_t TaskStackDepth = 5000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[MRAMTaskStack];
 
     MRAM mram{SMC::NCS0};
 
-    LCL &mramLCL = LCLDefinitions::lclArray[LCLDefinitions::MRAM];
+    LCL& mramLCL = LCLDefinitions::lclArray[LCLDefinitions::MRAM];
 
     uint32_t areYouAliveAddress = 0;
 
@@ -29,8 +27,8 @@ public:
 
     void createTask() {
         mramTaskHandle = xTaskCreateStatic(vClassTask<MRAMTask>, this->TaskName,
-                          MRAMTask::TaskStackDepth, this, tskIDLE_PRIORITY + 1, this->taskStack,
-                          &(this->taskBuffer));
+                                           MRAMTask::TaskStackDepth, this, MRAMTaskPriority, this->taskStack,
+                                           &(this->taskBuffer));
     }
 
     bool isMRAMAlive();

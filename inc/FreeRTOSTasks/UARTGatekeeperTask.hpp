@@ -1,7 +1,7 @@
 #pragma once
 
 #include "COBS.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "queue.h"
 #include "Peripheral_Definitions.hpp"
 
@@ -18,9 +18,7 @@ private:
 
     uint8_t ucQueueStorageArea[UARTQueueSize * sizeof(etl::string<LOGGER_MAX_MESSAGE_SIZE>)];
 
-    const static inline uint16_t TaskStackDepth = 2000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[UARTGatekeeperTaskStack];
 
     /**
      * This variable is used to store a task handle for a UART gatekeeper task.
@@ -58,14 +56,14 @@ public:
      * If the queue is full, the string is not added to the queue and is lost.
      * @param message the etl::string to be added in the queue of the UART Gatekeeper task.
      */
-    void addToQueue(const etl::string<LOGGER_MAX_MESSAGE_SIZE> &message) {
+    void addToQueue(const etl::string<LOGGER_MAX_MESSAGE_SIZE>& message) {
         xQueueSendToBack(xUartQueue, &message, 0);
     }
 
     void createTask() {
-        uartGatekeeperTaskHandle = xTaskCreateStatic(vClassTask < UARTGatekeeperTask > , this->TaskName,
+        uartGatekeeperTaskHandle = xTaskCreateStatic(vClassTask<UARTGatekeeperTask>, this->TaskName,
                                                      UARTGatekeeperTask::TaskStackDepth, this,
-                                                     tskIDLE_PRIORITY + 2, this->taskStack, &(this->taskBuffer));
+                                                     UARTGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 

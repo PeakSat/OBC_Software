@@ -65,6 +65,7 @@
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/uart/plib_uart0.h"
 #include "peripheral/mcan/plib_mcan0.h"
+#include "peripheral/twihs/master/plib_twihs0_master.h"
 #include "peripheral/mcan/plib_mcan1.h"
 #include "peripheral/twihs/master/plib_twihs1_master.h"
 #include "system/int/sys_int.h"

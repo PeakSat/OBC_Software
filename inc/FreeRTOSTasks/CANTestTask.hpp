@@ -1,15 +1,12 @@
 #pragma once
 
 #include "CAN/Driver.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class CANTestTask : public Task {
 private:
-
 public:
-    const static inline uint16_t TaskStackDepth = 2300;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[CANTestTaskStack];
 
     void execute();
 
@@ -19,8 +16,8 @@ public:
      * Create freeRTOS Task
      */
     void createTask() {
-        xTaskCreateStatic(vClassTask < CANTestTask > , this->TaskName, CANTestTask::TaskStackDepth, this,
-                          tskIDLE_PRIORITY + 1, this->taskStack, &(this->taskBuffer));
+        xTaskCreateStatic(vClassTask<CANTestTask>, this->TaskName, CANTestTask::TaskStackDepth, this,
+                          CANTestTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 

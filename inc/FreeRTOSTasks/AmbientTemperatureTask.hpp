@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "MCP9808.hpp"
 
 /**
@@ -8,7 +8,7 @@
  */
 class AmbientTemperatureTask : public Task {
 private:
-    const uint16_t DelayMs = 60000;
+    const uint16_t DelayMs = 1100;
 
     /**
      * Number of sensors on the PCB
@@ -19,7 +19,7 @@ private:
      * The I2C addresses of the sensors based on the pin configuration of the physical devices
      */
     inline static constexpr etl::array<uint8_t, NumberOfTemperatureSensors>
-            SensorI2CAddress = {0, 1};
+        SensorI2CAddress = {0, 1};
 
     /**
      * The driver for the MCP9808 temperature sensor
@@ -32,9 +32,7 @@ private:
      */
     etl::array<float, NumberOfTemperatureSensors> ambientTemperature = {0, 0};
 
-    const static inline uint16_t TaskStackDepth = 2000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[AmbientTemperatureTaskStack];
 
 public:
     void execute();
@@ -42,12 +40,11 @@ public:
     AmbientTemperatureTask() : Task("ExternalTemperatureSensors") {}
 
     void createTask() {
-        taskHandle = xTaskCreateStatic(vClassTask < AmbientTemperatureTask > , this->TaskName,
+        taskHandle = xTaskCreateStatic(vClassTask<AmbientTemperatureTask>, this->TaskName,
                                        AmbientTemperatureTask::TaskStackDepth, this,
-                                       tskIDLE_PRIORITY + 1, this->taskStack,
+                                       AmbientTemperatureTaskPriority, this->taskStack,
                                        &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<AmbientTemperatureTask> ambientTemperatureTask;

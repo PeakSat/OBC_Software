@@ -21,6 +21,7 @@
 #include "NANDTask.hpp"
 #include "MRAMTask.hpp"
 #include "PayloadTestTask.hpp"
+#include "TestTask.hpp"
 // Task Header files end
 
 #define IDLE_TASK_SIZE 1400
@@ -30,8 +31,8 @@
 static StaticTask_t xIdleTaskTCBBuffer;
 static StackType_t xIdleStack[IDLE_TASK_SIZE];
 
-extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer,
-                                              uint32_t *pulIdleTaskStackSize) {
+extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer, StackType_t** ppxIdleTaskStackBuffer,
+                                              uint32_t* pulIdleTaskStackSize) {
     *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
     *ppxIdleTaskStackBuffer = &xIdleStack[0];
     *pulIdleTaskStackSize = IDLE_TASK_SIZE;
@@ -43,31 +44,36 @@ extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    timeKeepingTask.emplace();
-    ambientTemperatureTask.emplace();
-    watchdogTask.emplace();
-    mcuTemperatureTask.emplace();
-    tcHandlingTask.emplace();
-    housekeepingTask.emplace();
+    nandTask.emplace();
+    payloadTestTask.emplace();
     canGatekeeperTask.emplace();
     canTestTask.emplace();
-    payloadTestTask.emplace();
-    nandTask.emplace();
+    housekeepingTask.emplace();
+    tcHandlingTask.emplace();
+    mcuTemperatureTask.emplace();
+    ambientTemperatureTask.emplace();
     mramTask.emplace();
+    timeKeepingTask.emplace();
+    TestTask.emplace();
+    watchdogTask.emplace();
 
 
-    ambientTemperatureTask->createTask();
-    mcuTemperatureTask->createTask();
-    timeKeepingTask->createTask();
+    __disable_irq();
     uartGatekeeperTask->createTask();
-    watchdogTask->createTask();
-    tcHandlingTask->createTask();
-    housekeepingTask->createTask();
+    nandTask->createTask();
+    payloadTestTask->createTask();
     canGatekeeperTask->createTask();
     canTestTask->createTask();
-    payloadTestTask->createTask();
-    nandTask->createTask();
+    housekeepingTask->createTask();
+    tcHandlingTask->createTask();
+    mcuTemperatureTask->createTask();
+    ambientTemperatureTask->createTask();
     mramTask->createTask();
+    timeKeepingTask->createTask();
+    TestTask->createTask();
+    watchdogTask->createTask();    
+
+    __enable_irq();
 
     vTaskStartScheduler();
 
@@ -78,4 +84,3 @@ extern "C" void main_cpp() {
 
     return;
 }
-

@@ -8,7 +8,7 @@
 #include "Message.hpp"
 #include "MessageParser.hpp"
 #include "OBC_Definitions.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 /**
  * FreeRTOS task implementing TC execution received externally using usart.
@@ -33,7 +33,7 @@ private:
     /**
      * The value that signals a message is done being transmitted.1
      */
-    const inline static uint8_t MessageEndDelimiter = 0x00;
+    const inline static uint8_t MessageEndDelimiter = 0x41;
 
     /**
      * Saves incoming bytes by inserting them into a queue.
@@ -47,9 +47,8 @@ public:
      * The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
      * architecture with 4 byte stack, assigning 100 to the usStackDepth argument, will allocate 4x100=400 bytes.
      */
-    const static inline uint16_t TaskStackDepth = 3000;
 
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[TCHandlingTaskStack];
 
     TCHandlingTask();
 
@@ -73,9 +72,8 @@ public:
      */
     void createTask() {
         xTaskCreateStatic(vClassTask<TCHandlingTask>, this->TaskName, TCHandlingTask::TaskStackDepth, this,
-                          tskIDLE_PRIORITY + 1, this->taskStack, &(this->taskBuffer));
+                          TCHandlingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<TCHandlingTask> tcHandlingTask;

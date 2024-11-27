@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 
 class WatchdogTask : public Task {
 private:
@@ -12,9 +12,7 @@ private:
      */
     const uint16_t WatchdogWindow = 14000;
 
-    const static inline uint16_t TaskStackDepth = 1000;
-
-    StackType_t taskStack[TaskStackDepth];
+    StackType_t taskStack[WatchdogTaskStack];
 
 public:
     void execute();
@@ -23,10 +21,8 @@ public:
 
     void createTask() {
         xTaskCreateStatic(vClassTask<WatchdogTask>, this->TaskName, WatchdogTask::TaskStackDepth, this,
-                          configMAX_PRIORITIES - 1, this->taskStack, &(this->taskBuffer));
+                          WatchdogTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
 };
 
 inline std::optional<WatchdogTask> watchdogTask;
-

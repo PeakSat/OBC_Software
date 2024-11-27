@@ -1,7 +1,7 @@
 // Dummy stub functions, so the linker doesnt complain
 // These functions are not intented to be used, if you need them
 // Implement them and adapt them to your needs
-// With love Tats Foundation
+// With love i kai oxi Tats Foundation
 
 #include "stub.h"
 

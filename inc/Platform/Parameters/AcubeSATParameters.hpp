@@ -1,6 +1,6 @@
 #pragma once
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpsabi"    // Suppress: parameter passing for argument of type 'Time::DefaultCUC' {aka 'TimeStamp<4, 0, 1, 10>'} changed in GCC 7.1
+#pragma GCC diagnostic ignored "-Wpsabi" // Suppress: parameter passing for argument of type 'Time::DefaultCUC' {aka 'TimeStamp<4, 0, 1, 10>'} changed in GCC 7.1
 
 #include "Helpers/Parameter.hpp"
 #include "CAN/Driver.hpp"
@@ -32,7 +32,7 @@ namespace AcubeSATParameters {
                                         ///< reset by a ground station pass.
         OBCLastFailedEvent = 5014,
         OBCMCUSystick = 5015,
-        OBCCANBUSLoad1 = 5016,  ///< the CAN bus load is based on the used capacity (bandwidth) divided by maximum capacity
+        OBCCANBUSLoad1 = 5016, ///< the CAN bus load is based on the used capacity (bandwidth) divided by maximum capacity
         OBCCANBUSLoad2 = 5017,
         OBCCANBUSActive = 5018,
         OBCMCUFDIR = 5019,
@@ -107,7 +107,7 @@ namespace AcubeSATParameters {
         SUProgramFlashScrubbingFrequency = 4058,
         SUTemperatureFromHumiditySensor1 = 4059,
         SUTemperatureFromHumiditySensor2 = 4060,
-        
+
 
         /* ADCS */
         ADCSUseRTT = 11,
@@ -501,13 +501,13 @@ namespace AcubeSATParameters {
     enum MagnetorquerModes : uint8_t {
         Idle = 0,
         SelfTest = 1,
-        Detumbling =2
+        Detumbling = 2
     };
 
     enum MagnetorquerActuationMethod : uint8_t {
         Current = 0,
         Dipole = 1,
-        PWM =2
+        PWM = 2
     };
 
     /******************* SU ENUMS *******************/
@@ -561,8 +561,8 @@ namespace AcubeSATParameters {
     inline Parameter<Time::DefaultCUC> obcOnBoardTime(Time::DefaultCUC(0));
 
     inline Parameter<SpacecraftTimeRef> obcSpacecraftTimeRef(Spacecraft); // enum
-    inline Parameter<OperationalMode> obcOperationalMode(NominalMode); // enum
-    inline Parameter<MemoryPartition> obcMemoryPartition(First); // enum
+    inline Parameter<OperationalMode> obcOperationalMode(NominalMode);    // enum
+    inline Parameter<MemoryPartition> obcMemoryPartition(First);          // enum
 
     inline Parameter<uint32_t> obcReconfigurationTimer(0);
     inline Parameter<uint16_t> obcLastFailedEvent(0);
@@ -572,7 +572,7 @@ namespace AcubeSATParameters {
     inline Parameter<float> obcCANBUSLoad2(0);
 
     inline Parameter<CAN::Driver::ActiveBus> obcCANBUSActive(CAN::Driver::Main); // enum
-    inline Parameter<MCUFDIR> obcMCUFDIR(OBC); // enum
+    inline Parameter<MCUFDIR> obcMCUFDIR(OBC);                                   // enum
 
     inline Parameter<uint8_t> obcMCURestartSafeModeThreshold(0);
     inline Parameter<float> obcNANDFLASHLCLThreshold(0);
@@ -667,7 +667,7 @@ namespace AcubeSATParameters {
     inline Parameter<float> suPhotoExposureTime(0);
     inline Parameter<uint16_t> suPhotoInterval(0);
     inline Parameter<CroppingResolution> suPhotoCroppedResolution(Default); // enum
-    inline Parameter<CompressionRate> suPhotoCompressionRate(None); // enum
+    inline Parameter<CompressionRate> suPhotoCompressionRate(None);         // enum
 
     // Misc
     inline Parameter<ExprerimentNumber> suExperimentNumber(FirstExperiment); // enum
@@ -794,7 +794,7 @@ namespace AcubeSATParameters {
     inline Parameter<double> adcsSGP4OrbitalElementsRAAN(0);
     inline Parameter<double> adcsSGP4OrbitalElementsInclination(0);
     inline Parameter<double> adcsSGP4OrbitalElementsMeanAnomaly(0);
-    inline Parameter<double> adcsTimeGST_JD(0);  ///< Greenwich Sidereal Time
+    inline Parameter<double> adcsTimeGST_JD(0); ///< Greenwich Sidereal Time
 
     inline Parameter<float> adcsDeterminationInitialMatricesQ1(0);
     inline Parameter<float> adcsDeterminationInitialMatricesQ2(0);
@@ -830,13 +830,13 @@ namespace AcubeSATParameters {
     inline Parameter<float> adcsReactionWheelAngularVelocity(0);
     inline Parameter<bool> adcsControlProfileSwitching(0);
 
-    inline Parameter<AxisAssignment> adcsMagnetorquerAxisAssignment(Xaxis); // enum
+    inline Parameter<AxisAssignment> adcsMagnetorquerAxisAssignment(Xaxis);    // enum
     inline Parameter<AxisAssignment> adcsTransformationAxisXAssignment(Xaxis); // enum
     inline Parameter<AxisAssignment> adcsTransformationAxisYAssignment(Xaxis); // enum
     inline Parameter<AxisAssignment> adcsTransformationAxisZAssignment(Xaxis); // enum
-    inline Parameter<AxisAssignment> adcsMagnetometerAxisAssignment(Xaxis); // enum
-    inline Parameter<AxisAssignment> adcsSunSensorAxisAssignment(Xaxis); // enum
-    inline Parameter<AxisAssignment> adcsGyroscopeAxisAssignment(Xaxis); // enum
+    inline Parameter<AxisAssignment> adcsMagnetometerAxisAssignment(Xaxis);    // enum
+    inline Parameter<AxisAssignment> adcsSunSensorAxisAssignment(Xaxis);       // enum
+    inline Parameter<AxisAssignment> adcsGyroscopeAxisAssignment(Xaxis);       // enum
 
     inline Parameter<bool> adcsFrameAxisSignECIToECEF_X(0);
     inline Parameter<bool> adcsFrameAxisSignECIToECEF_Y(0);
@@ -914,7 +914,7 @@ namespace AcubeSATParameters {
 
     inline Parameter<float> adcsDesaturationPecentageParameter(0);
 
-    inline Parameter<MagnetorquerModes> adcsISISMTQModes(Idle); // enum
+    inline Parameter<MagnetorquerModes> adcsISISMTQModes(Idle);                             // enum
     inline Parameter<MagnetorquerActuationMethod> adcsMagnetorquerActuationMethod(Current); // enum
 
     inline Parameter<float> adcsDutyCycleDetermination(0);
@@ -1019,9 +1019,9 @@ namespace AcubeSATParameters {
     inline Parameter<uint32_t> commsChannelNumberUHFBand(0);
     inline Parameter<uint32_t> commsChannelNumberSBand(0);
 
-    inline Parameter<AntennaGains> commsLNAGain(Gain); // enum
+    inline Parameter<AntennaGains> commsLNAGain(Gain);       // enum
     inline Parameter<AntennaGains> commsPAGainUHFBand(Gain); // enum
-    inline Parameter<AntennaGains> commsPAGainSBand(Gain); // enum
+    inline Parameter<AntennaGains> commsPAGainSBand(Gain);   // enum
 
     inline Parameter<uint8_t> commsVGAGain(0);
     inline Parameter<float> commsRSSI(0);
@@ -1050,6 +1050,6 @@ namespace AcubeSATParameters {
     inline Parameter<uint32_t> commsMCUSystick(0);
     inline Parameter<uint32_t> commsFlashInt(0);
     inline Parameter<uint32_t> commsSRAMInt(0);
-}
+} // namespace AcubeSATParameters
 
 #pragma GCC diagnostic pop

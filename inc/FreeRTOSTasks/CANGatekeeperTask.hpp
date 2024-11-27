@@ -2,7 +2,7 @@
 
 #include "CAN/ApplicationLayer.hpp"
 #include "CAN/Frame.hpp"
-#include "Task.hpp"
+#include "TaskConfigs.hpp"
 #include "queue.h"
 #include "Platform/Peripheral_Definitions.hpp"
 #include "CAN/TPProtocol.hpp"
@@ -70,10 +70,7 @@ private:
     static inline uint8_t incomingMFQueueStorageArea[CAN::FrameQueueSize * sizeof(CAN::Frame)];
 
 
-
-    const static inline uint16_t TaskStackDepth = 1300;
-
-    StackType_t taskStack[TaskStackDepth]{};
+    StackType_t taskStack[CANGatekeeperTaskStack]{};
 
     CAN::Driver::ActiveBus ActiveBus = CAN::Driver::ActiveBus::Main;
 
@@ -100,7 +97,7 @@ public:
      * @param message the CAN::Frame to be added in the queue of the CAN Gatekeeper task.
      * @param isISR indicating if the message is a response to another CAN Message, thus composed through an ISR
      */
-    inline void send(const CAN::Frame &message, bool isISR = false) {
+    inline void send(const CAN::Frame& message, bool isISR = false) {
         BaseType_t status;
 
         if (isISR) {
@@ -129,7 +126,7 @@ public:
      *
      * @param message The incoming CAN::Frame.
      */
-    inline void addSFToIncoming(const CAN::Frame &message) {
+    inline void addSFToIncoming(const CAN::Frame& message) {
         BaseType_t taskShouldYield = pdFALSE;
 
         xQueueSendToBackFromISR(incomingSFQueue, &message, &taskShouldYield);
@@ -148,7 +145,7 @@ public:
      *
      * @param message The incoming CAN::Frame.
      */
-    inline void addMFToIncoming(const CAN::Frame &message) {
+    inline void addMFToIncoming(const CAN::Frame& message) {
         BaseType_t taskShouldYield = pdFALSE;
 
         xQueueSendToBackFromISR(incomingMFQueue, &message, &taskShouldYield);
@@ -189,7 +186,7 @@ public:
         return message;
     }
 
-    inline void switchActiveBus(CAN::Driver::ActiveBus activeBus){
+    inline void switchActiveBus(CAN::Driver::ActiveBus activeBus) {
         this->ActiveBus = activeBus;
     }
 
@@ -215,8 +212,8 @@ public:
     }
 
     void createTask() {
-        taskHandle = xTaskCreateStatic(vClassTask < CANGatekeeperTask > , this->TaskName, CANGatekeeperTask::TaskStackDepth, this,
-                                       tskIDLE_PRIORITY + 2, this->taskStack, &(this->taskBuffer));
+        taskHandle = xTaskCreateStatic(vClassTask<CANGatekeeperTask>, this->TaskName, CANGatekeeperTask::TaskStackDepth, this,
+                                       CANGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 

@@ -10,7 +10,7 @@
 #include "ServicePool.hpp"
 #include "UARTGatekeeperTask.hpp"
 
-void Logger::log(Logger::LogLevel level, etl::istring &message) {
+void Logger::log(Logger::LogLevel level, etl::istring& message) {
     etl::string<MaxLogNameSize> levelString;
     etl::string<MaxTickCountStringSize> time;
 
@@ -67,12 +67,12 @@ void Logger::log(Logger::LogLevel level, etl::istring &message) {
     }
 }
 
-template<>
+template <>
 void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, char* value) {
     message.append(value);
 }
 
-template<>
-void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, const char* value)  {
+template <>
+void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, const char* value) {
     message.append(value);
 }
