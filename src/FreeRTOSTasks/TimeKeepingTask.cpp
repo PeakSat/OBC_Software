@@ -1,7 +1,7 @@
 #include "TimeKeepingTask.hpp"
 
 void TimeKeepingTask::execute() {
-    LOG_DEBUG << "Runtime init: " << this->TaskName;
+    // LOG_DEBUG << "Runtime init: " << this->TaskName;
     static tm dateTime;
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);

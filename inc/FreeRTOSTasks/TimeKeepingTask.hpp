@@ -36,7 +36,7 @@ public:
     TimeKeepingTask() : Task("Timekeeping") {}
 
     void createTask() {
-        xTaskCreateStatic(vClassTask<TimeKeepingTask>, this->TaskName, TimeKeepingTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<TimeKeepingTask>, this->TaskName, TimeKeepingTaskStack, this,
                           TimeKeepingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };

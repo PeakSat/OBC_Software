@@ -41,7 +41,7 @@ public:
 
     void createTask() {
         taskHandle = xTaskCreateStatic(vClassTask<AmbientTemperatureTask>, this->TaskName,
-                                       AmbientTemperatureTask::TaskStackDepth, this,
+                                       AmbientTemperatureTaskStack, this,
                                        AmbientTemperatureTaskPriority, this->taskStack,
                                        &(this->taskBuffer));
     }

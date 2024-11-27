@@ -2,7 +2,6 @@
 
 
 void AmbientTemperatureTask::execute() {
-    LOG_DEBUG << "Runtime init: " << this->TaskName;
     uint8_t numberOfDisconnectedSensors = 0;
 
     for (auto& sensor: sensors) {

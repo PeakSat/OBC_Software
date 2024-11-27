@@ -28,7 +28,6 @@
 #ifndef FREERTOS_H
 #define FREERTOS_H
 
-
 /*-----------------------------------------------------------
  * Application specific definitions.
  *
@@ -54,7 +53,7 @@
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
 #define configSUPPORT_STATIC_ALLOCATION 1
 #define configTOTAL_HEAP_SIZE ((size_t) 40980)
-#define configMAX_TASK_NAME_LEN (16)
+#define configMAX_TASK_NAME_LEN (25)
 #define configUSE_16_BIT_TICKS 0
 #define configIDLE_SHOULD_YIELD 1
 #define configUSE_MUTEXES 1
@@ -71,7 +70,7 @@
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK 2
 #define configUSE_TICK_HOOK 0
-#define configCHECK_FOR_STACK_OVERFLOW 0
+#define configCHECK_FOR_STACK_OVERFLOW 2
 #define configUSE_MALLOC_FAILED_HOOK 1
 
 /* Run time and task stats gathering related definitions. */

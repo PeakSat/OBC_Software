@@ -2,7 +2,7 @@
 
 void HousekeepingTask::execute() {
 
-    LOG_DEBUG << "Runtime init: " << this->TaskName;
+    // LOG_DEBUG << "Runtime init: " << this->TaskName;
     auto& housekeeping = Services.housekeeping;
     uint32_t nextCollection = 0;
     uint32_t timeBeforeDelay = 0;

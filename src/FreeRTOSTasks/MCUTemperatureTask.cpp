@@ -1,7 +1,7 @@
 #include "MCUTemperatureTask.hpp"
 
 void MCUTemperatureTask::execute() {
-    LOG_DEBUG << "Runtime init: " << this->TaskName;
+    // LOG_DEBUG << "Runtime init: " << this->TaskName;
 
     while (true) {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
