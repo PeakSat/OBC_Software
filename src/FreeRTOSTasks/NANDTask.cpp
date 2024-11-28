@@ -3,7 +3,6 @@
 #include <etl/to_string.h>
 #include <etl/String.hpp>
 #include "LCLDefinitions.hpp"
-#include "MRAMTask.hpp"
 #include "mutex_Handler.h"
 
 void printError(MT29F_Errno error){
@@ -80,7 +79,7 @@ bool singlePageRWTest(MT29F nand_module){
         return false;
     }
 
-    etl::array<uint8_t, 200> read_data;
+    etl::array<uint8_t, 200> read_data{};
     etl::span<uint8_t> data_span_read(read_data.data(), read_data.size());
     // LOG_DEBUG<<"Reading from: "<<address_pos;
     error = nand_module.readNAND(0, address_pos, data_span_read);
@@ -236,9 +235,9 @@ void NANDTask::execute() {
     }
 
     if(mt29f.isNANDAlive()){
-        LOG_DEBUG<<"NAND ID correct";
+        LOG_DEBUG<<"NAND ID correct (Die A)";
     }else{
-        LOG_DEBUG<<"NAND ID Error";
+        LOG_DEBUG<<"NAND ID Error (Die A)";
         // Error handler logic
     }
     vTaskDelay(pdMS_TO_TICKS(500));
@@ -250,9 +249,9 @@ void NANDTask::execute() {
 
 
      if(mt29f_b.isNANDAlive()){
-         LOG_DEBUG<<"NAND ID correct";
+         LOG_DEBUG<<"NAND ID correct (Die B)";
      }else{
-         LOG_DEBUG<<"NAND ID Error";
+         LOG_DEBUG<<"NAND ID Error (Die B)";
          // Error handler logic
      }
 
@@ -266,6 +265,6 @@ void NANDTask::execute() {
 
         // vTaskResume(MRAMTask::mramTaskHandle);
         // vTaskSuspend(NULL);
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(this->DelayMs));
     }
 }

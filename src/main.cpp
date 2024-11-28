@@ -55,7 +55,7 @@ extern "C" void main_cpp() {
      tcHandlingTask.emplace();
      mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
-    // mramTask.emplace();
+     mramTask.emplace();
      timeKeepingTask.emplace();
      TestTask.emplace();
     watchdogTask.emplace();
@@ -70,8 +70,8 @@ extern "C" void main_cpp() {
      housekeepingTask->createTask();
      tcHandlingTask->createTask();
      mcuTemperatureTask->createTask();
-    // ambientTemperatureTask->createTask();
-    // mramTask->createTask();
+//     ambientTemperatureTask->createTask();
+     mramTask->createTask();
      timeKeepingTask->createTask();
      TestTask->createTask();
     watchdogTask->createTask();
