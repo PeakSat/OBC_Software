@@ -64,16 +64,16 @@ extern "C" void main_cpp() {
     __disable_irq();
     uartGatekeeperTask->createTask();
     nandTask->createTask();
-     payloadTestTask->createTask();
-     canGatekeeperTask->createTask();
-     canTestTask->createTask();
-     housekeepingTask->createTask();
-     tcHandlingTask->createTask();
-     mcuTemperatureTask->createTask();
+//     payloadTestTask->createTask();
+//     canGatekeeperTask->createTask();
+//     canTestTask->createTask();
+//     housekeepingTask->createTask();
+//     tcHandlingTask->createTask();
+//     mcuTemperatureTask->createTask();
     // ambientTemperatureTask->createTask();
     // mramTask->createTask();
      timeKeepingTask->createTask();
-     TestTask->createTask();
+//     TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();

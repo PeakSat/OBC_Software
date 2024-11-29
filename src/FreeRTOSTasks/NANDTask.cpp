@@ -6,6 +6,16 @@
 #include "MRAMTask.hpp"
 #include "mutex_Handler.h"
 
+#include "lfs.h"
+
+MT29F mt29f(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
+MT29F mt29f_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
+
+// Static buffer allocations (aligned to requirements)
+static uint8_t read_buffer[256];    // Must match read_size
+static uint8_t prog_buffer[256];    // Must match prog_size
+static uint8_t lookahead_buffer[128]; // Must match lookahead_size / 8
+
 void printError(MT29F_Errno error){
     switch (error) {
         case TIMEOUT:
@@ -222,10 +232,86 @@ void testNANDmodule(MT29F nand_module){
 
 }
 
+
+int lfs_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
+    // Ensure the input parameters are valid
+    if (buffer == NULL || size == 0) {
+        return LFS_ERR_INVAL; // Invalid input
+    }
+
+    // Calculate the physical address in NAND flash
+    uint64_t position = (block * c->block_size) + off;
+
+    // Use the LUN (assumed to always be 0)
+    uint8_t LUN = 0;
+
+    // Wrap the output buffer in a span for the `readNAND` function
+    etl::span<uint8_t> data(reinterpret_cast<uint8_t*>(buffer), size);
+
+    // Call the `readNAND` function
+    MT29F_Errno result = mt29f.readNAND(LUN, position, data);
+
+    // Handle the result of the read operation
+    if (result != MT29F_Errno ::NONE){
+        printError(result);
+        return -1;
+    }
+    return 0;
+}
+
+int lfs_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
+    // Ensure the input parameters are valid
+    if (buffer == NULL || size == 0) {
+        return LFS_ERR_INVAL; // Invalid input
+    }
+
+    // Calculate the physical address in NAND flash
+    uint64_t position = (block * c->block_size) + off;
+
+    // LUN always 0
+    uint8_t LUN = 0;
+
+    // Wrap the input buffer in a span for the `writeNAND` function
+    etl::span<const uint8_t> data(reinterpret_cast<const uint8_t*>(buffer), size);
+
+    // Call the `writeNAND` function
+    MT29F_Errno result =mt29f.writeNAND(LUN, position, data);
+
+    // Handle the result of the write operation
+    if (result != MT29F_Errno ::NONE){
+        printError(result);
+        return -1;
+    }
+    return 0;
+}
+
+int lfs_erase(const struct lfs_config *c, lfs_block_t block) {
+
+    // LUN always 0
+    uint8_t LUN = 0;
+
+    MT29F_Errno result = mt29f.eraseBlock(LUN, block);
+
+    // Handle the result of the erase block operation
+    if (result != MT29F_Errno ::NONE){
+        printError(result);
+        return -1;
+    }
+
+    return 0;  // Success
+}
+
+int lfs_sync(const struct lfs_config *c) {
+    // Perform any necessary synchronization
+    if (!mt29f.getRDYstatus()) {
+        return LFS_ERR_IO;  // Return an error if the sync fails
+    }
+
+    return 0;  // Success
+}
+
+
 void NANDTask::execute() {
-    
-    MT29F mt29f(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
-    MT29F mt29f_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
 
     LCL& nandLCL = LCLDefinitions::lclArray[LCLDefinitions::NANDFlash];
     nandLCL.enableLCL();
@@ -241,7 +327,6 @@ void NANDTask::execute() {
         LOG_DEBUG<<"NAND ID Error";
         // Error handler logic
     }
-    vTaskDelay(pdMS_TO_TICKS(500));
 
      if(mt29f_b.resetNAND()!=MT29F_Errno::NONE){
          LOG_DEBUG<<"Error reseting NAND";
@@ -256,16 +341,75 @@ void NANDTask::execute() {
          // Error handler logic
      }
 
+     vTaskDelay(pdMS_TO_TICKS(500));
+
+     lfs_t lfs;
+     lfs_file_t file;
+
+     // configuration of the filesystem is provided by this struct
+     const struct lfs_config cfg = {
+         // block device operations
+         .read  = lfs_read,
+         .prog  = lfs_prog,
+         .erase = lfs_erase,
+         .sync  = lfs_sync,
+
+         // block device configuration
+         .read_size = 256,        // 8KB
+         .prog_size = 256,        // 8KB
+         .block_size = 1048576,    // 1MB (128 pages)
+         .block_count = 4096,      // Total number of blocks in the LUN
+         .block_cycles = 500,      // Erase cycles for wear leveling
+         .cache_size = 8192,       // Same as page size
+         .lookahead_size = 128,    // Lookahead buffer size
+
+         // Static memory buffers
+         .read_buffer = read_buffer,
+         .prog_buffer = prog_buffer,
+         .lookahead_buffer = lookahead_buffer,
+     };
+
+
 
     while (true) {
-        LOG_DEBUG<<"Testing NAND Die A";
-        testNANDmodule(mt29f);
-        LOG_DEBUG<<"\nTesting NAND Die B";
-        testNANDmodule(mt29f_b);
+//        LOG_DEBUG<<"Testing NAND Die A";
+//        testNANDmodule(mt29f);
+//        LOG_DEBUG<<"\nTesting NAND Die B";
+//        testNANDmodule(mt29f_b);
+
+        int err = lfs_mount(&lfs, &cfg);
+        if (err) {
+            // reformat if we can't mount the filesystem
+            // this should only happen on the first boot
+            LOG_DEBUG<<"Formatting LittleFS";
+            lfs_format(&lfs, &cfg);
+            lfs_mount(&lfs, &cfg);
+        }
+
+        // read current count
+        uint32_t boot_count = 0;
+        lfs_file_open(&lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT);
+        lfs_file_read(&lfs, &file, &boot_count, sizeof(boot_count));
+
+        // update boot count
+        boot_count += 1;
+        lfs_file_rewind(&lfs, &file);
+        lfs_file_write(&lfs, &file, &boot_count, sizeof(boot_count));
+
+        // remember the storage is not updated until the file is closed successfully
+        lfs_file_close(&lfs, &file);
+
+        // release any resources we were using
+        lfs_unmount(&lfs);
+
+        // print the boot count
+        LOG_DEBUG<<"Boot count: "<<boot_count;
+
+
         // LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
 
         // vTaskResume(MRAMTask::mramTaskHandle);
-        // vTaskSuspend(NULL);
-        vTaskDelay(pdMS_TO_TICKS(5000));
+         vTaskSuspend(NULL);
+//        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }
