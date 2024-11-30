@@ -1,5 +1,6 @@
 #include "TestTask.hpp"
 #include "task.h"
+#include "EPS_Driver.hpp"
 
 TestTask::TestTask() : Task("TestTask") {
     // LOG_INFO << "Initialised instance of TestTask";
@@ -16,9 +17,18 @@ TestTask::TestTask() : Task("TestTask") {
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     LOG_INFO << "TestTask started";
+    EPS eps;
+
+
+    auto stat = eps.watchdogReset();
+
 
     while (true) {
+//        auto stat = eps.watchdogReset();
+
+
+        LOG_DEBUG<< "EPS STAT: " << static_cast<EPSConfiguration::STAT_t>(stat.value());
         LOG_DEBUG << "Test Task executed";
-        vTaskDelay(pdMS_TO_TICKS(this->delayMs));
+        vTaskDelay(pdMS_TO_TICKS(10000));
     }
 }
