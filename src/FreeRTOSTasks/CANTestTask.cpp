@@ -8,8 +8,9 @@ void CANTestTask::execute() {
     for (auto i = 0; i < CAN::Frame::MaxDataLength; i++) {
         frame.data.at(i) = i;
     }
-
+uint8_t debug=0;
     String<ECSSMaxMessageSize> testPayload1("WHO LIVES IN A PINEAPPLE UNDER THE SEA?");
+    String<ECSSMaxMessageSize> testPayload3("THE WHITE FOX SAYS GOOD MORNING SWEETY?");
 
     String<ECSSMaxMessageSize> testPayload2("Giati?");
 
@@ -18,7 +19,14 @@ void CANTestTask::execute() {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
-            CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
+            if (debug) {
+                CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
+                debug=0;
+            }else {
+                CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload3.data(), false);
+                debug=1;
+            }
+            // CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
             LOG_DEBUG << "Sent CAN message to main CAN bus";
         } else {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);

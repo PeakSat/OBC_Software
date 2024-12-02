@@ -17,7 +17,7 @@ public:
     MCUTemperatureTask() : Task("MCUTemperatureSensor") {}
 
     void createTask() {
-        xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTaskStack, this,
                           MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };

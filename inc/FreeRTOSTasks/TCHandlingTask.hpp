@@ -71,7 +71,7 @@ public:
      * Create freeRTOS Task
      */
     void createTask() {
-        xTaskCreateStatic(vClassTask<TCHandlingTask>, this->TaskName, TCHandlingTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<TCHandlingTask>, this->TaskName, TCHandlingTaskStack, this,
                           TCHandlingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };

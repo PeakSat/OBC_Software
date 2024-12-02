@@ -144,9 +144,9 @@ void SYS_Initialize ( void* data )
 	SYSTICK_TimerInitialize();
     XDMAC_Initialize();
 
-	RSWDT_REGS->RSWDT_MR = RSWDT_MR_WDDIS_Msk;	// Disable RSWDT 
-
-	WDT_Initialize();
+    RSWDT_REGS->RSWDT_MR = RSWDT_MR_WDDIS_Msk;    // Disable RSWDT
+    //    WDT_Initialize();
+    WDT_REGS->WDT_MR = WDT_MR_WDDIS_Msk;         // Disable WDT
 
 
     PWM0_Initialize();

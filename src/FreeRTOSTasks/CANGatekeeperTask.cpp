@@ -37,8 +37,9 @@ void CANGatekeeperTask::execute() {
     uint32_t ulNotifiedValue;
 
     while (true) {
+
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        xTaskNotifyWait(0, 0, &ulNotifiedValue, portMAX_DELAY);
+        xTaskNotifyWait(0, 0, &ulNotifiedValue, 1000);
 
         if (xTaskGetTickCount() - lastTransmissionTime > 8000) {
             LOG_ERROR << "Resetting CAN LCLs";
@@ -48,15 +49,17 @@ void CANGatekeeperTask::execute() {
             MCAN1_Initialize();
         }
 
-        if (getIncomingSFMessagesCount()) {
+        while (getIncomingSFMessagesCount()) {
             xQueueReceive(incomingSFQueue, &in_message, portMAX_DELAY);
             CAN::TPProtocol::processSingleFrame(in_message);
         }
         CAN::TPProtocol::processMultipleFrames();
 
-        if (uxQueueMessagesWaiting(outgoingQueue)) {
+        while (uxQueueMessagesWaiting(outgoingQueue)) {
+            vTaskDelay(1);
             xQueueReceive(outgoingQueue, &out_message, portMAX_DELAY);
             CAN::Driver::send(out_message);
+
         }
         //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
     }

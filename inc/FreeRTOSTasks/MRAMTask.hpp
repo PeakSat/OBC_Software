@@ -27,7 +27,7 @@ public:
 
     void createTask() {
         mramTaskHandle = xTaskCreateStatic(vClassTask<MRAMTask>, this->TaskName,
-                                           MRAMTask::TaskStackDepth, this, MRAMTaskPriority, this->taskStack,
+                                           MRAMTaskStack, this, MRAMTaskPriority, this->taskStack,
                                            &(this->taskBuffer));
     }
 

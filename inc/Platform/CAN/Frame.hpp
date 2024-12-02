@@ -16,7 +16,7 @@ namespace CAN {
         /**
          * The maximum data length that is currently configured in the peripheral.
          */
-        static constexpr uint8_t MaxDataLength = 64;
+        static constexpr uint8_t MaxDataLength = 8;
 
         /**
          * The right aligned ID of the message to be sent. Since the protocol doesn't make use of extended IDs,

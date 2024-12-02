@@ -20,7 +20,7 @@ namespace CAN {
     /**
      * The maximum of the length of the queue for incoming/outgoing CAN frames.
      */
-    inline const uint8_t FrameQueueSize = 20;
+    inline const uint8_t FrameQueueSize = 100;
 
     /**
      * The maximum size for the data field of a CAN-TP message.

@@ -20,7 +20,7 @@ public:
     WatchdogTask() : Task("Watchdog") {}
 
     void createTask() {
-        xTaskCreateStatic(vClassTask<WatchdogTask>, this->TaskName, WatchdogTask::TaskStackDepth, this,
+        xTaskCreateStatic(vClassTask<WatchdogTask>, this->TaskName, WatchdogTaskStack, this,
                           WatchdogTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };

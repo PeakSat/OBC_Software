@@ -19,7 +19,7 @@ public:
 
     void createTask() {
         nandTaskHandle = xTaskCreateStatic(vClassTask<NANDTask>, this->TaskName,
-                                           NANDTask::TaskStackDepth, this, NANDTaskPriority, this->taskStack,
+                                           NANDTaskStack, this, NANDTaskPriority, this->taskStack,
                                            &(this->taskBuffer));
     }
 };
