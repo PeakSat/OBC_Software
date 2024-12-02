@@ -491,26 +491,28 @@ namespace AcubeSATParameters {
         EPS_CC2_ENG = 3137,
         EPS_CC3_ENG = 3138,
         EPS_CC4_ENG = 3139,
-        EPS_CC1_RA = 3140,
-        EPS_CC2_RA = 3141,
-        EPS_CC3_RA = 3142,
-        EPS_CC4_RA = 3143,
-        EPS_BAT_STAT = 3144,
-        EPS_BAT_TEMP2_RAW = 3145,
-        EPS_BAT_TEMP3_RAW = 3146,
-        EPS_BAT_TEMP2_ENG = 3147,
-        EPS_BAT_TEMP3_ENG = 3148,
-        EPS_BAT_TEMP2_RA = 3149,
-        EPS_BAT_TEMP3_RA = 3150,
-        EPS_VOLT_VD0_RAW  = 3151,
-        EPS_VOLT_VD1_RAW  = 3152,
-        EPS_VOLT_VD2_RAW  = 3153,
-        EPS_VOLT_VD0_ENG = 3154,
-        EPS_VOLT_VD1_ENG = 3155,
-        EPS_VOLT_VD2_ENG = 3156,
-        EPS_VOLT_VD0_RA  = 3157,
-        EPS_VOLT_VD1_RA  = 3158,
-        EPS_VOLT_VD2_RA  = 3159,
+        EPS_CC5_ENG = 3140,
+        EPS_CC1_RA = 3141,
+        EPS_CC2_RA = 3142,
+        EPS_CC3_RA = 3143,
+        EPS_CC4_RA = 3144,
+        EPS_CC5_RA = 3145,
+        EPS_BAT_STAT = 3146,
+        EPS_BAT_TEMP2_RAW = 3147,
+        EPS_BAT_TEMP3_RAW = 3148,
+        EPS_BAT_TEMP2_ENG = 3149,
+        EPS_BAT_TEMP3_ENG = 3150,
+        EPS_BAT_TEMP2_RA = 3151,
+        EPS_BAT_TEMP3_RA = 3152,
+        EPS_VOLT_VD0_RAW = 3153,
+        EPS_VOLT_VD1_RAW = 3154,
+        EPS_VOLT_VD2_RAW = 3155,
+        EPS_VOLT_VD0_ENG = 3156,
+        EPS_VOLT_VD1_ENG = 3157,
+        EPS_VOLT_VD2_ENG = 3158,
+        EPS_VOLT_VD0_RA = 3159,
+        EPS_VOLT_VD1_RA = 3160,
+        EPS_VOLT_VD2_RA = 3161,
 
 
 
@@ -1111,9 +1113,6 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsVIP_CH14_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH15_RAW(0);
 
-
-
-
     inline Parameter<int16_t> epsVOLT_BRDSUP_ENG(0);
     inline Parameter<int16_t> epsTEMP_MCU_ENG(0);
     inline Parameter<int16_t> epsVIP_INPUT_ENG(0);
@@ -1192,11 +1191,15 @@ namespace AcubeSATParameters {
     inline Parameter<int16_t> epsCC2_ENG(0);
     inline Parameter<int16_t> epsCC3_ENG(0);
     inline Parameter<int16_t> epsCC4_ENG(0);
+    inline Parameter<int16_t> epsCC5_ENG(0);
+
 
     inline Parameter<int16_t> epsCC1_RA(0);
     inline Parameter<int16_t> epsCC2_RA(0);
     inline Parameter<int16_t> epsCC3_RA(0);
     inline Parameter<int16_t> epsCC4_RA(0);
+    inline Parameter<int16_t> epsCC5_RA(0);
+
 
     inline Parameter<int16_t> epsBAT_STAT(0);
     inline Parameter<uint16_t> epsBAT_TEMP2_RAW(0);
