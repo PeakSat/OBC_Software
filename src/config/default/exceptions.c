@@ -44,11 +44,9 @@
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
-    #include "configuration.h"
+#include "configuration.h"
 #include "interrupts.h"
 #include "definitions.h"
-
- 
 
 // *****************************************************************************
 // *****************************************************************************
@@ -57,7 +55,8 @@
 // *****************************************************************************
 
 /* Brief default interrupt handlers for core IRQs.*/
-void __attribute__((noreturn, weak)) NonMaskableInt_Handler(void)
+
+void __attribute__((noreturn)) NonMaskableInt_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
     __builtin_software_breakpoint();
@@ -66,8 +65,8 @@ void __attribute__((noreturn, weak)) NonMaskableInt_Handler(void)
     {
     }
 }
- 
-void __attribute__((noreturn, weak)) HardFault_Handler(void)
+
+void __attribute__((noreturn)) HardFault_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
    __builtin_software_breakpoint();
@@ -77,7 +76,7 @@ void __attribute__((noreturn, weak)) HardFault_Handler(void)
    }
 }
 
-void __attribute__((noreturn, weak)) DebugMonitor_Handler(void)
+void __attribute__((noreturn)) DebugMonitor_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
    __builtin_software_breakpoint();
@@ -87,7 +86,7 @@ void __attribute__((noreturn, weak)) DebugMonitor_Handler(void)
    }
 }
 
-void __attribute__((noreturn, weak)) MemoryManagement_Handler(void)
+void __attribute__((noreturn)) MemoryManagement_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
    __builtin_software_breakpoint();
@@ -97,7 +96,7 @@ void __attribute__((noreturn, weak)) MemoryManagement_Handler(void)
    }
 }
 
-void __attribute__((noreturn, weak)) BusFault_Handler(void)
+void __attribute__((noreturn)) BusFault_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
    __builtin_software_breakpoint();
@@ -107,7 +106,7 @@ void __attribute__((noreturn, weak)) BusFault_Handler(void)
    }
 }
 
-void __attribute__((noreturn, weak)) UsageFault_Handler(void)
+void __attribute__((noreturn)) UsageFault_Handler(void)
 {
 #if defined(__DEBUG) || defined(__DEBUG_D) && defined(__XC32)
    __builtin_software_breakpoint();
@@ -116,7 +115,6 @@ void __attribute__((noreturn, weak)) UsageFault_Handler(void)
    {
    }
 }
- 
 /*******************************************************************************
  End of File
  */

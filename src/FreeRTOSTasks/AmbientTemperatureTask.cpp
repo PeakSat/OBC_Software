@@ -14,7 +14,7 @@ void AmbientTemperatureTask::execute() {
 
     if (numberOfDisconnectedSensors == NumberOfTemperatureSensors) {
         LOG_ERROR << "Suspending ambient temperature task";
-        vTaskSuspend(taskHandle);
+//        vTaskSuspend(taskHandle);
     }
 
 

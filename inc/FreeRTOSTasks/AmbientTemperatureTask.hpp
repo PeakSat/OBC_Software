@@ -8,7 +8,7 @@
  */
 class AmbientTemperatureTask : public Task {
 private:
-    const uint16_t DelayMs = 1100;
+    const uint16_t DelayMs = 1000;
 
     /**
      * Number of sensors on the PCB

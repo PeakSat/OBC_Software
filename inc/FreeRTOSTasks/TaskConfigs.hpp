@@ -17,7 +17,7 @@ const BaseType_t TimeKeepingTaskPriority = tskIDLE_PRIORITY + 2;
 const BaseType_t UARTGatekeeperTaskPriority = tskIDLE_PRIORITY + 3;
 const BaseType_t WatchdogTaskPriority = configMAX_PRIORITIES - 1;
 
-const BaseType_t TestTaskPriority               =   tskIDLE_PRIORITY+1;
+const BaseType_t TestTaskPriority = tskIDLE_PRIORITY + 1;
 
 /**
 * The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
@@ -38,4 +38,4 @@ const uint16_t TimeKeepingTaskStack = 2000;
 const uint16_t UARTGatekeeperTaskStack = 1000;
 const uint16_t WatchdogTaskStack = 1000;
 
-const uint16_t TestTaskStack                =   2000;
+const uint16_t TestTaskStack = 3000;
