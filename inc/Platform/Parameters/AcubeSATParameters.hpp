@@ -389,86 +389,130 @@ namespace AcubeSATParameters {
         EPS_OCF_CNT_CH13 = 3035,
         EPS_OCF_CNT_CH14 = 3036,
         EPS_OCF_CNT_CH15 = 3037,
-        EPS_OCF_CNT_CH16 = 3038,
-        EPS_VOLT_BRDSUP_RAW = 3039,
-        EPS_TEMP_RAW = 3040,
-        EPS_VIP_DIST_INPUT_RAW = 3041,
-        EPS_VIP_BATT_INPUT_RAW = 3042,
-        EPS_VIP_VD0_RAW = 3043,
-        EPS_VIP_VD1_RAW = 3044,
-        EPS_VIP_VD2_RAW = 3045,
-        EPS_VIP_VD3_RAW = 3046,
-        EPS_VIP_VD4_RAW = 3047,
-        EPS_VIP_VD5_RAW = 3048,
-        EPS_VIP_VD6_RAW = 3049,
-        EPS_VIP_VD7_RAW = 3050,
-        EPS_VIP_VD8_RAW = 3051,
-        EPS_VIP_VD9_RAW = 3052,
-        EPS_VIP_VD10_RAW = 3053,
-        EPS_VIP_VD11_RAW = 3054,
-        EPS_VIP_V12_RAW = 3055,
-        EPS_VIP_VD13_RAW = 3056,
-        EPS_VIP_VD14_RAW = 3057,
-        EPS_VIP_VD15_RAW = 3058,
-        EPS_VOLT_BRDSUPraw = 3059,
-        EPS_BAT_STAT = 3060,
-        EPS_BAT_TEMP2 = 3061,
-        EPS_VOLT_VD0_RAW = 3062,
-        EPS_VOLT_VD1_RAW = 3063,
-        EPS_VOLT_VD2_RAW = 3064,
-        EPS_VIP_CH00_RAW = 3065,
-        EPS_VIP_CH01_RAW = 3066,
-        EPS_VIP_CH02_RAW = 3067,
-        EPS_VIP_CH03_RAW = 3068,
-        EPS_VIP_CH04_RAW = 3069,
-        EPS_VIP_CH05_RAW = 3070,
-        EPS_VIP_CH06_RAW = 3071,
-        EPS_VIP_CH07_RAW = 3072,
-        EPS_VIP_CH08_RAW = 3073,
-        EPS_VIP_CH09_RAW = 3074,
-        EPS_VIP_CH10_RAW = 3075,
-        EPS_VIP_CH11_RAW = 3076,
-        EPS_VIP_CH12_RAW = 3077,
-        EPS_VIP_CH13_RAW = 3078,
-        EPS_VIP_CH14_RAW = 3079,
-        EPS_VIP_CH15_RAW = 3080,
-        EPS_CC1_RAW = 3081,
-        EPS_CC2_RAW = 3082,
-        EPS_CC3_RAW = 3083,
-        EPS_CC4_RAW = 3084,
-        EPS_CC5_RAW = 3085,
+        EPS_ABF_PLACED_0 = 3038,
+        EPS_ABF_PLACED_1 = 3039,
+        EPS_VOLT_BRDSUP_RAW = 3040,
+        EPS_TEMP_MCU_RAW = 3041,
+        EPS_VIP_INPUT_RAW = 3042,
+        EPS_VIP_DIST_INPUT_RAW = 3043,
+        EPS_VIP_BAT_INPUT_RAW = 3044,
+        EPS_VIP_VD0_RAW = 3045,
+        EPS_VIP_VD1_RAW = 3046,
+        EPS_VIP_VD2_RAW = 3047,
+        EPS_VIP_VD3_RAW = 3048,
+        EPS_VIP_VD4_RAW = 3049,
+        EPS_VIP_VD5_RAW = 3050,
+        EPS_VIP_VD6_RAW = 3051,
+        EPS_VIP_CH00_RAW = 3052,
+        EPS_VIP_CH01_RAW = 3053,
+        EPS_VIP_CH02_RAW = 3054,
+        EPS_VIP_CH03_RAW = 3055,
+        EPS_VIP_CH04_RAW = 3056,
+        EPS_VIP_CH05_RAW = 3057,
+        EPS_VIP_CH06_RAW = 3058,
+        EPS_VIP_CH07_RAW = 3059,
+        EPS_VIP_CH08_RAW = 3060,
+        EPS_VIP_CH09_RAW = 3061,
+        EPS_VIP_CH10_RAW = 3062,
+        EPS_VIP_CH11_RAW = 3063,
+        EPS_VIP_CH12_RAW = 3064,
+        EPS_VIP_CH13_RAW = 3065,
+        EPS_VIP_CH14_RAW = 3066,
+        EPS_VIP_CH15_RAW = 3067,
+        EPS_VOLT_BRDSUP_ENG = 3068,
+        EPS_TEMP_MCU_ENG = 3069,
+        EPS_VIP_INPUT_ENG = 3070,
+        EPS_VIP_DIST_INPUT_ENG = 3071,
+        EPS_VIP_BAT_INPUT_ENG = 3072,
+        EPS_VIP_VD0_ENG = 3073,
+        EPS_VIP_VD1_ENG = 3074,
+        EPS_VIP_VD2_ENG = 3075,
+        EPS_VIP_VD3_ENG = 3076,
+        EPS_VIP_VD4_ENG = 3077,
+        EPS_VIP_VD5_ENG = 3078,
+        EPS_VIP_VD6_ENG = 3079,
+        EPS_VIP_CH00_ENG = 3080,
+        EPS_VIP_CH01_ENG = 3081,
+        EPS_VIP_CH02_ENG = 3082,
+        EPS_VIP_CH03_ENG = 3083,
+        EPS_VIP_CH04_ENG = 3084,
+        EPS_VIP_CH05_ENG = 3085,
+        EPS_VIP_CH06_ENG = 3086,
+        EPS_VIP_CH07_ENG = 3087,
+        EPS_VIP_CH08_ENG = 3088,
+        EPS_VIP_CH09_ENG = 3089,
+        EPS_VIP_CH10_ENG = 3090,
+        EPS_VIP_CH11_ENG = 3091,
+        EPS_VIP_CH12_ENG = 3092,
+        EPS_VIP_CH13_ENG = 3093,
+        EPS_VIP_CH14_ENG = 3094,
+        EPS_VIP_CH15_ENG = 3095,
+        EPS_VOLT_BRDSUP_RA = 3096,
+        EPS_TEMP_MCU_RA = 3097,
+        EPS_VIP_INPUT_RA = 3098,
+        EPS_VIP_DIST_INPUT_RA = 3099,
+        EPS_VIP_BAT_INPUT_RA = 3100,
+        EPS_VIP_VD0_RA = 3101,
+        EPS_VIP_VD1_RA = 3102,
+        EPS_VIP_VD2_RA = 3103,
+        EPS_VIP_VD3_RA = 3104,
+        EPS_VIP_VD4_RA = 3105,
+        EPS_VIP_VD5_RA = 3106,
+        EPS_VIP_VD6_RA = 3107,
+        EPS_VIP_CH00_RA = 3108,
+        EPS_VIP_CH01_RA = 3109,
+        EPS_VIP_CH02_RA = 3110,
+        EPS_VIP_CH03_RA = 3111,
+        EPS_VIP_CH04_RA = 3112,
+        EPS_VIP_CH05_RA = 3113,
+        EPS_VIP_CH06_RA = 3114,
+        EPS_VIP_CH07_RA = 3115,
+        EPS_VIP_CH08_RA = 3116,
+        EPS_VIP_CH09_RA = 3117,
+        EPS_VIP_CH10_RA = 3118,
+        EPS_VIP_CH11_RA = 3119,
+        EPS_VIP_CH12_RA = 3120,
+        EPS_VIP_CH13_RA = 3121,
+        EPS_VIP_CH14_RA = 3122,
+        EPS_VIP_CH15_RA = 3123,
+        EPS_STAT_BU = 3124,
+        EPS_BP3_RAW = 3125,
+        EPS_BP2_RAW = 3126,
+        EPS_BP3_ENG = 3127,
+        EPS_BP2_ENG = 3128,
+        EPS_BP3_RA = 3129,
+        EPS_BP2_RA = 3130,
+        EPS_CC1_RAW = 3131,
+        EPS_CC2_RAW = 3132,
+        EPS_CC3_RAW = 3133,
+        EPS_CC4_RAW = 3134,
+        EPS_CC5_RAW = 3135,
+        EPS_CC1_ENG = 3136,
+        EPS_CC2_ENG = 3137,
+        EPS_CC3_ENG = 3138,
+        EPS_CC4_ENG = 3139,
+        EPS_CC1_RA = 3140,
+        EPS_CC2_RA = 3141,
+        EPS_CC3_RA = 3142,
+        EPS_CC4_RA = 3143,
+        EPS_BAT_STAT = 3144,
+        EPS_BAT_TEMP2_RAW = 3145,
+        EPS_BAT_TEMP3_RAW = 3146,
+        EPS_BAT_TEMP2_ENG = 3147,
+        EPS_BAT_TEMP3_ENG = 3148,
+        EPS_BAT_TEMP2_RA = 3149,
+        EPS_BAT_TEMP3_RA = 3150,
+        EPS_VOLT_VD0_RAW  = 3151,
+        EPS_VOLT_VD1_RAW  = 3152,
+        EPS_VOLT_VD2_RAW  = 3153,
+        EPS_VOLT_VD0_ENG = 3154,
+        EPS_VOLT_VD1_ENG = 3155,
+        EPS_VOLT_VD2_ENG = 3156,
+        EPS_VOLT_VD0_RA  = 3157,
+        EPS_VOLT_VD1_RA  = 3158,
+        EPS_VOLT_VD2_RA  = 3159,
 
-        EPS_VOLT_VD0_ENG = 3086,
-        EPS_VOLT_VD1_ENG = 3087,
-        EPS_VOLT_VD2_ENG = 3088,
-        EPS_VIP_CH00_ENG = 3089,
-        EPS_VIP_CH01_ENG = 3090,
-        EPS_VIP_CH02_ENG = 3091,
-        EPS_VIP_CH03_ENG = 3092,
-        EPS_VIP_CH04_ENG = 3093,
-        EPS_VIP_CH05_ENG = 3094,
-        EPS_VIP_CH06_ENG = 3095,
-        EPS_VIP_CH07_ENG = 3096,
-        EPS_VIP_CH08_ENG = 3097,
 
-        EPS_CC1_ENG = 3098,
-        EPS_CC2_ENG = 3099,
-        EPS_CC3_ENG = 3100,
-        EPS_VOLT_VD0_RA = 3101,
-        EPS_VOLT_VD1_RA = 3102,
-        EPS_VOLT_VD2_RA = 3103,
-        EPS_VIP_CH00_RA = 3104,
-        EPS_VIP_CH01_RA = 3105,
-        EPS_VIP_CH02_RA = 3106,
-        EPS_VIP_CH03_RA = 3107,
-        EPS_VIP_CH04_RA = 3108,
-        EPS_VIP_CH05_RA = 3109,
-        EPS_VIP_CH06_RA = 3110,
-        EPS_VIP_CH07_RA = 3111,
-        EPS_VIP_CH08_RA = 3112,
-        EPS_CC1_RA = 3113,
-        EPS_CC2_RA = 3114,
-        EPS_CC3_RA = 3115,
 
         /* COMMS Parameters */
         COMMSUHFBandPATemperature = 2000,
@@ -1008,12 +1052,12 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsPREVCMD_ELAPSED(0);
     inline Parameter<uint32_t > epsUNIX_TIME(0);
     inline Parameter<uint8_t> epsUNIX_YEAR(0);
-
     inline Parameter<uint8_t> epsUNIX_MONTH(0);
     inline Parameter<uint8_t > epsUNIX_DAY(0);
     inline Parameter<uint8_t> epsUNIX_HOUR(0);
     inline Parameter<uint8_t> epsUNIX_MINUTE(0);
     inline Parameter<uint8_t > epsUNIX_SECOND(0);
+
     inline Parameter<uint16_t> epsSTAT_CH_ON(0);
     inline Parameter<uint16_t> epsSTAT_CH_EXT_ON(0);
     inline Parameter<uint16_t> epsSTAT_CH_OCF(0);
@@ -1022,7 +1066,6 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsOCF_CNT_CH01(0);
     inline Parameter<uint16_t> epsOCF_CNT_CH02(0);
     inline Parameter<uint16_t> epsOCF_CNT_CH03(0);
-
     inline Parameter<uint16_t> epsOCF_CNT_CH04(0);
     inline Parameter<uint16_t> epsOCF_CNT_CH05(0);
     inline Parameter<uint16_t> epsOCF_CNT_CH06(0);
@@ -1036,40 +1079,21 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsOCF_CNT_CH14(0);
     inline Parameter<uint16_t> epsOCF_CNT_CH15(0);
 
-    inline Parameter<uint16_t> epsOCF_CNT_CH16(0);
-    inline Parameter<uint16_t> epsVOLT_BRDSUP_RAW(0);
-    inline Parameter<uint16_t> epsTEMP_RAW(0);
-    inline Parameter<int16_t> epsVIP_DIST_INPUT_RAW(0);
-    inline Parameter<int16_t> epsVIP_BATT_INPUT_RAW(0);
+    inline Parameter<uint8_t> epsABF_PLACED_0(0);
+    inline Parameter<uint8_t> epsABF_PLACED_1(0);
 
+    inline Parameter<uint16_t> epsVOLT_BRDSUP_RAW(0);
+    inline Parameter<uint16_t> epsTEMP_MCU_RAW(0);
+    inline Parameter<int16_t> epsVIP_INPUT_RAW(0);
+    inline Parameter<int16_t> epsVIP_DIST_INPUT_RAW(0);
+    inline Parameter<int16_t> epsVIP_BAT_INPUT_RAW(0);
     inline Parameter<int16_t> epsVIP_VD0_RAW(0);
     inline Parameter<int16_t> epsVIP_VD1_RAW(0);
     inline Parameter<int16_t> epsVIP_VD2_RAW(0);
     inline Parameter<int16_t> epsVIP_VD3_RAW(0);
     inline Parameter<int16_t> epsVIP_VD4_RAW(0);
-
     inline Parameter<int16_t> epsVIP_VD5_RAW(0);
-
     inline Parameter<int16_t> epsVIP_VD6_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD7_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD8_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD9_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD10_RAW(0);
-
-    inline Parameter<int16_t> epsVIP_VD11_RAW(0);
-    inline Parameter<int16_t> epsVIP_V12_RAW(0);
-
-    inline Parameter<int16_t> epsVIP_VD13_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD14_RAW(0);
-    inline Parameter<int16_t> epsVIP_VD15_RAW(0);
-
-    inline Parameter<int16_t> epsVOLT_BRDSUPraw(0);
-    inline Parameter<int16_t> epsBAT_STAT(0);
-    inline Parameter<int16_t> epsBAT_TEMP1(0);
-    inline Parameter<int16_t> epsBAT_TEMP2(0);
-    inline Parameter<uint16_t> epsVOLT_VD0_RAW(0);
-    inline Parameter<uint16_t> epsVOLT_VD1_RAW(0);
-    inline Parameter<uint16_t> epsVOLT_VD2_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH00_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH01_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH02_RAW(0);
@@ -1086,43 +1110,112 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsVIP_CH13_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH14_RAW(0);
     inline Parameter<uint16_t> epsVIP_CH15_RAW(0);
+
+
+
+
+    inline Parameter<int16_t> epsVOLT_BRDSUP_ENG(0);
+    inline Parameter<int16_t> epsTEMP_MCU_ENG(0);
+    inline Parameter<int16_t> epsVIP_INPUT_ENG(0);
+    inline Parameter<int16_t> eps_DIST_INPUT_ENG(0);
+    inline Parameter<int16_t> epsVIP_BAT_INPUT_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD0_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD1_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD2_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD3_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD4_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD5_ENG(0);
+    inline Parameter<int16_t> epsVIP_VD6_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH00_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH01_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH02_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH03_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH04_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH05_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH06_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH07_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH08_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH09_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH10_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH11_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH12_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH13_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH14_ENG(0);
+    inline Parameter<int16_t> epsVIP_CH15_ENG(0);
+
+    inline Parameter<int16_t> epsVOLT_BRDSUP_RA(0);
+    inline Parameter<int16_t> epsTEMP_MCU_RA(0);
+    inline Parameter<int16_t> epsVIP_INPUT_RA(0);
+    inline Parameter<int16_t> epsVIP_DIST_INPUT_RA(0);
+    inline Parameter<int16_t> epsVIP_BAT_INPUT_RA(0);
+    inline Parameter<int16_t> epsVIP_VD0_RA(0);
+    inline Parameter<int16_t> epsVIP_VD1_RA(0);
+    inline Parameter<int16_t> epsVIP_VD2_RA(0);
+    inline Parameter<int16_t> epsVIP_VD3_RA(0);
+    inline Parameter<int16_t> epsVIP_VD4_RA(0);
+    inline Parameter<int16_t> epsVIP_VD5_RA(0);
+    inline Parameter<int16_t> epsVIP_VD6_RA(0);
+    inline Parameter<int16_t> epsVIP_CH00_RA(0);
+    inline Parameter<int16_t> epsVIP_CH01_RA(0);
+    inline Parameter<int16_t> epsVIP_CH02_RA(0);
+    inline Parameter<int16_t> epsVIP_CH03_RA(0);
+    inline Parameter<int16_t> epsVIP_CH04_RA(0);
+    inline Parameter<int16_t> epsVIP_CH05_RA(0);
+    inline Parameter<int16_t> epsVIP_CH06_RA(0);
+    inline Parameter<int16_t> epsVIP_CH07_RA(0);
+    inline Parameter<int16_t> epsVIP_CH08_RA(0);
+    inline Parameter<int16_t> epsVIP_CH09_RA(0);
+    inline Parameter<int16_t> epsVIP_CH10_RA(0);
+    inline Parameter<int16_t> epsVIP_CH11_RA(0);
+    inline Parameter<int16_t> epsVIP_CH12_RA(0);
+    inline Parameter<int16_t> epsVIP_CH13_RA(0);
+    inline Parameter<int16_t> epsVIP_CH14_RA(0);
+    inline Parameter<int16_t> epsVIP_CH15_RA(0);
+
+    inline Parameter<uint16_t> epsSTAT_BU(0);
+    inline Parameter<uint16_t> epsBP3_RAW(0);
+    inline Parameter<uint16_t> epsBP2_RAW(0);
+
+
+    inline Parameter<int16_t> epsBP2_ENG(0);
+    inline Parameter<int16_t> epsBP3_ENG(0);
+    inline Parameter<int16_t> epsBP3_RA(0);
+    inline Parameter<int16_t> epsBP2_RA(0);
+
+
     inline Parameter<uint16_t> epsCC1_RAW(0);
     inline Parameter<uint16_t> epsCC2_RAW(0);
     inline Parameter<uint16_t> epsCC3_RAW(0);
     inline Parameter<uint16_t> epsCC4_RAW(0);
     inline Parameter<uint16_t> epsCC5_RAW(0);
-
-    inline Parameter<int16_t> epsVOLT_VD0_ENG(0);
-    inline Parameter<int16_t> epsVOLT_VD1_ENG(0);
-    inline Parameter<int16_t> epsVOLT_VD2_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH00_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH01_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH02_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH03_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH04_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH05_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH06_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH07_ENG(0);
-    inline Parameter<int16_t> eps_VIP_CH08_ENG(0);
     inline Parameter<int16_t> epsCC1_ENG(0);
     inline Parameter<int16_t> epsCC2_ENG(0);
     inline Parameter<int16_t> epsCC3_ENG(0);
+    inline Parameter<int16_t> epsCC4_ENG(0);
 
-    inline Parameter<int16_t> epsVOLT_VD0_RA(0);
-    inline Parameter<int16_t> epsVOLT_VD1_RA(0);
-    inline Parameter<int16_t> epsVOLT_VD2_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH00_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH01_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH02_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH03_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH04_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH05_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH06_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH07_RA(0);
-    inline Parameter<int16_t> eps_VIP_CH08_RA(0);
     inline Parameter<int16_t> epsCC1_RA(0);
     inline Parameter<int16_t> epsCC2_RA(0);
     inline Parameter<int16_t> epsCC3_RA(0);
+    inline Parameter<int16_t> epsCC4_RA(0);
+
+    inline Parameter<int16_t> epsBAT_STAT(0);
+    inline Parameter<uint16_t> epsBAT_TEMP2_RAW(0);
+    inline Parameter<uint16_t> epsBAT_TEMP3_RAW(0);
+    inline Parameter<int16_t> epsBAT_TEMP2_ENG(0);
+    inline Parameter<int16_t> epsBAT_TEMP3_ENG(0);
+    inline Parameter<int16_t> epsBAT_TEMP2_RA(0);
+    inline Parameter<int16_t> epsBAT_TEMP3_RA(0);
+
+    inline Parameter<uint16_t> epsVOLT_VD0_RAW(0);
+    inline Parameter<uint16_t> epsVOLT_VD1_RAW(0);
+    inline Parameter<uint16_t> epsVOLT_VD2_RAW(0);
+    inline Parameter<int16_t> epsVOLT_VD0_ENG(0);
+    inline Parameter<int16_t> epsVOLT_VD1_ENG(0);
+    inline Parameter<int16_t> epsVOLT_VD2_ENG(0);
+    inline Parameter<int16_t> epsVOLT_VD0_RA(0);
+    inline Parameter<int16_t> epsVOLT_VD1_RA(0);
+    inline Parameter<int16_t> epsVOLT_VD2_RA(0);
+
 
     /****************** COMMS PARAMETERS *******************/
     inline Parameter<float> commsUHFBandPATemperature(0);
