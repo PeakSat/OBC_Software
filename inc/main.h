@@ -5,6 +5,10 @@ extern "C" {
 
 #include <stdint.h>
 
+void configureDWTForRunTimeStats(void);
+
+uint32_t getTimerValue(void);
+
 void main_cpp();
 
 #ifdef __cplusplus
