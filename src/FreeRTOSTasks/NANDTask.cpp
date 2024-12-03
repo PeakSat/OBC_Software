@@ -7,25 +7,25 @@
 
 void printError(MT29F_Errno error){
     switch (error) {
-        case TIMEOUT:
+        case MT29F_Errno::TIMEOUT:
             LOG_DEBUG<<"TIMEOUT";
             break;
-        case ADDRESS_OUT_OF_BOUNDS:
+        case MT29F_Errno::ADDRESS_OUT_OF_BOUNDS:
             LOG_DEBUG<<"ADDRESS OUT OF BOUNDS";
             break;
-        case BUSY_IO:
+        case MT29F_Errno::BUSY_IO:
             LOG_DEBUG<<"MODULE BUSY (I/O)";
             break;
-        case BUSY_ARRAY:
+        case MT29F_Errno::BUSY_ARRAY:
             LOG_DEBUG<<"MODULE BUSY (ARRAY)";
             break;
-        case FAIL_PREVIOUS:
+        case MT29F_Errno::FAIL_PREVIOUS:
             LOG_DEBUG<<"PREVIOUS OPERATION FAILED";
             break;
-        case FAIL_RECENT:
+        case MT29F_Errno::FAIL_RECENT:
             LOG_DEBUG<<"RECENT OPERATION FAILED";
             break;
-        case NOT_READY:
+        case MT29F_Errno::NOT_READY:
             LOG_DEBUG<<"MODULE NOT READY";
             break;
         default:
@@ -41,7 +41,7 @@ bool singleByteRWTest(MT29F nand_module){
 //     LOG_DEBUG<<"Writing to: "<<address_pos;
     MT29F_Errno error = nand_module.writeNAND(0, address_pos, data);
     if(error != MT29F_Errno::NONE){
-        LOG_DEBUG<<"Write operation returned error-code: "<<error;
+        printError(error);
         return false;
     }
     data = 0;

@@ -14,7 +14,7 @@ void printMRAMErrno(MRAM_Errno error){
             LOG_DEBUG<<"MRAM Address Out Of Bounds";
             break;
         default:
-            LOG_DEBUG<<"Unknown MRAM Errno: "<<error;
+            LOG_DEBUG<<"Unknown MRAM Errno: "<<(uint8_t) error;
             break;
     }
 }
@@ -46,7 +46,7 @@ bool MRAMmultipleBytesRWTest(MRAM mram_module){
     // Prevent overflow by subtracting from the maximum address the length of the array to be written
     LOG_DEBUG<<"Testing Address: "<<randomAddress;
 
-    etl::span<uint8_t> data_span_write(mram_test_data.data(), mram_test_data.size());
+    etl::span<const uint8_t> data_span_write(mram_test_data.data(), mram_test_data.size());
     MRAM_Errno error = mram_module.mramWriteData(randomAddress, data_span_write);
     if(error!=MRAM_Errno ::MRAM_NONE){
         printMRAMErrno(error);
