@@ -26,25 +26,25 @@ lfs_t lfs_mram;
 
 void printNANDError(MT29F_Errno error){
     switch (error) {
-        case TIMEOUT:
+        case MT29F_Errno::TIMEOUT:
             LOG_DEBUG<<"TIMEOUT";
             break;
-        case ADDRESS_OUT_OF_BOUNDS:
+        case MT29F_Errno::ADDRESS_OUT_OF_BOUNDS:
             LOG_DEBUG<<"ADDRESS OUT OF BOUNDS";
             break;
-        case BUSY_IO:
+        case MT29F_Errno::BUSY_IO:
             LOG_DEBUG<<"MODULE BUSY (I/O)";
             break;
-        case BUSY_ARRAY:
+        case MT29F_Errno::BUSY_ARRAY:
             LOG_DEBUG<<"MODULE BUSY (ARRAY)";
             break;
-        case FAIL_PREVIOUS:
+        case MT29F_Errno::FAIL_PREVIOUS:
             LOG_DEBUG<<"PREVIOUS OPERATION FAILED";
             break;
-        case FAIL_RECENT:
+        case MT29F_Errno::FAIL_RECENT:
             LOG_DEBUG<<"RECENT OPERATION FAILED";
             break;
-        case NOT_READY:
+        case MT29F_Errno::NOT_READY:
             LOG_DEBUG<<"MODULE NOT READY";
             break;
         default:
@@ -65,7 +65,7 @@ void printMRAMErrno(MRAM_Errno error){
             LOG_DEBUG<<"MRAM Address Out Of Bounds";
             break;
         default:
-            LOG_DEBUG<<"Unknown MRAM Errno: "<<error;
+            LOG_DEBUG<<"Unknown MRAM Errno: "<<(uint8_t) error;
             break;
     }
 }

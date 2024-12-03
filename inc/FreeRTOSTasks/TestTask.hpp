@@ -20,7 +20,8 @@ public:
     void createTask() {
         TestTaskHandle = xTaskCreateStatic(vClassTask < TestTask > , this->TaskName,
                                            TestTaskStack, this,
-                                                     TestTaskPriority, this->taskStack, &(this->taskBuffer));
+                                           TestTaskPriority, this->taskStack,
+                                           &(this->taskBuffer));
     }
 };
 

@@ -26,9 +26,8 @@
 #include "TestTask.hpp"
 // Task Header files end
 
+
 #define IDLE_TASK_SIZE 1000
-
-
 #if configSUPPORT_STATIC_ALLOCATION
 /* static memory allocation for the IDLE task */
 static StaticTask_t xIdleTaskTCBBuffer;
@@ -41,6 +40,18 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
     *pulIdleTaskStackSize = IDLE_TASK_SIZE;
 }
 
+#endif
+
+#if configGENERATE_RUN_TIME_STATS
+void configureDWTForRunTimeStats(void) {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT access
+    DWT->CYCCNT = 0;                               // Reset the cycle counter
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;           // Enable the cycle counter
+}
+
+uint32_t getTimerValue(void){
+    return (DWT->CYCCNT);
+}
 #endif
 
 
