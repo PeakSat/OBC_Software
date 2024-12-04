@@ -7,6 +7,10 @@
 #include "peripheral/mcan/plib_mcan1.h"
 #include "peripheral/mcan/plib_mcan0.h"
 
+const uint8_t CANMessageSize = CAN::MaxPayloadLength;
+// const uint8_t CANFrameSize = 64;
+const uint32_t sizeOfIncommingFrameBuffer = 128; // in frames of (CANFrameSize)
+
 namespace CAN {
     /**
      * A basic driver for the CAN Peripherals of the SAMV71 family of processors. This driver includes encoding/decoding
@@ -206,14 +210,14 @@ namespace CAN {
          * Immediately ends a CAN Message
          * @param message The message to be sent.
          */
-        static void send(const CAN::Frame& message);
+        static void send(const CAN::Packet& message);
 
         /**
          * Converts an MCAN_RX_BUFFER object into a CAN::Frame.
          * @param rxBuffer The incoming buffer.
          * @return A CAN::Frame.
          */
-        static CAN::Frame getFrame(const MCAN_RX_BUFFER& rxBuffer);
+        static CAN::Packet getFrame(const MCAN_RX_BUFFER& rxBuffer);
     };
 } // namespace CAN
 

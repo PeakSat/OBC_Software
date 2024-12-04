@@ -28,13 +28,13 @@ namespace CAN::TPProtocol {
     /**
      * The usable data length for a consecutive message.
      */
-    static constexpr uint8_t UsableDataLength = CAN::Frame::MaxDataLength - 2;
+    static constexpr uint8_t UsableDataLength = CAN::MaxPayloadLength - 2;
 
     /**
      * Creates a TPMessage object from a single frame, and passes it over to the parse function.
      * @param message A received CAN::Frame.
      */
-    void processSingleFrame(const CAN::Frame& message);
+    void processSingleFrame(const CAN::Packet& message);
 
     /**
      * Receives a collection of messages from the Gatekeeper Task's incomingQueue, and processes them.
@@ -45,7 +45,7 @@ namespace CAN::TPProtocol {
      * Processes the stored messages received and acts on their content accordingly.
      * @param message the complete CAN-TP message.
      */
-    void parseMessage(TPMessage& message);
+    void parseMessage(Packet& message);
 
     /**
      * Splits a CAN-TP Message into a collection of CAN frames according to the TP protocol and adds them to the CAN

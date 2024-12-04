@@ -4,11 +4,11 @@
 void CANTestTask::execute() {
 
     LOG_DEBUG << "Runtime init: " << this->TaskName;
-    CAN::Frame frame = {CAN::NodeID};
-    for (auto i = 0; i < CAN::Frame::MaxDataLength; i++) {
+    CAN::Packet frame = {CAN::NodeID};
+    for (auto i = 0; i < CAN::MaxPayloadLength; i++) {
         frame.data.at(i) = i;
     }
-uint8_t debug=0;
+    uint8_t debug = 0;
     String<ECSSMaxMessageSize> testPayload1("WHO LIVES IN A PINEAPPLE UNDER THE SEA?");
     String<ECSSMaxMessageSize> testPayload3("THE WHITE FOX SAYS GOOD MORNING SWEETY?");
 
@@ -21,10 +21,10 @@ uint8_t debug=0;
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
             if (debug) {
                 CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
-                debug=0;
-            }else {
+                debug = 0;
+            } else {
                 CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload3.data(), false);
-                debug=1;
+                debug = 1;
             }
             // CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
             LOG_DEBUG << "Sent CAN message to main CAN bus";
