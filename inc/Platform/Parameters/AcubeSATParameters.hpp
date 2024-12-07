@@ -10,6 +10,7 @@ namespace AcubeSATParameters {
      * ID enumeration of OBDH subsystem's specific parameters.
      */
     enum ParameterID : uint16_t {
+        init = 0,
         OBCUseRTT = 8,
         OBCUseUART = 9,
         OBCUseCAN = 10,
@@ -476,45 +477,140 @@ namespace AcubeSATParameters {
         EPS_VIP_CH14_RA = 3122,
         EPS_VIP_CH15_RA = 3123,
         EPS_STAT_BU = 3124,
-        EPS_BP3_RAW = 3125,
-        EPS_BP2_RAW = 3126,
-        EPS_BP3_ENG = 3127,
-        EPS_BP2_ENG = 3128,
-        EPS_BP3_RA = 3129,
-        EPS_BP2_RA = 3130,
-        EPS_CC1_RAW = 3131,
-        EPS_CC2_RAW = 3132,
-        EPS_CC3_RAW = 3133,
-        EPS_CC4_RAW = 3134,
-        EPS_CC5_RAW = 3135,
-        EPS_CC1_ENG = 3136,
-        EPS_CC2_ENG = 3137,
-        EPS_CC3_ENG = 3138,
-        EPS_CC4_ENG = 3139,
-        EPS_CC5_ENG = 3140,
-        EPS_CC1_RA = 3141,
-        EPS_CC2_RA = 3142,
-        EPS_CC3_RA = 3143,
-        EPS_CC4_RA = 3144,
-        EPS_CC5_RA = 3145,
-        EPS_BAT_STAT = 3146,
-        EPS_BAT_TEMP2_RAW = 3147,
-        EPS_BAT_TEMP3_RAW = 3148,
-        EPS_BAT_TEMP2_ENG = 3149,
-        EPS_BAT_TEMP3_ENG = 3150,
-        EPS_BAT_TEMP2_RA = 3151,
-        EPS_BAT_TEMP3_RA = 3152,
-        EPS_VOLT_VD0_RAW = 3153,
-        EPS_VOLT_VD1_RAW = 3154,
-        EPS_VOLT_VD2_RAW = 3155,
-        EPS_VOLT_VD0_ENG = 3156,
-        EPS_VOLT_VD1_ENG = 3157,
-        EPS_VOLT_VD2_ENG = 3158,
-        EPS_VOLT_VD0_RA = 3159,
-        EPS_VOLT_VD1_RA = 3160,
-        EPS_VOLT_VD2_RA = 3161,
-
-
+        EPS_BP1_RAW = 3125,
+        EPS_BP3_RAW = 3126,
+        EPS_BP2_RAW = 3127,
+        EPS_BP1_ENG = 3128,
+        EPS_BP2_ENG = 3129,
+        EPS_BP3_ENG = 3130,
+        EPS_BP1_RA = 3131,
+        EPS_BP2_RA = 3132,
+        EPS_BP3_RA = 3133,
+        EPS_CC1_RAW = 3134,
+        EPS_CC2_RAW = 3135,
+        EPS_CC3_RAW = 3136,
+        EPS_CC4_RAW = 3137,
+        EPS_CC5_RAW = 3138,
+        EPS_CC1_ENG = 3139,
+        EPS_CC2_ENG = 3140,
+        EPS_CC3_ENG = 3141,
+        EPS_CC4_ENG = 3142,
+        EPS_CC5_ENG = 3143,
+        EPS_CC1_RA = 3144,
+        EPS_CC2_RA = 3145,
+        EPS_CC3_RA = 3146,
+        EPS_CC4_RA = 3147,
+        EPS_CC5_RA = 3148,
+        EPS_BAT_STAT = 3149,
+        EPS_BAT_TEMP2_RAW = 3150,
+        EPS_BAT_TEMP3_RAW = 3151,
+        EPS_BAT_TEMP2_ENG = 3152,
+        EPS_BAT_TEMP3_ENG = 3153,
+        EPS_BAT_TEMP2_RA = 3154,
+        EPS_BAT_TEMP3_RA = 3155,
+        EPS_VOLT_VD0_RAW = 3156,
+        EPS_VOLT_VD1_RAW = 3157,
+        EPS_VOLT_VD2_RAW = 3158,
+        EPS_VOLT_VD0_ENG = 3159,
+        EPS_VOLT_VD1_ENG = 3160,
+        EPS_VOLT_VD2_ENG = 3161,
+        EPS_VOLT_VD0_RA = 3162,
+        EPS_VOLT_VD1_RA = 3163,
+        EPS_VOLT_VD2_RA = 3164,
+        EPS_CH_STARTUP_ENA_BF = 3165,
+        EPS_CH_STARTUP_KEY = 3166,
+        EPS_CH_LATCHOFF_ENA_BF = 3167,
+        EPS_CH_LATCHOFF_KEY = 3168,
+        EPS_TTC_WDG_TIMEOUT = 3169,
+        EPS_TTC_WDG_TIMEOUT_KEY = 3170,
+        EPS_CH_STARTUP_DELAY_CH1 = 3171,
+        EPS_CH_LATCHOFF_DELAY_CH1 = 3172,
+        EPS_SAFETY_VOLT_LOTHR = 3173,
+        EPS_SAFETY_VOLT_HITHR = 3174,
+        EPS_LOTHR_BP1_HEATER = 3175,
+        EPS_LOTHR_BP2_HEATER = 3176,
+        EPS_LOTHR_BP3_HEATER = 3177,
+        EPS_HITHR_BP1_HEATER = 3178,
+        EPS_HITHR_BP2_HEATER = 3179,
+        EPS_HITHR_BP3_HEATER = 3180,
+        EPS_LOTHR_BP1_UNBAL = 3181,
+        EPS_LOTHR_BP2_UNBAL = 3182,
+        EPS_LOTHR_BP3_UNBAL = 3183,
+        EPS_HITHR_BP1_UNBAL = 3184,
+        EPS_HITHR_BP2_UNBAL = 3185,
+        EPS_HITHR_BP3_UNBAL = 3186,
+        EPS_MCU_TEMP_BIAS = 3187,
+        EPS_MCU_TEMP_PREMUL = 3188,
+        EPS_MCU_TEMP_POSDIV = 3189,
+        EPS_BP1_TEMP1_BIAS = 3190,
+        EPS_BP1_TEMP2_BIAS = 3191,
+        EPS_BP1_TEMP3_BIAS = 3192,
+        EPS_BP2_TEMP1_BIAS = 3193,
+        EPS_BP2_TEMP2_BIAS = 3194,
+        EPS_BP2_TEMP3_BIAS = 3195,
+        EPS_BP3_TEMP1_BIAS = 3196,
+        EPS_BP3_TEMP2_BIAS = 3197,
+        EPS_BP3_TEMP3_BIAS = 3198,
+        EPS_BP1_TEMP1_PREMUL = 3199,
+        EPS_BP1_TEMP2_PREMUL = 3200,
+        EPS_BP1_TEMP3_PREMUL = 3201,
+        EPS_BP2_TEMP1_PREMUL = 3202,
+        EPS_BP2_TEMP2_PREMUL = 3203,
+        EPS_BP2_TEMP3_PREMUL = 3204,
+        EPS_BP3_TEMP1_PREMUL = 3205,
+        EPS_BP3_TEMP2_PREMUL = 3206,
+        EPS_BP3_TEMP3_PREMUL = 3207,
+        EPS_BP1_TEMP1_POSDIV = 3208,
+        EPS_BP1_TEMP2_POSDIV = 3209,
+        EPS_BP1_TEMP3_POSDIV = 3210,
+        EPS_BP2_TEMP1_POSDIV = 3211,
+        EPS_BP2_TEMP2_POSDIV = 3212,
+        EPS_BP2_TEMP3_POSDIV = 3213,
+        EPS_BP3_TEMP1_POSDIV = 3214,
+        EPS_BP3_TEMP2_POSDIV = 3215,
+        EPS_BP3_TEMP3_POSDIV = 3216,
+        EPS_BOARD_IDENTIFIER = 3217,
+        EPS_BOARD_IDENTIFIER_KEY = 3218,
+        EPS_RAVG_STRENGTH_P2 = 3219,
+        EPS_AUTO_HEAT_ENA_BP1 = 3220,
+        EPS_AUTO_HEAT_ENA_BP2 = 3221,
+        EPS_AUTO_HEAT_ENA_BP3 = 3222,
+        EPS_AUTO_BAL_ENA_BP1 = 3223,
+        EPS_AUTO_BAL_ENA_BP2 = 3224,
+        EPS_AUTO_BAL_ENA_BP3 = 3225,
+        EPS_VD1_ALWAYS_ENA = 3226,
+        EPS_VD1_ALWAYS_DISA = 3227,
+        EPS_CH_FORCE_ENA_USE_BF = 3228,
+        EPS_CH_STARTUP_ENA_USE_BF = 3229,
+        EPS_CH_LATCHOFF_ENA_USE_BF = 3230,
+        EPS_VD1_ALLOC_CH_BF = 3231,
+        EPS_SWCI_CH_CMD_ENA_BF = 3232,
+        EPS_SWCI_CH_CMD_DISA_BF = 3233,
+        EPS_TTC_I2C_SLAVE_ADDR = 3234,
+        EPS_CONF_NVM_SAVE_CNTR = 3235,
+        EPS_CONF_NVM_SAVE_CHKS = 3236,
+        EPS_RST_CAUSE = 3237,
+        EPS_RST_CNTR_PWRON = 3238,
+        EPS_RST_CNTR_WDG = 3239,
+        EPS_RST_CNTR_CMD = 3240,
+        EPS_RST_CNTR_MCU = 3241,
+        EPS_RST_CNTR_EMLOPO = 3242,
+        EPS_RST_CODE_MCU_RAW = 3243,
+        EPS_EMLOPO_VOLT_LOTHR = 3244,
+        EPS_EMLOPO_VOLT_HITHR = 3245,
+        EPS_EMLOPO_PERIOD = 3246,
+        EPS_SAFETY_VOLT_LOTHR_USED = 3247,
+        EPS_SAFETY_VOLT_HITHR_USED = 3248,
+        EPS_SAFETY_LINGER = 3249,
+        EPS_TTC_WDG_TIMOUT_USED = 3250,
+        EPS_TTC_PREVCMD_ELAPSED = 3251,
+        EPS_ADC_MCU_TEMP_V25T30 = 3252,
+        EPS_ADC_MCU_TEMP_V25T85 = 3253,
+        EPS_STID = 3254,
+        EPS_IVID = 3255,
+        EPS_BID_USED = 3256,
+        EPS_BOOT_RESUME_SHORT = 3257,
+        EPS_CONF_PARAM_CHANGED = 3258,
 
         /* COMMS Parameters */
         COMMSUHFBandPATemperature = 2000,
@@ -1174,12 +1270,15 @@ namespace AcubeSATParameters {
     inline Parameter<uint16_t> epsSTAT_BU(0);
     inline Parameter<uint16_t> epsBP3_RAW(0);
     inline Parameter<uint16_t> epsBP2_RAW(0);
+    inline Parameter<uint16_t> epsBP1_RAW(0);
 
 
+    inline Parameter<uint16_t> epsBP1_ENG(0);
     inline Parameter<int16_t> epsBP2_ENG(0);
     inline Parameter<int16_t> epsBP3_ENG(0);
-    inline Parameter<int16_t> epsBP3_RA(0);
+    inline Parameter<uint16_t> epsBP1_RA(0);
     inline Parameter<int16_t> epsBP2_RA(0);
+    inline Parameter<int16_t> epsBP3_RA(0);
 
 
     inline Parameter<uint16_t> epsCC1_RAW(0);
@@ -1218,6 +1317,112 @@ namespace AcubeSATParameters {
     inline Parameter<int16_t> epsVOLT_VD0_RA(0);
     inline Parameter<int16_t> epsVOLT_VD1_RA(0);
     inline Parameter<int16_t> epsVOLT_VD2_RA(0);
+
+    inline Parameter<uint32_t> epsCH_STARTUP_ENA_BF(0);
+    inline Parameter<uint32_t> epsCH_STARTUP_KEY(0);
+    inline Parameter<uint32_t> epsCH_LATCHOFF_ENA_BF(0);
+    inline Parameter<uint32_t> epsCH_LATCHOFF_KEY(0);
+
+    inline Parameter<uint16_t> epsTTC_WDG_TIMEOUT(0);
+    inline Parameter<uint16_t> epsTTC_WDG_TIMEOUT_KEY(0);
+    inline Parameter<uint16_t> epsCH_STARTUP_DELAY_CH1(0);
+    inline Parameter<uint16_t> epsCH_LATCHOFF_DELAY_CH1(0);
+    inline Parameter<uint16_t> epsSAFETY_VOLT_LOTHR(0);
+    inline Parameter<uint16_t> epsSAFETY_VOLT_HITHR(0);
+
+    inline Parameter<int16_t> epsLOTHR_BP1_HEATER(0);
+    inline Parameter<int16_t> epsLOTHR_BP2_HEATER(0);
+    inline Parameter<int16_t> epsLOTHR_BP3_HEATER(0);
+    inline Parameter<int16_t> epsHITHR_BP1_HEATER(0);
+    inline Parameter<int16_t> epsHITHR_BP2_HEATER(0);
+    inline Parameter<int16_t> epsHITHR_BP3_HEATER(0);
+    inline Parameter<int16_t> epsLOTHR_BP1_UNBAL(0);
+    inline Parameter<int16_t> epsLOTHR_BP2_UNBAL(0);
+    inline Parameter<int16_t> epsLOTHR_BP3_UNBAL(0);
+    inline Parameter<int16_t> epsHITHR_BP1_UNBAL(0);
+    inline Parameter<int16_t> epsHITHR_BP2_UNBAL(0);
+    inline Parameter<int16_t> epsHITHR_BP3_UNBAL(0);
+    inline Parameter<int16_t> epsMCU_TEMP_BIAS(0);
+    inline Parameter<int16_t> epsMCU_TEMP_PREMUL(0);
+    inline Parameter<int16_t> epsMCU_TEMP_POSDIV(0);
+    inline Parameter<int16_t> epsBP1_TEMP1_BIAS(0);
+    inline Parameter<int16_t> epsBP1_TEMP2_BIAS(0);
+    inline Parameter<int16_t> epsBP1_TEMP3_BIAS(0);
+    inline Parameter<int16_t> epsBP2_TEMP1_BIAS(0);
+    inline Parameter<int16_t> epsBP2_TEMP2_BIAS(0);
+    inline Parameter<int16_t> epsBP2_TEMP3_BIAS(0);
+    inline Parameter<int16_t> epsBP3_TEMP1_BIAS(0);
+    inline Parameter<int16_t> epsBP3_TEMP2_BIAS(0);
+    inline Parameter<int16_t> epsBP3_TEMP3_BIAS(0);
+    inline Parameter<int16_t> epsBP1_TEMP1_PREMUL(0);
+    inline Parameter<int16_t> epsBP1_TEMP2_PREMUL(0);
+    inline Parameter<int16_t> epsBP1_TEMP3_PREMUL(0);
+    inline Parameter<int16_t> epsBP2_TEMP1_PREMUL(0);
+    inline Parameter<int16_t> epsBP2_TEMP2_PREMUL(0);
+    inline Parameter<int16_t> epsBP2_TEMP3_PREMUL(0);
+    inline Parameter<int16_t> epsBP3_TEMP1_PREMUL(0);
+    inline Parameter<int16_t> epsBP3_TEMP2_PREMUL(0);
+    inline Parameter<int16_t> epsBP3_TEMP3_PREMUL(0);
+    inline Parameter<int16_t> epsBP1_TEMP1_POSDIV(0);
+    inline Parameter<int16_t> epsBP1_TEMP2_POSDIV(0);
+    inline Parameter<int16_t> epsBP1_TEMP3_POSDIV(0);
+    inline Parameter<int16_t> epsBP2_TEMP1_POSDIV(0);
+    inline Parameter<int16_t> epsBP2_TEMP2_POSDIV(0);
+    inline Parameter<int16_t> epsBP2_TEMP3_POSDIV(0);
+    inline Parameter<int16_t> epsBP3_TEMP1_POSDIV(0);
+    inline Parameter<int16_t> epsBP3_TEMP2_POSDIV(0);
+    inline Parameter<int16_t> epsBP3_TEMP3_POSDIV(0);
+
+    inline Parameter<uint8_t> epsBOARD_IDENTIFIER(0);
+    inline Parameter<uint8_t> epsBOARD_IDENTIFIER_KEY(0);
+    inline Parameter<uint8_t> epsRAVG_STRENGTH_P2(0);
+
+    inline Parameter<int8_t> epsAUTO_HEAT_ENA_BP1(0);
+    inline Parameter<int8_t> epsAUTO_HEAT_ENA_BP2(0);
+    inline Parameter<int8_t> epsAUTO_HEAT_ENA_BP3(0);
+    inline Parameter<int8_t> epsAUTO_BAL_ENA_BP1(0);
+    inline Parameter<int8_t> epsAUTO_BAL_ENA_BP2(0);
+    inline Parameter<int8_t> epsAUTO_BAL_ENA_BP3(0);
+    inline Parameter<int8_t> epsVD1_ALWAYS_ENA(0);
+    inline Parameter<int8_t> epsVD1_ALWAYS_DISA(0);
+
+    inline Parameter<uint32_t> epsCH_FORCE_ENA_USE_BF(0);
+    inline Parameter<uint32_t> epsCH_STARTUP_ENA_USE_BF(0);
+    inline Parameter<uint32_t> epsCH_LATCHOFF_ENA_USE_BF(0);
+    inline Parameter<uint32_t> epsVD1_ALLOC_CH_BF(0); // VD1 default, add the offset for other channels, range: (0x680C –0x6812)
+    inline Parameter<uint32_t> epsSWCI_CH_CMD_ENA_BF(0);
+    inline Parameter<uint32_t> epsSWCI_CH_CMD_DISA_BF(0);
+
+    inline Parameter<uint16_t> epsTTC_I2C_SLAVE_ADDR(0);
+    inline Parameter<uint16_t> epsCONF_NVM_SAVE_CNTR(0);
+    inline Parameter<uint16_t> epsCONF_NVM_SAVE_CHKS(0);
+    inline Parameter<uint16_t> epsRST_CAUSE(0);
+    inline Parameter<uint16_t> epsRST_CNTR_PWRON(0);
+    inline Parameter<uint16_t> epsRST_CNTR_WDG(0);
+    inline Parameter<uint16_t> epsRST_CNTR_CMD(0);
+    inline Parameter<uint16_t> epsRST_CNTR_MCU(0);
+    inline Parameter<uint16_t> epsRST_CNTR_EMLOPO(0);
+    inline Parameter<uint16_t> epsRST_CODE_MCU_RAW(0);
+    inline Parameter<uint16_t> epsEMLOPO_VOLT_LOTHR(0);
+    inline Parameter<uint16_t> epsEMLOPO_VOLT_HITHR(0);
+    inline Parameter<uint16_t> epsEMLOPO_PERIOD(0);
+    inline Parameter<uint16_t> epsSAFETY_VOLT_LOTHR_USED(0);
+    inline Parameter<uint16_t> epsSAFETY_VOLT_HITHR_USED(0);
+    inline Parameter<uint16_t> epsSAFETY_LINGER(0);
+    inline Parameter<uint16_t> epsTTC_WDG_TIMOUT_USED(0);
+    inline Parameter<uint16_t> epsTTC_PREVCMD_ELAPSED(0);
+
+    inline Parameter<int16_t> epsADC_MCU_TEMP_V25T30(0);
+    inline Parameter<int16_t> epsADC_MCU_TEMP_V25T85(0);
+
+    inline Parameter<uint8_t> epsSTID(0);
+    inline Parameter<uint8_t> epsIVID(0);
+    inline Parameter<uint8_t> epsBID_USED(0);
+    inline Parameter<uint8_t> epsBOOT_RESUME_SHORT(0);
+
+    inline Parameter<int8_t> epsCONF_PARAM_CHANGED(0);
+
+
 
 
     /****************** COMMS PARAMETERS *******************/

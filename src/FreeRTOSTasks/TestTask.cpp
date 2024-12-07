@@ -17,7 +17,7 @@ TestTask::TestTask() : Task("TestTask") {
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     LOG_INFO << "TestTask started";
-    EPS eps;
+    constexpr EPS eps;
 
 
     auto stat = eps.watchdogReset();
