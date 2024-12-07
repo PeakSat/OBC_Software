@@ -741,15 +741,11 @@ namespace AcubeSATParameters {
         EPS_SAFETY_LINGER = 3387,
         EPS_TTC_WDG_TIMOUT_USED = 3388,
         EPS_TTC_PREVCMD_ELAPSED = 3389,
-        EPS_ADC_MCU_TEMP_V25T30 = 3390,
-        EPS_ADC_MCU_TEMP_V25T85 = 3391,
-        EPS_STID = 3392,
-        EPS_IVID = 3393,
-        EPS_BID_USED = 3394,
-        EPS_BOOT_RESUME_SHORT = 3395,
-        EPS_CONF_PARAM_CHANGED = 3396,
-
-
+        EPS_STID = 3390,
+        EPS_IVID = 3391,
+        EPS_BID_USED = 3392,
+        EPS_BOOT_RESUME_SHORT = 3393,
+        EPS_CONF_PARAM_CHANGED = 3394,
 
         /* COMMS Parameters */
         COMMSUHFBandPATemperature = 2000,

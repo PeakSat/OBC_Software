@@ -712,8 +712,6 @@ void ParameterService::initializeParameterMap() {
                   {AcubeSATParameters::EPS_SAFETY_LINGER,AcubeSATParameters::epsSAFETY_LINGER},
                   {AcubeSATParameters::EPS_TTC_WDG_TIMOUT_USED,AcubeSATParameters::epsTTC_WDG_TIMOUT_USED},
                   {AcubeSATParameters::EPS_TTC_PREVCMD_ELAPSED,AcubeSATParameters::epsTTC_PREVCMD_ELAPSED},
-                  {AcubeSATParameters::EPS_ADC_MCU_TEMP_V25T30,AcubeSATParameters::epsADC_MCU_TEMP_V25T30},
-                  {AcubeSATParameters::EPS_ADC_MCU_TEMP_V25T85,AcubeSATParameters::epsADC_MCU_TEMP_V25T85},
                   {AcubeSATParameters::EPS_STID,    AcubeSATParameters::epsSTID},
                   {AcubeSATParameters::EPS_IVID,    AcubeSATParameters::epsIVID},
                   {AcubeSATParameters::EPS_BID_USED,AcubeSATParameters::epsBID_USED},
