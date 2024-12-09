@@ -1,4 +1,5 @@
 #include "WatchdogTask.hpp"
+#include "git_version.h"
 
 void WatchdogTask::execute() {
     while (true) {
@@ -6,6 +7,7 @@ void WatchdogTask::execute() {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         WDT_Clear();
         LOG_DEBUG << "Watchdog reset";
+        LOG_INFO << "####### This board runs OBC_Software, commit " << kGitHash << " #######";
 
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(WatchdogWindow));
