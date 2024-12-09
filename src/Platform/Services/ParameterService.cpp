@@ -905,8 +905,15 @@ void ParameterService::initializeParameterMap() {
                   {AcubeSATParameters::EPS_VIP_VOLT_BAT_INPUT_RAW, AcubeSATParameters::epsVIP_VOLT_BAT_INPUT_RAW},
                   {AcubeSATParameters::EPS_VIP_CURR_BAT_INPUT_RAW, AcubeSATParameters::epsVIP_CURR_BAT_INPUT_RAW},
                   {AcubeSATParameters::EPS_VIP_POWE_BAT_INPUT_RAW, AcubeSATParameters::epsVIP_POWE_BAT_INPUT_RAW},
-
-
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_VOLT_RAW, AcubeSATParameters::epsVIP_OUTPUT_VOLT_RAW},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_CURR_RAW, AcubeSATParameters::epsVIP_OUTPUT_CURR_RAW},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_POWE_RAW, AcubeSATParameters::epsVIP_OUTPUT_POWE_RAW},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_VOLT_ENG, AcubeSATParameters::epsVIP_OUTPUT_VOLT_ENG},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_CURR_ENG, AcubeSATParameters::epsVIP_OUTPUT_CURR_ENG},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_POWE_ENG, AcubeSATParameters::epsVIP_OUTPUT_POWE_ENG},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_VOLT_RA , AcubeSATParameters::epsVIP_OUTPUT_VOLT_RA},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_CURR_RA , AcubeSATParameters::epsVIP_OUTPUT_CURR_RA},
+                  {AcubeSATParameters::EPS_VIP_OUTPUT_POWE_RA , AcubeSATParameters::epsVIP_OUTPUT_POWE_RA},
 
                   //---------------------------------------------------------------------------------------------
                   {AcubeSATParameters::COMMSUHFBandPATemperature, AcubeSATParameters::commsUHFBandPATemperature},

@@ -941,6 +941,16 @@ namespace AcubeSATParameters {
         EPS_VIP_CURR_BAT_INPUT_RAW = 3602,
         EPS_VIP_POWE_BAT_INPUT_RAW = 3603,
 
+        EPS_VIP_OUTPUT_VOLT_RAW = 3604,
+        EPS_VIP_OUTPUT_CURR_RAW = 3605,
+        EPS_VIP_OUTPUT_POWE_RAW = 3606,
+        EPS_VIP_OUTPUT_VOLT_ENG = 3607,
+        EPS_VIP_OUTPUT_CURR_ENG = 3608,
+        EPS_VIP_OUTPUT_POWE_ENG = 3609,
+        EPS_VIP_OUTPUT_VOLT_RA = 3610,
+        EPS_VIP_OUTPUT_CURR_RA = 3611,
+        EPS_VIP_OUTPUT_POWE_RA = 3612,
+
         /* COMMS Parameters */
         COMMSUHFBandPATemperature = 2000,
         COMMSSBandPATemperature = 2001,
@@ -1881,6 +1891,16 @@ namespace AcubeSATParameters {
     inline Parameter<int16_t> epsBAT_TEMP2_BP3_RA(0);
     inline Parameter<int16_t> epsBAT_TEMP3_BP3_RA(0);
 
+
+    inline Parameter<int16_t> epsVIP_OUTPUT_VOLT_RAW(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_CURR_RAW(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_POWE_RAW(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_VOLT_ENG(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_CURR_ENG(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_POWE_ENG(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_VOLT_RA(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_CURR_RA(0);
+    inline Parameter<int16_t> epsVIP_OUTPUT_POWE_RA(0);
     inline Parameter<uint16_t> epsVIP_CC1_OUTPUT_VOLT_RAW(0);
     inline Parameter<int16_t> epsVIP_CC1_OUTPUT_CURR_RAW(0);
     inline Parameter<int16_t> epsVIP_CC1_OUTPUT_POWE_RAW(0);
