@@ -10,14 +10,14 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: twihs0, value: '150000000'}
+        attributes: {id: twihs0, value: '100000000'}
   - type: Integer
     attributes: {id: TWIHS_CWGR_CHDIV}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: twihs0, value: '177'}
+        attributes: {id: twihs0, value: '117'}
   - type: Integer
     attributes: {id: TWIHS_CWGR_CKDIV}
     children:
@@ -31,7 +31,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: twihs0, value: '192'}
+        attributes: {id: twihs0, value: '127'}
   - type: Integer
     attributes: {id: TWIHS_TIMEOUT_COUNT_VAL}
     children:

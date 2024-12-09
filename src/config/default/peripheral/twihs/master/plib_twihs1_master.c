@@ -49,7 +49,6 @@
 
 #include "device.h"
 #include "plib_twihs1_master.h"
-#include "interrupts.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -57,7 +56,7 @@
 // *****************************************************************************
 // *****************************************************************************
 
-volatile static TWIHS_OBJ twihs1Obj;
+static TWIHS_OBJ twihs1Obj;
 
 // *****************************************************************************
 // *****************************************************************************
@@ -74,7 +73,7 @@ void TWIHS1_Initialize( void )
     TWIHS1_REGS->TWIHS_CR = TWIHS_CR_MSDIS_Msk | TWIHS_CR_SVDIS_Msk;
 
     // Set Baud rate
-    TWIHS1_REGS->TWIHS_CWGR = (TWIHS_CWGR_HOLD_Msk & TWIHS1_REGS->TWIHS_CWGR) | TWIHS_CWGR_CLDIV(192) | TWIHS_CWGR_CHDIV(177) | TWIHS_CWGR_CKDIV(0);
+    TWIHS1_REGS->TWIHS_CWGR = (TWIHS_CWGR_HOLD_Msk & TWIHS1_REGS->TWIHS_CWGR) | TWIHS_CWGR_CLDIV(127) | TWIHS_CWGR_CHDIV(117) | TWIHS_CWGR_CKDIV(0);
 
     // Starts the transfer by clearing the transmit hold register
     TWIHS1_REGS->TWIHS_CR = TWIHS_CR_THRCLR_Msk;
@@ -102,7 +101,7 @@ static void TWIHS1_InitiateRead( void )
     /* When a single data byte read is performed,
      * the START and STOP bits must be set at the same time
      */
-    if(twihs1Obj.readSize == 1U)
+    if(twihs1Obj.readSize == 1)
     {
         TWIHS1_REGS->TWIHS_CR = TWIHS_CR_START_Msk | TWIHS_CR_STOP_Msk;
     }
@@ -121,12 +120,12 @@ static bool TWIHS1_InitiateTransfer( uint16_t address, bool type )
     uint32_t timeoutCntr = 60000;
 
     // 10-bit Slave Address
-    if( address > 0x007FU )
+    if( address > 0x007F )
     {
-        TWIHS1_REGS->TWIHS_MMR = TWIHS_MMR_DADR(((uint32_t)address & 0x00007F00U) >> 8U) | TWIHS_MMR_IADRSZ(1);
+        TWIHS1_REGS->TWIHS_MMR = TWIHS_MMR_DADR((address & 0x00007F00) >> 8) | TWIHS_MMR_IADRSZ(1);
 
         // Set internal address
-        TWIHS1_REGS->TWIHS_IADR = TWIHS_IADR_IADR((uint32_t)address & 0x000000FFU );
+        TWIHS1_REGS->TWIHS_IADR = TWIHS_IADR_IADR(address & 0x000000FF );
     }
     // 7-bit Slave Address
     else
@@ -141,17 +140,16 @@ static bool TWIHS1_InitiateTransfer( uint16_t address, bool type )
     if(type == false)
     {
         // Single Byte Write
-        if( twihs1Obj.writeSize == 1U )
+        if( twihs1Obj.writeSize == 1 )
         {
             // Single Byte write only
-            if( twihs1Obj.readSize == 0U )
+            if( twihs1Obj.readSize == 0 )
             {
                 // Load last byte in transmit register, issue stop condition
                 // Generate TXCOMP interrupt after STOP condition has been sent
                 twihs1Obj.state = TWIHS_STATE_WAIT_FOR_TXCOMP;
 
-                TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[0]);
-                twihs1Obj.writeCount++;
+                TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
                 TWIHS1_REGS->TWIHS_CR = TWIHS_CR_STOP_Msk;
                 TWIHS1_REGS->TWIHS_IER = TWIHS_IER_TXCOMP_Msk;
             }
@@ -161,24 +159,19 @@ static bool TWIHS1_InitiateTransfer( uint16_t address, bool type )
                 // START bit must be set before the byte is shifted out. Hence disabled interrupt
                 __disable_irq();
 
-                TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[0]);
-                twihs1Obj.writeCount++;
+                TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
 
                 // Wait for control byte to be transferred before initiating repeat start for read
-                while((TWIHS1_REGS->TWIHS_SR & (TWIHS_SR_TXCOMP_Msk | TWIHS_SR_TXRDY_Msk)) != 0U)
-                {
-                    /* Do Nothing */
-                }
+                while((TWIHS1_REGS->TWIHS_SR & (TWIHS_SR_TXCOMP_Msk | TWIHS_SR_TXRDY_Msk)) != 0);
 
-                while((TWIHS1_REGS->TWIHS_SR & (TWIHS_SR_TXRDY_Msk)) == 0U)
+                while((TWIHS1_REGS->TWIHS_SR & (TWIHS_SR_TXRDY_Msk)) == 0)
                 {
-                    if (timeoutCntr == 0U)
+                    if (--timeoutCntr == 0)
                     {
                         twihs1Obj.error = TWIHS_BUS_ERROR;
                         __enable_irq();
                         return false;
                     }
-                    timeoutCntr--;
                 }
 
                 type = true;
@@ -189,8 +182,7 @@ static bool TWIHS1_InitiateTransfer( uint16_t address, bool type )
         {
             twihs1Obj.state = TWIHS_STATE_TRANSFER_WRITE;
 
-            TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[0]);
-            twihs1Obj.writeCount++;
+            TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
 
             TWIHS1_REGS->TWIHS_IER = TWIHS_IDR_TXRDY_Msk | TWIHS_IER_TXCOMP_Msk;
         }
@@ -334,30 +326,30 @@ bool TWIHS1_TransferSetup( TWIHS_TRANSFER_SETUP* setup, uint32_t srcClkFreq )
     i2cClkSpeed = setup->clkSpeed;
 
     /* Maximum I2C clock speed in Master mode cannot be greater than 400 KHz */
-    if (i2cClkSpeed > 4000000U)
+    if (i2cClkSpeed > 4000000)
     {
         return false;
     }
 
-    if(srcClkFreq == 0U)
+    if(srcClkFreq == 0)
     {
-        srcClkFreq = 150000000;
+        srcClkFreq = 100000000;
     }
 
     /* Formula for calculating baud value involves two unknowns. Fix one unknown and calculate the other.
        Fix the CKDIV value and see if CLDIV (or CHDIV) fits into the 8-bit register. */
 
     /* Calculate CLDIV with CKDIV set to 0 */
-    cldiv = (srcClkFreq /(2U * i2cClkSpeed)) - 3U;
+    cldiv = (srcClkFreq /(2 * i2cClkSpeed)) - 3;
 
     /* CLDIV must fit within 8-bits and CKDIV must fit within 3-bits */
-    while ((cldiv > 255U) && (ckdiv < 7U))
+    while ((cldiv > 255) && (ckdiv < 7))
     {
         ckdiv++;
-        cldiv /= 2U;
+        cldiv /= 2;
     }
 
-    if (cldiv > 255U)
+    if (cldiv > 255)
     {
         /* Could not generate CLDIV and CKDIV register values for the requested baud rate */
         return false;
@@ -369,22 +361,21 @@ bool TWIHS1_TransferSetup( TWIHS_TRANSFER_SETUP* setup, uint32_t srcClkFreq )
     return true;
 }
 
-void __attribute__((used)) TWIHS1_InterruptHandler( void )
+void TWIHS1_InterruptHandler( void )
 {
     uint32_t status;
-    uintptr_t context = twihs1Obj.context;
 
     // Read the peripheral status
     status = TWIHS1_REGS->TWIHS_SR;
 
     /* checks if Slave has Nacked */
-    if(( status & TWIHS_SR_NACK_Msk ) != 0U)
+    if( status & TWIHS_SR_NACK_Msk )
     {
         twihs1Obj.state = TWIHS_STATE_ERROR;
         twihs1Obj.error = TWIHS_ERROR_NACK;
     }
 
-    if(( status & TWIHS_SR_TXCOMP_Msk ) != 0U)
+    if( status & TWIHS_SR_TXCOMP_Msk )
     {
         /* Disable and Enable I2C Master */
         TWIHS1_REGS->TWIHS_CR = TWIHS_CR_MSDIS_Msk;
@@ -395,7 +386,7 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
     }
 
     /* checks if the arbitration is lost in multi-master scenario */
-    if(( status & TWIHS_SR_ARBLST_Msk ) != 0U)
+    if( status & TWIHS_SR_ARBLST_Msk )
     {
         /* Re-initiate the transfer if arbitration is lost in
          * between of the transfer
@@ -409,15 +400,15 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
         {
             case TWIHS_STATE_ADDR_SEND:
             {
-                if (twihs1Obj.writeSize != 0U )
+                if (twihs1Obj.writeSize != 0 )
                 {
                     // Initiate Write transfer
-                    (void) TWIHS1_InitiateTransfer(twihs1Obj.address, false);
+                    TWIHS1_InitiateTransfer(twihs1Obj.address, false);
                 }
                 else
                 {
                     // Initiate Read transfer
-                     (void) TWIHS1_InitiateTransfer(twihs1Obj.address, true);
+                    TWIHS1_InitiateTransfer(twihs1Obj.address, true);
                 }
             }
             break;
@@ -425,35 +416,30 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
             case TWIHS_STATE_TRANSFER_WRITE:
             {
                 /* checks if master is ready to transmit */
-                if(( status & TWIHS_SR_TXRDY_Msk ) != 0U)
+                if( status & TWIHS_SR_TXRDY_Msk )
                 {
-                    size_t writeCount = twihs1Obj.writeCount;
-                    bool lastByteWrPending = (writeCount == (twihs1Obj.writeSize -1U));
-
                     // Write Last Byte and then initiate read transfer
-                    if(( twihs1Obj.readSize != 0U ) && (lastByteWrPending))
+                    if( ( twihs1Obj.writeCount == (twihs1Obj.writeSize -1) ) && ( twihs1Obj.readSize != 0 ))
                     {
                         // START bit must be set before the last byte is shifted out to generate repeat start. Hence disabled interrupt
                         __disable_irq();
                         TWIHS1_REGS->TWIHS_IDR = TWIHS_IDR_TXRDY_Msk;
-                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[writeCount]);
-                        writeCount++;
+                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
                         TWIHS1_InitiateRead();
                     }
                     // Write Last byte and then issue STOP condition
-                    else if ( writeCount == (twihs1Obj.writeSize -1U))
+                    else if ( twihs1Obj.writeCount == (twihs1Obj.writeSize -1))
                     {
                         // Load last byte in transmit register, issue stop condition
                         // Generate TXCOMP interrupt after STOP condition has been sent
-                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[writeCount]);
-                        writeCount++;
+                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
                         TWIHS1_REGS->TWIHS_CR = TWIHS_CR_STOP_Msk;
                         TWIHS1_REGS->TWIHS_IDR = TWIHS_IDR_TXRDY_Msk;
 
                         /* Check TXCOMP to confirm if STOP condition has been sent, otherwise wait for TXCOMP interrupt */
                         status = TWIHS1_REGS->TWIHS_SR;
 
-                        if(( status & TWIHS_SR_TXCOMP_Msk ) != 0U)
+                        if( status & TWIHS_SR_TXCOMP_Msk )
                         {
                             twihs1Obj.state = TWIHS_STATE_TRANSFER_DONE;
                         }
@@ -465,15 +451,11 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
                     // Write next byte
                     else
                     {
-                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[writeCount]);
-                        writeCount++;
+                        TWIHS1_REGS->TWIHS_THR = TWIHS_THR_TXDATA(twihs1Obj.writeBuffer[twihs1Obj.writeCount++]);
                     }
-
-                    twihs1Obj.writeCount = writeCount;
 
                     // Dummy read to ensure that TXRDY bit is cleared
                     status = TWIHS1_REGS->TWIHS_SR;
-                    (void) status;
                 }
 
                 break;
@@ -482,29 +464,26 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
             case TWIHS_STATE_TRANSFER_READ:
             {
                 /* checks if master has received the data */
-                if(( status & TWIHS_SR_RXRDY_Msk ) != 0U)
+                if( status & TWIHS_SR_RXRDY_Msk )
                 {
-                    size_t readCount = twihs1Obj.readCount;
-
                     // Set the STOP (or START) bit before reading the TWIHS_RHR on the next-to-last access
-                    if(  readCount == (twihs1Obj.readSize - 2U) )
+                    if(  twihs1Obj.readCount == (twihs1Obj.readSize - 2) )
                     {
                         TWIHS1_REGS->TWIHS_CR = TWIHS_CR_STOP_Msk;
                     }
 
                     /* read the received data */
-                    twihs1Obj.readBuffer[readCount] = (uint8_t)(TWIHS1_REGS->TWIHS_RHR & TWIHS_RHR_RXDATA_Msk);
-                    readCount++;
+                    twihs1Obj.readBuffer[twihs1Obj.readCount++] = (uint8_t)(TWIHS1_REGS->TWIHS_RHR & TWIHS_RHR_RXDATA_Msk);
 
                     /* checks if transmission has reached at the end */
-                    if( readCount == twihs1Obj.readSize )
+                    if( twihs1Obj.readCount == twihs1Obj.readSize )
                     {
                         /* Disable the RXRDY interrupt*/
                         TWIHS1_REGS->TWIHS_IDR = TWIHS_IDR_RXRDY_Msk;
 
                         /* Check TXCOMP to confirm if STOP condition has been sent, otherwise wait for TXCOMP interrupt */
                         status = TWIHS1_REGS->TWIHS_SR;
-                        if(( status & TWIHS_SR_TXCOMP_Msk ) != 0U)
+                        if( status & TWIHS_SR_TXCOMP_Msk )
                         {
                             twihs1Obj.state = TWIHS_STATE_TRANSFER_DONE;
                         }
@@ -513,15 +492,13 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
                             twihs1Obj.state = TWIHS_STATE_WAIT_FOR_TXCOMP;
                         }
                     }
-
-                    twihs1Obj.readCount = readCount;
                 }
                 break;
             }
 
             case TWIHS_STATE_WAIT_FOR_TXCOMP:
             {
-                if(( status & TWIHS_SR_TXCOMP_Msk ) != 0U)
+                if( status & TWIHS_SR_TXCOMP_Msk )
                 {
                     twihs1Obj.state = TWIHS_STATE_TRANSFER_DONE;
                 }
@@ -530,7 +507,6 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
 
             default:
             {
-                /* Do Nothing */
                 break;
             }
         }
@@ -547,7 +523,7 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
 
         if ( twihs1Obj.callback != NULL )
         {
-            twihs1Obj.callback( context );
+            twihs1Obj.callback( twihs1Obj.context );
         }
     }
     // check for completion of transfer
@@ -565,7 +541,7 @@ void __attribute__((used)) TWIHS1_InterruptHandler( void )
 
         if ( twihs1Obj.callback != NULL )
         {
-            twihs1Obj.callback( context );
+            twihs1Obj.callback( twihs1Obj.context );
         }
     }
 
