@@ -31,6 +31,7 @@ void TestTask::execute() {
 
     while (true) {
         monitorAllTasks();
+        PIO_PinToggle(USR_GPIO_PIN);
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
 }
