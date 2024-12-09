@@ -44,36 +44,7 @@ namespace CAN {
             : pointerToData(0) {
         }
     };
-    /**
-* A struct with every information necessary to retrieve a packet
-*/
-    class StoredPacket {
 
-    public:
-        /**
-     * Pointer to the bus from which the frame came from
-     */
-        enum CANInstance CANInstance;
-
-        /**
-     * The header contains information about the frame,
-     * such as sender ID
-      */
-        uint32_t Identifier;
-        /**
-        * Size of the message in eMMC
-         */
-        uint32_t size;
-
-        /**
-      * Start address of the data in the eMMC item area ()
-      */
-        uint32_t pointerToeMMCItemData;
-
-        StoredPacket()
-            : pointerToeMMCItemData(0), size(0) { // Initialize error to no error
-        }
-    };
 
     /**
 * A class to handle the incoming frames and combine them into a packet (1024 bytes max).

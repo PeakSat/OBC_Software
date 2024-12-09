@@ -124,9 +124,10 @@ void CANGatekeeperTask::execute() {
                         CANPacketHandler->TailPointer = CANPacketHandler->TailPointer + 1;
                     }
                     // Add message to queue
+                    __NOP();
 
-                    xQueueSendToBack(storedPacketQueue, &PacketToBeStored, NULL);
-                    CAN::TPProtocol::parseMessage(message);
+                    // xQueueSendToBack(storedPacketQueue, &PacketToBeStored, NULL);
+                    // CAN::TPProtocol::parseMessage(message);
                 } else {
                     // Message not received correctly
                     LOG_DEBUG << "DROPPED CAN MESSAGE";
@@ -150,3 +151,4 @@ void CANGatekeeperTask::execute() {
             //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         }
     }
+}

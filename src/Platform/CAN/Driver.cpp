@@ -144,9 +144,11 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
                 // todo
                 __NOP();
             } else {
+                MCAN_ERROR error = MCAN0_ErrorGet();
                 xQueueSendToBackFromISR(canGatekeeperTask->incomingFrameQueue, &newFrame, NULL);
                 xTaskNotifyFromISR(canGatekeeperTask->taskHandle, 0, eNoAction, &xHigherPriorityTaskWoken);
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+                __NOP();
             }
         }
 

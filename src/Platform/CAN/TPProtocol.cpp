@@ -62,48 +62,48 @@ void TPProtocol::processMultipleFrames() {
 void TPProtocol::parseMessage(Packet& message) {
     uint8_t messageType = static_cast<Application::MessageIDs>(message.data[0]);
     switch (messageType) {
-        case CAN::Application::SendParameters:
-            CAN::Application::parseSendParametersMessage(message);
-            break;
-        case CAN::Application::RequestParameters:
-            CAN::Application::parseRequestParametersMessage(message);
-            break;
-        case CAN::Application::PerformFunction:
-            break; //todo: use ST[08] to execute the perform function command
-        case CAN::Application::EventReport:
-            break; //todo: use the Event Report service
-        case CAN::Application::TMPacket:
-            CAN::Application::parseTMMessage(message);
-            break;
-        case CAN::Application::TCPacket:
-            CAN::Application::parseTCMessage(message);
-            break;
-        case CAN::Application::CCSDSPacket:
-            break; //todo send this to comms? idk
-        case CAN::Application::Ping: {
-            auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
-            auto senderName = CAN::Application::nodeIdToString.at(senderID);
-            LOG_DEBUG << "Received ping from " << senderName.c_str();
-            CAN::Application::sendPongMessage();
-        } break;
-        case CAN::Application::Pong: {
-            auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
-            auto senderName = CAN::Application::nodeIdToString.at(senderID);
-            LOG_DEBUG << "Received pong from " << senderName.c_str();
-        } break;
-        case CAN::Application::LogMessage: {
-            auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
-            auto senderName = CAN::Application::nodeIdToString.at(senderID);
-            String<ECSSMaxMessageSize> logSource = "Incoming Log from ";
-            logSource.append(senderName);
-            logSource.append(": ");
-            auto logData = String<ECSSMaxMessageSize>(message.data + 1, message.dataSize - 1);
-            LOG_DEBUG << logSource.c_str() << logData.c_str();
-        } break;
-        default:
-            LOG_INFO << "CAN Message of Unknown type";
-            // ErrorHandler::reportInternalError(ErrorHandler::UnknownMessageType);
-            break;
+        // case CAN::Application::SendParameters:
+        //     CAN::Application::parseSendParametersMessage(message);
+        //     break;
+        // case CAN::Application::RequestParameters:
+        //     CAN::Application::parseRequestParametersMessage(message);
+        //     break;
+        // case CAN::Application::PerformFunction:
+        //     break; //todo: use ST[08] to execute the perform function command
+        // case CAN::Application::EventReport:
+        //     break; //todo: use the Event Report service
+        // case CAN::Application::TMPacket:
+        //     CAN::Application::parseTMMessage(message);
+        //     break;
+        // case CAN::Application::TCPacket:
+        //     CAN::Application::parseTCMessage(message);
+        //     break;
+        // case CAN::Application::CCSDSPacket:
+        //     break; //todo send this to comms? idk
+        // case CAN::Application::Ping: {
+        //     auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
+        //     auto senderName = CAN::Application::nodeIdToString.at(senderID);
+        //     LOG_DEBUG << "Received ping from " << senderName.c_str();
+        //     CAN::Application::sendPongMessage();
+        // } break;
+        // case CAN::Application::Pong: {
+        //     auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
+        //     auto senderName = CAN::Application::nodeIdToString.at(senderID);
+        //     LOG_DEBUG << "Received pong from " << senderName.c_str();
+        // } break;
+        // case CAN::Application::LogMessage: {
+        //     auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
+        //     auto senderName = CAN::Application::nodeIdToString.at(senderID);
+        //     String<ECSSMaxMessageSize> logSource = "Incoming Log from ";
+        //     logSource.append(senderName);
+        //     logSource.append(": ");
+        //     auto logData = String<ECSSMaxMessageSize>(message.data + 1, message.dataSize - 1);
+        //     LOG_DEBUG << logSource.c_str() << logData.c_str();
+        // } break;
+        // default:
+        //     LOG_INFO << "CAN Message of Unknown type";
+        //     // ErrorHandler::reportInternalError(ErrorHandler::UnknownMessageType);
+        //     break;
     }
 }
 
