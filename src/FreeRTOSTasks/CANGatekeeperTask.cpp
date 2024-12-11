@@ -92,7 +92,7 @@ void CANGatekeeperTask::execute() {
             if (frameType == CAN::TPProtocol::Frame::Single) {
                 __NOP();
             } else if (frameType == CAN::TPProtocol::Frame::First) {
-                // debugCounter=0;
+                // // debugCounter=0;
                 CANPacketHandler->PacketSize = payloadLength << 8;
                 CANPacketHandler->PacketSize = CANPacketHandler->PacketSize | in_frame_handler.pointerToData[1];
                 CANPacketHandler->PacketSize -= 1; //compensate for ID byte
@@ -143,12 +143,13 @@ void CANGatekeeperTask::execute() {
             // }
             CAN::TPProtocol::processMultipleFrames();
 
-            while (uxQueueMessagesWaiting(outgoingQueue)) {
-                vTaskDelay(1);
-                xQueueReceive(outgoingQueue, &out_message, portMAX_DELAY);
-                CAN::Driver::send(out_message);
-            }
+
             //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
+        }
+        while (uxQueueMessagesWaiting(outgoingQueue)) {
+            vTaskDelay(1);
+            xQueueReceive(outgoingQueue, &out_message, portMAX_DELAY);
+            CAN::Driver::send(out_message);
         }
     }
 }
