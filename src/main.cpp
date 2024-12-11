@@ -6,6 +6,7 @@
 #include "definitions.h"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
+#include "git_version.h"
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -88,6 +89,8 @@ extern "C" void main_cpp() {
     watchdogTask->createTask();
 
     __enable_irq();
+
+    LOG_INFO << "####### This board runs OBC_Software, commit " << kGitHash << " #######";
 
     vTaskStartScheduler();
 
