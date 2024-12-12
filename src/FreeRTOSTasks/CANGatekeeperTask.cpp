@@ -4,6 +4,14 @@
 
 struct incomingFIFO incomingFIFO;
 uint8_t incomingBuffer[CANMessageSize * sizeOfIncommingFrameBuffer];
+    struct localPacketHandler {
+        uint8_t Buffer[1024];
+        uint32_t TailPointer = 0;
+        uint32_t PacketSize = 0;
+        uint8_t PacketID = 0;
+    };
+    struct localPacketHandler CAN1PacketHandler;
+    struct localPacketHandler CAN2PacketHandler;
 
 CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
     CAN::Driver::initialize();
@@ -44,14 +52,14 @@ void CANGatekeeperTask::execute() {
     CAN::Packet out_message = {};
     CAN::Packet in_message = {};
 
-    struct localPacketHandler {
+ /*   struct localPacketHandler {
         uint8_t Buffer[1024];
         uint32_t TailPointer = 0;
         uint32_t PacketSize = 0;
         uint8_t PacketID = 0;
     };
     struct localPacketHandler CAN1PacketHandler;
-    struct localPacketHandler CAN2PacketHandler;
+    struct localPacketHandler CAN2PacketHandler;*/
     CAN::Frame in_frame_handler = {};
 
     uint32_t ulNotifiedValue;
@@ -124,6 +132,12 @@ void CANGatekeeperTask::execute() {
                         CANPacketHandler->TailPointer = CANPacketHandler->TailPointer + 1;
                     }
                     // Add message to queue
+                    CAN::TPMessage message;
+                    message.appendUint8(CANPacketHandler->PacketID);
+                    for (int i = 0; i < CANPacketHandler->PacketSize; i++) {
+                        message.appendUint8(CANPacketHandler->Buffer[i]);
+                    }
+                    CAN::TPProtocol::parseMessage(message);
                     __NOP();
 
                     // xQueueSendToBack(storedPacketQueue, &PacketToBeStored, NULL);
