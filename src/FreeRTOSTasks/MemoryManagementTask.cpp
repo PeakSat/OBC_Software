@@ -273,37 +273,28 @@ const struct lfs_config nand_b_cfg = {
     .lookahead_buffer = nand_b_lookahead_buffer,
 };
 
-bool configureMountFS_NAND_A(){
-    int err = lfs_mount(&lfs_nand_a, &nand_a_cfg);
-    if (err) {
-        // reformat if we can't mount the filesystem
+bool configureMountFS_NAND(){
+    int err_nand_a = lfs_mount(&lfs_nand_a, &nand_a_cfg);
+    if (err_nand_a) {
+        // Format if we can't mount the filesystem
         // this should only happen on the first boot
         LOG_DEBUG<<"Formatting LittleFS for NAND A";
         lfs_format(&lfs_nand_a, &nand_a_cfg);
-        err = lfs_mount(&lfs_nand_a, &nand_a_cfg);
-        if(err == 0){
-            return true;
-        }
+        err_nand_a = lfs_mount(&lfs_nand_a, &nand_a_cfg);
     }
-    if(err == 0){
-        return true;
-    }
-    return false;
-}
 
-bool configureMountFS_NAND_B(){
-    int err = lfs_mount(&lfs_nand_b, &nand_b_cfg);
-    if (err) {
-        // reformat if we can't mount the filesystem
+    int err_nand_b = lfs_mount(&lfs_nand_b, &nand_b_cfg);
+    if (err_nand_b) {
+        // Format if we can't mount the filesystem
         // this should only happen on the first boot
         LOG_DEBUG<<"Formatting LittleFS for NAND B";
         lfs_format(&lfs_nand_b, &nand_b_cfg);
-        err = lfs_mount(&lfs_nand_b, &nand_b_cfg);
-        if(err){
-            return false;
-        }
+        err_nand_b = lfs_mount(&lfs_nand_b, &nand_b_cfg);
     }
-//    LOG_DEBUG<<"Mount LFS returned err: "<<err;
+
+    if(err_nand_a || err_nand_b){
+        return false;
+    }
     return true;
 }
 
@@ -314,19 +305,28 @@ void initLCLs(){
     mramLCL.enableLCL();
 }
 
-bool initNANDinstance(MT29F nand){
-    if(nand.resetNAND()!=MT29F_Errno::NONE){
-        LOG_DEBUG<<"Error reseting NAND";
-        return false;
-//        mt29f.errorHandler(mt29f.resetNAND());
+bool initNAND(){
+    bool flag = false;
+    if(mt29f_part_a.resetNAND()!=MT29F_Errno::NONE){
+        LOG_DEBUG<<"Error reseting NAND A";
+        flag = true;
     }
 
-    if(not nand.isNANDAlive()){
+    if(not mt29f_part_a.isNANDAlive()){
         LOG_DEBUG<<"NAND ID Error (Die A)";
-        return false;
-        // Error handler logic
+        flag = true;
     }
-    return true;
+
+    if(mt29f_part_b.resetNAND()!=MT29F_Errno::NONE){
+        LOG_DEBUG<<"Error reseting NAND B";
+        flag = true;
+    }
+
+    if(not mt29f_part_b.isNANDAlive()){
+        LOG_DEBUG<<"NAND ID Error (Die B)";
+        flag = true;
+    }
+    return !flag;
 }
 
 // Internal R/W functions
@@ -535,6 +535,23 @@ void MemManTask::printAvailableFiles(lfs *lfs){
     lfs_dir_close(lfs, &dir);
 }
 
+/**
+ * Check if the stored version of the HASH ID is correct
+ * @param hash_id the hash id read from Memory
+ * @return true on correct match
+ */
+bool checkGitHash(char* hash_id){
+    if(hash_id[0] == 0){
+        return false;
+    }
+    for(uint8_t  i=0;i<7;i++){
+        if(hash_id[i]!=kGitHash[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
 bool MemManTask::updateBiosFile(){
     bios_file_content bios;
 
@@ -544,17 +561,25 @@ bool MemManTask::updateBiosFile(){
         // Continue since on the first boot it may not exist, the write function will create it
         bios.boot_count = 0;
     }
+    // Check for updated FW version
     if(bios.fw_ver[0]!=FW_VER_MAJOR ||  bios.fw_ver[1]!=FW_VER_MINOR || bios.fw_ver[2]!=FW_VER_PATCH){
         LOG_DEBUG<<"New FW version detected";
         bios.fw_ver[0]=FW_VER_MAJOR;
         bios.fw_ver[1]=FW_VER_MINOR;
         bios.fw_ver[2]=FW_VER_PATCH;
     }
-    // Add last reset reason get function
+    // TODO: Add last reset reason get function
+    // Check Git commit hash
+    if(!checkGitHash(bios.git_hash_id)){
+        LOG_DEBUG<<"New Git Hash detected";
+        memccpy(bios.git_hash_id, kGitHash, '\0', 10);
+    }
+
     bios.boot_count+=1;
     LOG_DEBUG<<"FW_VERSION: "<<bios.fw_ver[0]<<"."<<bios.fw_ver[1]<<"."<<bios.fw_ver[2];
     LOG_DEBUG<<"BOOT_COUNT: "<<bios.boot_count;
     LOG_DEBUG<<"RESET_RSN : "<<bios.last_reset_cause;
+    LOG_DEBUG<<"GIT_HASH  : "<<bios.git_hash_id;
 
     etl::span<const uint8_t> writeSpan(reinterpret_cast<const uint8_t*>(&bios), sizeof(bios));
     if(not writeToFile(FILE_BIOS, writeSpan, FILE_RW_FLAGS::OVERWRITE)){
@@ -564,24 +589,18 @@ bool MemManTask::updateBiosFile(){
     return true;
 }
 
+
 void MemManTask::execute() {
     // Enable LCLs
     initLCLs();
 
     // Init memories
-    if(not initNANDinstance(mt29f_part_a)){
-        LOG_ERROR << "Error initialising NAND part a";
+    if(not initNAND()){
+        LOG_ERROR << "Error initialising NAND";
         // Error Handling?
         vTaskSuspend(NULL);
     }
-    LOG_DEBUG << "NAND part a initialised";
-
-    if(not initNANDinstance(mt29f_part_b)){
-        LOG_ERROR << "Error initialising NAND part b";
-        // Error Handling?
-        vTaskSuspend(NULL);
-    }
-    LOG_DEBUG << "NAND part b initialised";
+    LOG_DEBUG << "NAND part initialised";
 
     MRAM_Errno error = mram.isMRAMAlive();
     if( error != MRAM_Errno ::MRAM_READY){
@@ -595,19 +614,12 @@ void MemManTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(1000));
 
     // Mount LFS
-    if(!configureMountFS_NAND_A()){
-        LOG_ERROR << "Error mounting FS on NAND part a";
+    if(!configureMountFS_NAND()){
+        LOG_ERROR << "Error mounting FS on NAND";
         // Error Handling?
         vTaskSuspend(NULL);
     }
-    LOG_DEBUG << "NAND part a FS mounted";
-
-    if(!configureMountFS_NAND_B()){
-        LOG_ERROR << "Error mounting FS on NAND part b";
-        // Error Handling?
-        vTaskSuspend(NULL);
-    }
-    LOG_DEBUG << "NAND part b FS mounted";
+    LOG_DEBUG << "NAND FS mounted";
 
     vTaskDelay(pdMS_TO_TICKS(1000));
 

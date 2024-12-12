@@ -12,12 +12,14 @@
 #include "queue.h"
 #include "filenames.hpp"
 #include "general_definitions.hpp"
+#include "git_version.h"
 #include "lfs.h"
 
 typedef struct {
     uint boot_count;
     uint8_t last_reset_cause;
     uint8_t fw_ver[3];
+    char git_hash_id[10];
 }bios_file_content;
 
 enum class FILE_RW_FLAGS: uint8_t{

@@ -8,6 +8,7 @@
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
 
+
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
 #include "TimeKeepingTask.hpp"
@@ -78,17 +79,17 @@ extern "C" void main_cpp() {
     __disable_irq();
     uartGatekeeperTask->createTask();
 //    nandTask->createTask();
-//     payloadTestTask->createTask();
-//     canGatekeeperTask->createTask();
-//     canTestTask->createTask();
-//     housekeepingTask->createTask();
-//     tcHandlingTask->createTask();
-//     mcuTemperatureTask->createTask();
+     payloadTestTask->createTask();
+     canGatekeeperTask->createTask();
+     canTestTask->createTask();
+     housekeepingTask->createTask();
+     tcHandlingTask->createTask();
+     mcuTemperatureTask->createTask();
     // ambientTemperatureTask->createTask();
     // mramTask->createTask();
     memManTask->createTask();
      timeKeepingTask->createTask();
-//     TestTask->createTask();
+     TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();

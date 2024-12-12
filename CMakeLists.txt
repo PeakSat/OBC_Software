@@ -75,6 +75,8 @@ include_directories(lib/Peripherals/COBS)
 include_directories(lib/Peripherals/ADM)
 include_directories(lib/Peripherals/LittleFS/inc)
 include_directories(lib/Peripherals/LittleFS/src)
+include(CheckGit.cmake)
+CheckGitSetup()
 
 file(GLOB_RECURSE DRIVER_SOURCES "lib/Peripherals/MCP9808/*.cpp" "lib/Peripherals/LCL/*.cpp"
         "lib/Peripherals/NANDFlash/*.cpp"  "lib/Peripherals/MRAM/*.cpp" "lib/Peripherals/LittleFS/*.c")
@@ -84,7 +86,7 @@ file(GLOB_RECURSE EXTRA_SOURCES "lib/Peripherals/COBS/cobs.c" "lib/Peripherals/C
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT} ${FREERTOS_SOURCES} ${DRIVER_SOURCES} ${EXTRA_SOURCES})
 
-target_link_libraries(${PROJECT_NAME}.elf PRIVATE common etl log_common)
+target_link_libraries(${PROJECT_NAME}.elf PRIVATE common etl log_common git_version)
 
 set(CMAKE_EXE_LINKER_FLAGS
         "${CMAKE_EXE_LINKER_FLAGS_INIT} -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
