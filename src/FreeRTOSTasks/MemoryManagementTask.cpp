@@ -20,7 +20,6 @@ static uint8_t nand_b_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must matc
 
 lfs_t lfs_nand_a;
 lfs_t lfs_nand_b;
-lfs_t lfs_mram;
 
 // Error Translating functions
 
@@ -230,77 +229,81 @@ int lfs_nand_b_sync(const struct lfs_config *c) {
 
 // LFS Configuration & Mounting Functions
 
+const struct lfs_config nand_a_cfg = {
+    // block device operations
+    .read  = lfs_nand_a_read,
+    .prog  = lfs_nand_a_prog,
+    .erase = lfs_nand_a_erase,
+    .sync  = lfs_nand_a_sync,
+
+    // block device configuration
+    .read_size = MaxMemoryElementByteSize,
+    .prog_size = MaxMemoryElementByteSize,
+    .block_size = NAND_partition_size_bytes,
+    .block_count = NAND_partition_blocks,
+    .block_cycles = NAND_wear_leveling_cycles,
+    .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
+    .lookahead_size = MaxMemoryLookaheadByteSize,
+
+    // Static memory buffers
+    .read_buffer = nand_a_read_buffer,
+    .prog_buffer = nand_a_prog_buffer,
+    .lookahead_buffer = nand_a_lookahead_buffer,
+};
+
+const struct lfs_config nand_b_cfg = {
+    // block device operations
+    .read  = lfs_nand_b_read,
+    .prog  = lfs_nand_b_prog,
+    .erase = lfs_nand_b_erase,
+    .sync  = lfs_nand_b_sync,
+
+    // block device configuration
+    .read_size = MaxMemoryElementByteSize,
+    .prog_size = MaxMemoryElementByteSize,
+    .block_size = NAND_partition_size_bytes,
+    .block_count = NAND_partition_blocks,
+    .block_cycles = NAND_wear_leveling_cycles,
+    .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
+    .lookahead_size = MaxMemoryLookaheadByteSize,
+
+    // Static memory buffers
+    .read_buffer = nand_b_read_buffer,
+    .prog_buffer = nand_b_prog_buffer,
+    .lookahead_buffer = nand_b_lookahead_buffer,
+};
+
 bool configureMountFS_NAND_A(){
-    const struct lfs_config nand_cfg = {
-        // block device operations
-        .read  = lfs_nand_a_read,
-        .prog  = lfs_nand_a_prog,
-        .erase = lfs_nand_a_erase,
-        .sync  = lfs_nand_a_sync,
-
-        // block device configuration
-        .read_size = MaxMemoryElementByteSize,
-        .prog_size = MaxMemoryElementByteSize,
-        .block_size = NAND_partition_size_bytes,
-        .block_count = NAND_partition_blocks,
-        .block_cycles = NAND_wear_leveling_cycles,
-        .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
-        .lookahead_size = MaxMemoryLookaheadByteSize,
-
-        // Static memory buffers
-        .read_buffer = nand_a_read_buffer,
-        .prog_buffer = nand_a_prog_buffer,
-        .lookahead_buffer = nand_a_lookahead_buffer,
-    };
-
-    int err = lfs_mount(&lfs_nand_a, &nand_cfg);
+    int err = lfs_mount(&lfs_nand_a, &nand_a_cfg);
     if (err) {
         // reformat if we can't mount the filesystem
         // this should only happen on the first boot
         LOG_DEBUG<<"Formatting LittleFS for NAND A";
-        lfs_format(&lfs_nand_a, &nand_cfg);
-        err = lfs_mount(&lfs_nand_a, &nand_cfg);
-        if(err){
-            return false;
+        lfs_format(&lfs_nand_a, &nand_a_cfg);
+        err = lfs_mount(&lfs_nand_a, &nand_a_cfg);
+        if(err == 0){
+            return true;
         }
     }
-    return true;
+    if(err == 0){
+        return true;
+    }
+    return false;
 }
 
 bool configureMountFS_NAND_B(){
-    const struct lfs_config nand_cfg = {
-        // block device operations
-        .read  = lfs_nand_b_read,
-        .prog  = lfs_nand_b_prog,
-        .erase = lfs_nand_b_erase,
-        .sync  = lfs_nand_b_sync,
-
-        // block device configuration
-        .read_size = MaxMemoryElementByteSize,
-        .prog_size = MaxMemoryElementByteSize,
-        .block_size = NAND_partition_size_bytes,
-        .block_count = NAND_partition_blocks,
-        .block_cycles = NAND_wear_leveling_cycles,
-        .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
-        .lookahead_size = MaxMemoryLookaheadByteSize,
-
-        // Static memory buffers
-        .read_buffer = nand_b_read_buffer,
-        .prog_buffer = nand_b_prog_buffer,
-        .lookahead_buffer = nand_b_lookahead_buffer,
-    };
-
-    int err = lfs_mount(&lfs_nand_b, &nand_cfg);
+    int err = lfs_mount(&lfs_nand_b, &nand_b_cfg);
     if (err) {
         // reformat if we can't mount the filesystem
         // this should only happen on the first boot
         LOG_DEBUG<<"Formatting LittleFS for NAND B";
-        lfs_format(&lfs_nand_b, &nand_cfg);
-        err = lfs_mount(&lfs_nand_b, &nand_cfg);
+        lfs_format(&lfs_nand_b, &nand_b_cfg);
+        err = lfs_mount(&lfs_nand_b, &nand_b_cfg);
         if(err){
             return false;
         }
     }
+//    LOG_DEBUG<<"Mount LFS returned err: "<<err;
     return true;
 }
 
@@ -326,6 +329,240 @@ bool initNANDinstance(MT29F nand){
     return true;
 }
 
+// Internal R/W functions
+
+bool MemManTask::writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag){
+    lfs_file_t file;
+    int flags = 0;
+    switch (flag) {
+        case FILE_RW_FLAGS::APPEND:
+            flags = LFS_O_CREAT | LFS_O_APPEND | LFS_O_WRONLY;
+            break;
+        case FILE_RW_FLAGS::OVERWRITE:
+            flags = LFS_O_CREAT | LFS_O_TRUNC | LFS_O_WRONLY;
+            break;
+        default:
+            flags = LFS_O_WRONLY;
+            break;
+    }
+    int error = lfs_file_open(lfs, &file, filename, flags);
+    if(error < 0){
+        LOG_ERROR<<"Failed to open the selected file";
+        return false;
+    }
+    error = lfs_file_write(lfs, &file, data.data(), data.size());
+    if(error < 0){
+        LOG_ERROR<<"Failed writing the selected file";
+        return false;
+    }
+    error = lfs_file_close(lfs, &file);
+    if(error < 0){
+        LOG_ERROR<<"Failed syncing the selected file";
+        return false;
+    }
+    return true;
+}
+
+bool MemManTask::writeMRAM_File(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag){
+    LOG_DEBUG<< "MRAM Write Not implemented yet hehe";
+    return false;
+}
+
+bool MemManTask::readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data){
+    lfs_file_t file;
+    int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
+    if(error < 0){
+        LOG_ERROR<<"Failed to open the selected file";
+        return false;
+    }
+    error = lfs_file_read(lfs, &file, data.data(), data.size());
+    if(error < 0){
+        LOG_ERROR<<"Failed reading the selected file";
+        return false;
+    }
+    error = lfs_file_close(lfs, &file);
+    if(error < 0){
+        LOG_ERROR<<"Failed syncing the selected file";
+        return false;
+    }
+    return true;
+}
+
+bool MemManTask::readMRAM_File(const char* filename, etl::span<uint8_t> &data){
+    LOG_DEBUG<< "MRAM Read Not implemented yet hehe";
+    return false;
+}
+
+bool MemManTask::eraseMRAMFile(const char* filename){
+    LOG_DEBUG<<"MRAM Erase function not implemented yet, hehe";
+    return false;
+}
+
+size_t MemManTask::getNANDFileSize(lfs *lfs, const char* filename){
+    lfs_file_t file;
+    int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
+    if(error < 0){
+        LOG_ERROR<<"Failed to open the selected file";
+        return 0;
+    }
+    size_t file_size = lfs_file_seek(lfs, &file, 0, LFS_SEEK_END);
+    error = lfs_file_close(lfs, &file);
+    if(error < 0){
+        LOG_ERROR<<"Failed syncing the selected file";
+    }
+    return file_size;
+}
+
+size_t MemManTask::getMRAMFileSize(const char* filename){
+    LOG_DEBUG<<"MRAM get file size function not implemented yet, hehe";
+    return 0;
+}
+
+//
+
+bool MemManTask::writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags){
+    char id_byte = filename[FILE_ID_POS];
+    switch (id_byte) {
+        case 'A':
+            return writeNANDFile(&lfs_nand_a, filename, data, flags);
+        case 'B':
+            return writeNANDFile(&lfs_nand_b, filename, data, flags);
+        case 'C':
+            return writeMRAM_File(filename, data, flags);
+        default:
+            LOG_DEBUG<<"Unknown File ID";
+            return false;
+    }
+    // Should never reach here
+    return false;
+}
+
+bool MemManTask::readFromFile(const char* filename, etl::span<uint8_t> &data){
+    char id_byte = filename[FILE_ID_POS];
+    switch (id_byte) {
+        case 'A':
+            return readNANDFile(&lfs_nand_a, filename, data);
+        case 'B':
+            return readNANDFile(&lfs_nand_b, filename, data);
+        case 'C':
+            return readMRAM_File(filename, data);
+        default:
+            LOG_DEBUG<<"Unknown File ID";
+            return false;
+    }
+    // Should never reach here
+    return false;
+}
+
+bool MemManTask::eraseFile(const char* filename){
+    char id_byte = filename[FILE_ID_POS];
+    int error = 0;
+    switch (id_byte) {
+        case 'A':
+            error = lfs_remove(&lfs_nand_a, filename);
+            break;
+        case 'B':
+            error = lfs_remove(&lfs_nand_b, filename);
+            break;
+        case 'C':
+            error = eraseMRAMFile(filename);
+            break;
+        default:
+            LOG_ERROR<<"Unknown fileID";
+            error = -1;
+            break;
+    }
+    if(error < 0){
+        LOG_DEBUG<<"File erase operation failed";
+        return false;
+    }
+    return true;
+}
+
+bool MemManTask::getFileSize(const char* filename, size_t &filesize){
+    char id_byte = filename[FILE_ID_POS];
+    switch (id_byte) {
+        case 'A':
+            filesize = getNANDFileSize(&lfs_nand_a, filename);
+            return true;
+        case 'B':
+            filesize = getNANDFileSize(&lfs_nand_b, filename);
+            return true;
+        case 'C':
+            filesize = getMRAMFileSize(filename);
+            return true;
+        default:
+            LOG_ERROR<<"Unknown fileID";
+            return false;
+    }
+    // Should not reach here
+    return false;
+}
+
+float MemManTask::getUsedSpace(lfs *lfs){
+    lfs_ssize_t used_blocks = lfs_fs_size(lfs);
+    if(used_blocks<0){
+        LOG_ERROR<<"Failed retrieving FS used blocks";
+        return 0;
+    }
+    size_t used_size = used_blocks * NAND_partition_size_bytes;
+    uint64_t total_size = (uint64_t) NAND_partition_blocks * NAND_partition_size_bytes;
+    float percentage = ((float)used_size/total_size)*100;
+//    LOG_DEBUG<<"Used space: "<<percentage<<"%";
+    return percentage;
+}
+
+void MemManTask::printAvailableFiles(lfs *lfs){
+    lfs_dir_t dir;
+    struct lfs_info info;
+
+    int error = lfs_dir_open(lfs, &dir, "/");
+    if(error < 0){
+        LOG_ERROR<<"Failed opening root directory";
+        return;
+    }
+    error = 1;
+    while(error!=0){ // Error = 0 end of directory reached
+        error = lfs_dir_read(lfs, &dir, &info);
+        if(error<0){
+            LOG_ERROR<<"Failed to read directory";
+            return;
+        }
+        if(info.type==LFS_TYPE_REG){
+            LOG_DEBUG<<"File: "<<info.name<<" Size: "<<(long long)info.size<<" bytes";
+        }
+    }
+    lfs_dir_close(lfs, &dir);
+}
+
+bool MemManTask::updateBiosFile(){
+    bios_file_content bios;
+
+    etl::span<uint8_t> dataSpan(reinterpret_cast<uint8_t*>(&bios), sizeof(bios));
+    if(not readFromFile(FILE_BIOS, dataSpan)){
+        LOG_DEBUG<<"Unable to read BIOS file";
+        // Continue since on the first boot it may not exist, the write function will create it
+        bios.boot_count = 0;
+    }
+    if(bios.fw_ver[0]!=FW_VER_MAJOR ||  bios.fw_ver[1]!=FW_VER_MINOR || bios.fw_ver[2]!=FW_VER_PATCH){
+        LOG_DEBUG<<"New FW version detected";
+        bios.fw_ver[0]=FW_VER_MAJOR;
+        bios.fw_ver[1]=FW_VER_MINOR;
+        bios.fw_ver[2]=FW_VER_PATCH;
+    }
+    // Add last reset reason get function
+    bios.boot_count+=1;
+    LOG_DEBUG<<"FW_VERSION: "<<bios.fw_ver[0]<<"."<<bios.fw_ver[1]<<"."<<bios.fw_ver[2];
+    LOG_DEBUG<<"BOOT_COUNT: "<<bios.boot_count;
+    LOG_DEBUG<<"RESET_RSN : "<<bios.last_reset_cause;
+
+    etl::span<const uint8_t> writeSpan(reinterpret_cast<const uint8_t*>(&bios), sizeof(bios));
+    if(not writeToFile(FILE_BIOS, writeSpan, FILE_RW_FLAGS::OVERWRITE)){
+        LOG_DEBUG<<"Unable to write BIOS file";
+        return false;
+    }
+    return true;
+}
 
 void MemManTask::execute() {
     // Enable LCLs
@@ -333,13 +570,15 @@ void MemManTask::execute() {
 
     // Init memories
     if(not initNANDinstance(mt29f_part_a)){
-        LOG_DEBUG << "Error initialising NAND part a";
+        LOG_ERROR << "Error initialising NAND part a";
+        // Error Handling?
         vTaskSuspend(NULL);
     }
     LOG_DEBUG << "NAND part a initialised";
 
     if(not initNANDinstance(mt29f_part_b)){
-        LOG_DEBUG << "Error initialising NAND part b";
+        LOG_ERROR << "Error initialising NAND part b";
+        // Error Handling?
         vTaskSuspend(NULL);
     }
     LOG_DEBUG << "NAND part b initialised";
@@ -347,26 +586,48 @@ void MemManTask::execute() {
     MRAM_Errno error = mram.isMRAMAlive();
     if( error != MRAM_Errno ::MRAM_READY){
         printMRAMErrno(error);
-        LOG_DEBUG << "Failed to initialise MRAM";
+        LOG_ERROR << "Failed to initialise MRAM";
+        // Error Handling?
         vTaskSuspend(NULL);
     }
     LOG_DEBUG << "MRAM initialised";
 
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
     // Mount LFS
     if(!configureMountFS_NAND_A()){
-        LOG_DEBUG << "Error mounting FS on NAND part a";
+        LOG_ERROR << "Error mounting FS on NAND part a";
+        // Error Handling?
         vTaskSuspend(NULL);
     }
     LOG_DEBUG << "NAND part a FS mounted";
 
     if(!configureMountFS_NAND_B()){
-        LOG_DEBUG << "Error mounting FS on NAND part b";
+        LOG_ERROR << "Error mounting FS on NAND part b";
+        // Error Handling?
         vTaskSuspend(NULL);
     }
     LOG_DEBUG << "NAND part b FS mounted";
 
-    // Check memories
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
     // Print memories info
+    LOG_DEBUG<<"NAND part a Info:";
+    LOG_DEBUG<<"Used space (%): "<<getUsedSpace(&lfs_nand_a);
+    printAvailableFiles(&lfs_nand_a);
+    LOG_DEBUG<<"NAND part b Info:";
+    LOG_DEBUG<<"Used space (%): "<<getUsedSpace(&lfs_nand_b);
+    printAvailableFiles(&lfs_nand_b);
+
+    // Add logic for MRAM
+
+
+    //Update BIOS parameters
+    if(not updateBiosFile()){
+        LOG_DEBUG<<"BIOS file update ERROR";
+    }else{
+        LOG_DEBUG<<"BIOS file updated";
+    }
 
     while(true){
         vTaskSuspend(NULL);

@@ -4,6 +4,7 @@
 #include "list.h"
 #include "task.h"
 #include "definitions.h"
+#include "general_definitions.hpp"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
 
