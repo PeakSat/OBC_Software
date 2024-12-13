@@ -73,21 +73,19 @@
 // Section: Data Types
 // *****************************************************************************
 // *****************************************************************************
-#define MCAN0_CLOCK_FREQUENCY    50000000U
-
 /* MCAN0 Message RAM Configuration Size */
-#define MCAN0_RX_FIFO0_ELEMENT_SIZE       72U
-#define MCAN0_RX_FIFO0_SIZE               1440U
-#define MCAN0_RX_FIFO1_ELEMENT_SIZE       72U
-#define MCAN0_RX_FIFO1_SIZE               720U
-#define MCAN0_TX_FIFO_BUFFER_ELEMENT_SIZE 72U
-#define MCAN0_TX_FIFO_BUFFER_SIZE         720U
+#define MCAN0_RX_FIFO0_ELEMENT_SIZE       16U
+#define MCAN0_RX_FIFO0_SIZE               320U
+#define MCAN0_RX_FIFO1_ELEMENT_SIZE       16U
+#define MCAN0_RX_FIFO1_SIZE               160U
+#define MCAN0_TX_FIFO_BUFFER_ELEMENT_SIZE 16U
+#define MCAN0_TX_FIFO_BUFFER_SIZE         160U
 #define MCAN0_TX_EVENT_FIFO_SIZE          80U
 #define MCAN0_STD_MSG_ID_FILTER_SIZE      4U
 
 /* MCAN0_MESSAGE_RAM_CONFIG_SIZE to be used by application or driver
    for allocating buffer from non-cached contiguous memory */
-#define MCAN0_MESSAGE_RAM_CONFIG_SIZE     2964U
+#define MCAN0_MESSAGE_RAM_CONFIG_SIZE     724U
 
 // *****************************************************************************
 // *****************************************************************************
@@ -107,8 +105,6 @@ bool MCAN0_StandardFilterElementSet(uint8_t filterNumber, mcan_sidfe_registers_t
 bool MCAN0_StandardFilterElementGet(uint8_t filterNumber, mcan_sidfe_registers_t *stdMsgIDFilterElement);
 void MCAN0_SleepModeEnter(void);
 void MCAN0_SleepModeExit(void);
-bool MCAN0_BitTimingCalculationGet(MCAN_BIT_TIMING_SETUP *setup, MCAN_BIT_TIMING *bitTiming);
-bool MCAN0_BitTimingSet(MCAN_BIT_TIMING *bitTiming);
 void MCAN0_TxFifoCallbackRegister(MCAN_TX_FIFO_CALLBACK callback, uintptr_t contextHandle);
 void MCAN0_TxEventFifoCallbackRegister(MCAN_TX_EVENT_FIFO_CALLBACK callback, uintptr_t contextHandle);
 void MCAN0_RxFifoCallbackRegister(MCAN_RX_FIFO_NUM rxFifoNum, MCAN_RX_FIFO_CALLBACK callback, uintptr_t contextHandle);
