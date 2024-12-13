@@ -67,10 +67,6 @@ void CANGatekeeperTask::execute() {
         }
 
         while (uxQueueMessagesWaiting(incomingFrameQueue)) {
-            // if (eMMCPacketTailPointer + 2 > eMMC::memoryMap[eMMC::CANMessages].size / 512) {
-            //     eMMCPacketTailPointer = 0;
-            // }
-
 
             // Get the message pointer from the queue
             xQueueReceive(incomingFrameQueue, &in_frame_handler, portMAX_DELAY);
@@ -138,14 +134,6 @@ void CANGatekeeperTask::execute() {
                 __NOP();
                 CANPacketHandler->TailPointer = 0;
             }
-
-
-            // while (getIncomingSFMessagesCount()) {
-            //     xQueueReceive(incomingSFQueue, &in_message, portMAX_DELAY);
-            //     CAN::TPProtocol::processSingleFrame(in_message);
-            // }
-            CAN::TPProtocol::processMultipleFrames();
-
 
             //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         }

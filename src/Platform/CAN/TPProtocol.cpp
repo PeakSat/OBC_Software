@@ -16,7 +16,7 @@ void TPProtocol::processSingleFrame(const CAN::Packet& message) {
         tpMessage.appendUint8(message.data[idx]);
     }
 
-    parseMessage(tpMessage);
+    // parseMessage(tpMessage);
 }
 
 void TPProtocol::processMultipleFrames() {
@@ -56,7 +56,7 @@ void TPProtocol::processMultipleFrames() {
         return;
     }
 
-    parseMessage(message);
+    // parseMessage(message);
 }
 
 void TPProtocol::parseMessage(TPMessage& message) {
