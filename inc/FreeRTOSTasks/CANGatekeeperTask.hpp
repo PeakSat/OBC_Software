@@ -9,7 +9,18 @@
 #ifdef OBC_EQM_LCL
 #include "LCLDefinitions.hpp"
 #endif
-
+/**
+* Every variable needed to control the incoming frames' fifo buffer
+* will be stored in this struct.
+ */
+struct incomingFIFO {
+    uint8_t* buffer;
+    uint32_t NOfItems;
+    uint32_t lastItemPointer;
+    incomingFIFO() : buffer(nullptr), NOfItems(0), lastItemPointer(0) {}
+    incomingFIFO(uint8_t* externalBuffer, uint32_t NOfItems) : buffer(externalBuffer), NOfItems(NOfItems), lastItemPointer(0) {}
+};
+extern incomingFIFO incomingFIFO;
 /**
  * Contains functionality of a Gatekeeper Task for the CAN Bus. It has the sole access to CAN, to avoid any
  * deadlocks that might be caused by simultaneous requests of access to the same resource. It works by having anyone
@@ -23,7 +34,7 @@
  * @endcode
  */
 class CANGatekeeperTask : public Task {
-private:
+public:
     /**
      * A freeRTOS queue to handle outgoing messages, to keep order in case tasks interrupt each other.
      */
@@ -67,8 +78,21 @@ private:
     /**
      * Storage area given to freeRTOS to manage the queue items.
      */
-    static inline uint8_t incomingMFQueueStorageArea[CAN::FrameQueueSize * sizeof(CAN::Frame)];
+    static inline uint8_t incomingMFQueueStorageArea[CAN::FrameQueueSize * sizeof(CAN::Packet)];
 
+    /**
+* A freeRTOS queue to handle incoming Packets part of a CAN-TP message, since they need to be parsed as a whole.
+*/
+    QueueHandle_t incomingFrameQueue;
+    /**
+   * The variable used to hold the queue's data structure.
+   */
+    static inline StaticQueue_t incomingFrameQueueBuffer;
+
+    /**
+   * Storage area given to freeRTOS to manage the queue items.
+   */
+    static inline uint8_t incomingFrameQueueStorageArea[sizeOfIncommingFrameBuffer * sizeof(CAN::Frame)];
 
     StackType_t taskStack[CANGatekeeperTaskStack]{};
 
@@ -97,7 +121,7 @@ public:
      * @param message the CAN::Frame to be added in the queue of the CAN Gatekeeper task.
      * @param isISR indicating if the message is a response to another CAN Message, thus composed through an ISR
      */
-    inline void send(const CAN::Frame& message, bool isISR = false) {
+    inline void send(const CAN::Packet& message, bool isISR = false) {
         BaseType_t status;
 
         if (isISR) {
@@ -126,7 +150,7 @@ public:
      *
      * @param message The incoming CAN::Frame.
      */
-    inline void addSFToIncoming(const CAN::Frame& message) {
+    inline void addSFToIncoming(const CAN::Packet& message) {
         BaseType_t taskShouldYield = pdFALSE;
 
         xQueueSendToBackFromISR(incomingSFQueue, &message, &taskShouldYield);
@@ -145,7 +169,7 @@ public:
      *
      * @param message The incoming CAN::Frame.
      */
-    inline void addMFToIncoming(const CAN::Frame& message) {
+    inline void addMFToIncoming(const CAN::Packet& message) {
         BaseType_t taskShouldYield = pdFALSE;
 
         xQueueSendToBackFromISR(incomingMFQueue, &message, &taskShouldYield);
@@ -198,8 +222,8 @@ public:
         xQueueReset(incomingSFQueue);
     }
 
-    inline CAN::Frame getFromMFQueue() {
-        CAN::Frame message;
+    inline CAN::Packet getFromMFQueue() {
+        CAN::Packet message;
         xQueueReceive(incomingMFQueue, &message, 0);
         return message;
     }
