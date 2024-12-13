@@ -456,7 +456,7 @@ bool MemManTask::readFromFile(const char* filename, etl::span<uint8_t> &data){
 
 bool MemManTask::eraseFile(const char* filename){
     char id_byte = filename[FILE_ID_POS];
-    int error = 0;
+    int error = -1;
     switch (id_byte) {
         case 'A':
             error = lfs_remove(&lfs_nand_a, filename);
@@ -469,7 +469,6 @@ bool MemManTask::eraseFile(const char* filename){
             break;
         default:
             LOG_ERROR<<"Unknown fileID";
-            error = -1;
             break;
     }
     if(error < 0){
@@ -533,6 +532,16 @@ void MemManTask::printAvailableFiles(lfs *lfs){
         }
     }
     lfs_dir_close(lfs, &dir);
+}
+
+bool MemManTask::formatNANDmodules() {
+    bool err = 0;
+    err = lfs_unmount(&lfs_nand_a);
+    err = lfs_format(&lfs_nand_a, &nand_a_cfg);
+    err = lfs_unmount(&lfs_nand_b);
+    err = lfs_format(&lfs_nand_b, &nand_b_cfg);
+    err = !configureMountFS_NAND();
+    return !err;
 }
 
 /**

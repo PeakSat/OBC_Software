@@ -71,6 +71,7 @@ public:
     bool getFileSize(const char* filename, size_t &filesize);
     float getUsedSpace(lfs *lfs);
     void printAvailableFiles(lfs *lfs);
+    bool formatNANDmodules();
 
 };
 
