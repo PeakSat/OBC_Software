@@ -139,14 +139,15 @@ void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     for (uint8_t currentConsecutiveFrameCount = 1;
          currentConsecutiveFrameCount <= totalConsecutiveFramesNeeded; currentConsecutiveFrameCount++) {
 
-        uint8_t firstByte = (Consecutive << 6) | (currentConsecutiveFrameCount & 0b111111);
+        uint8_t firstByte = (Consecutive << 6);
         if (currentConsecutiveFrameCount == totalConsecutiveFramesNeeded) {
-            firstByte = ((Final << 6) & 0xFF) | (currentConsecutiveFrameCount & 0b111111);
+            firstByte = (Final << 6);
         }
         etl::array<uint8_t, CAN::MaxPayloadLength> consecutiveFrame = {firstByte};
+        consecutiveFrame.at(1) = currentConsecutiveFrameCount;
 
         for (uint8_t idx = 0; idx < UsableDataLength; idx++) {
-            consecutiveFrame.at(idx + 1) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
+            consecutiveFrame.at(idx + 2) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
         }
 
         canGatekeeperTask->send({id, consecutiveFrame}, isISR);

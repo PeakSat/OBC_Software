@@ -138,11 +138,7 @@ void CANGatekeeperTask::execute() {
             //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         }
         while (uxQueueMessagesWaiting(outgoingQueue)) {
-            vTaskDelay(1);
-            xQueueReceive(outgoingQueue, &out_message, portMAX_DELAY);
-            CAN::Driver::send(out_message);
-        }
-        if (uxQueueMessagesWaiting(outgoingQueue)) {
+            // vTaskDelay(1);
             xQueueReceive(outgoingQueue, &out_message, portMAX_DELAY);
             CAN::Driver::send(out_message);
         }
