@@ -44,6 +44,7 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
 
 
 extern "C" void main_cpp() {
+    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();

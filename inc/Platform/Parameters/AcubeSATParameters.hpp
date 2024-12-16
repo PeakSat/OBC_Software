@@ -950,6 +950,8 @@ namespace AcubeSATParameters {
         EPS_VIP_OUTPUT_VOLT_RA = 3610,
         EPS_VIP_OUTPUT_CURR_RA = 3611,
         EPS_VIP_OUTPUT_POWE_RA = 3612,
+        EPS_ADC_MCU_TEMP_V25T30 = 3613,
+        EPS_ADC_MCU_TEMP_V25T85 = 3614,
 
         /* COMMS Parameters */
         COMMSUHFBandPATemperature = 2000,

@@ -914,6 +914,9 @@ void ParameterService::initializeParameterMap() {
                   {AcubeSATParameters::EPS_VIP_OUTPUT_VOLT_RA , AcubeSATParameters::epsVIP_OUTPUT_VOLT_RA},
                   {AcubeSATParameters::EPS_VIP_OUTPUT_CURR_RA , AcubeSATParameters::epsVIP_OUTPUT_CURR_RA},
                   {AcubeSATParameters::EPS_VIP_OUTPUT_POWE_RA , AcubeSATParameters::epsVIP_OUTPUT_POWE_RA},
+                  {AcubeSATParameters::EPS_ADC_MCU_TEMP_V25T30 , AcubeSATParameters::epsADC_MCU_TEMP_V25T30},
+                  {AcubeSATParameters::EPS_ADC_MCU_TEMP_V25T85 , AcubeSATParameters::epsADC_MCU_TEMP_V25T85},
+
 
                   //---------------------------------------------------------------------------------------------
                   {AcubeSATParameters::COMMSUHFBandPATemperature, AcubeSATParameters::commsUHFBandPATemperature},
