@@ -2,6 +2,9 @@
 #include "CAN/TPProtocol.hpp"
 #include "CANGatekeeperTask.hpp"
 #include "Logger.hpp"
+#include "FreeRTOS.h"
+#include <semphr.h>
+#include <TPProtocol.hpp>
 
 uint8_t CAN::Driver::convertDlcToLength(uint8_t dlc) {
     static constexpr uint8_t msgLength[] = {0U, 1U, 2U, 3U, 4U, 5U, 6U, 7U, 8U, 12U, 16U, 20U, 24U, 32U, 48U, 64U};
@@ -258,6 +261,8 @@ CAN::Packet CAN::Driver::getFrame(const MCAN_RX_BUFFER& rxBuffer) {
 }
 
 void CAN::Driver::initialize() {
+
+    CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE = xSemaphoreCreateMutex();
     MCAN0_MessageRAMConfigSet(CAN::Driver::mcan0MessageRAM);
     MCAN1_MessageRAMConfigSet(CAN::Driver::mcan1MessageRAM);
 
