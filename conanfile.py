@@ -35,6 +35,8 @@ class EQMSoftwareRecipe(ConanFile):
     def source(self):
         git = Git(self)
         git.clone(url="git@github.com:PeakSat/OBC_Peripheral_Libraries.git", target=join(str(self.source_folder), "lib/Peripherals"))
+        git = Git(self)
+        git.clone(url="git@github.com:PeakSat/ECSS-Services.git", target=join(str(self.source_folder), "lib/ECSS"))
 
     def layout(self):
         cmake_layout(self)
@@ -51,4 +53,3 @@ class EQMSoftwareRecipe(ConanFile):
     def requirements(self):
         self.requires("etl/20.37.2")
         self.requires("logger/1.0")
-        self.requires("ecss-services/0.9")

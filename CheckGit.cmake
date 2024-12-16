@@ -54,7 +54,9 @@ function(CheckGitVersion)
 
         configure_file(${pre_configure_file} ${post_configure_file} @ONLY)
     endif ()
-
+    # Export GIT_HASH to the parent scope
+    set(GIT_HASH ${GIT_HASH} PARENT_SCOPE)
+    message(STATUS "Git Hash Cache: ${GIT_HASH_CACHE}")
 endfunction()
 
 function(CheckGitSetup)
@@ -73,6 +75,7 @@ function(CheckGitSetup)
     add_dependencies(git_version AlwaysCheckGit)
 
     CheckGitVersion()
+    message(STATUS "Git Hash ID: ${GIT_HASH}")
 endfunction()
 
 # This is used to run this function from an external cmake process.

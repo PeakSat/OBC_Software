@@ -8,6 +8,12 @@
 #include "FreeRTOSHandlers.hpp"
 #include "git_version.h"
 
+// ECSS Header Files
+#include "ErrorHandler.hpp"
+#include "Message.hpp"
+
+
+
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
 #include "TimeKeepingTask.hpp"
@@ -75,22 +81,20 @@ extern "C" void main_cpp() {
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    nandTask->createTask();
-     payloadTestTask->createTask();
-     canGatekeeperTask->createTask();
-     canTestTask->createTask();
+//    nandTask->createTask();
+//     payloadTestTask->createTask();
+//     canGatekeeperTask->createTask();
+//     canTestTask->createTask();
      housekeepingTask->createTask();
-     tcHandlingTask->createTask();
+//     tcHandlingTask->createTask();
      mcuTemperatureTask->createTask();
 //     ambientTemperatureTask->createTask();
-     mramTask->createTask();
+//     mramTask->createTask();
      timeKeepingTask->createTask();
      TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();
-
-    LOG_INFO << "####### This board runs OBC_Software, commit " << kGitHash << " #######";
 
     vTaskStartScheduler();
 
