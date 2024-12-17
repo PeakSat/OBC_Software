@@ -71,6 +71,17 @@ void printMRAMErrno(MRAM_Errno error){
 
 // LFS functions for NAND part A
 
+/**
+ * @Description  Low level read function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @param off    : Offset inside the block
+ * @param buffer : Read data storage
+ * @param size   : Size of the data to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
@@ -91,12 +102,23 @@ int lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
 
     // Handle the result of the read operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
-    return 0;
+    return LFS_ERR_OK;
 }
 
+/**
+ * @Description  Low level write function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @param off    : Offset inside the block
+ * @param buffer : Read data storage
+ * @param size   : Size of the data to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
@@ -117,39 +139,61 @@ int lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
 
     // Handle the result of the write operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
-    return 0;
+    return LFS_ERR_OK;
 }
 
+/**
+ * @Description  Low level erase function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_a_erase(const struct lfs_config *c, lfs_block_t block) {
-
-    // LUN always 0
-    uint8_t LUN = 0;
-
+    uint8_t LUN = 0; // LUN always 0
     MT29F_Errno result = mt29f_part_a.eraseBlock(LUN, block);
-
     // Handle the result of the erase block operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
 
-    return 0;  // Success
+    return LFS_ERR_OK;  // Success
 }
 
+/**
+ * @Description  Low level sync function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c : Specific configurations of the memory module
+ * @return  : 0 on success, negative error code on failure
+ */
 int lfs_nand_a_sync(const struct lfs_config *c) {
     // Perform any necessary synchronization
     if (!mt29f_part_a.getRDYstatus()) {
         return LFS_ERR_IO;  // Return an error if the sync fails
     }
 
-    return 0;  // Success
+    return LFS_ERR_OK;  // Success
 }
 
 // LFS functions for NAND part B
 
+/**
+ * @Description  Low level read function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @param off    : Offset inside the block
+ * @param buffer : Read data storage
+ * @param size   : Size of the data to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
@@ -170,12 +214,23 @@ int lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
 
     // Handle the result of the read operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
-    return 0;
+    return LFS_ERR_OK;
 }
 
+/**
+ * @Description  Low level write function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @param off    : Offset inside the block
+ * @param buffer : Read data storage
+ * @param size   : Size of the data to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
@@ -196,12 +251,20 @@ int lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
 
     // Handle the result of the write operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
-    return 0;
+    return LFS_ERR_OK;
 }
 
+/**
+ * @Description  Low level erase function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c      : Specific configurations of the memory module
+ * @param block  : Block to read
+ * @return       : 0 on success, negative error code on failure
+ */
 int lfs_nand_b_erase(const struct lfs_config *c, lfs_block_t block) {
 
     // LUN always 0
@@ -211,20 +274,27 @@ int lfs_nand_b_erase(const struct lfs_config *c, lfs_block_t block) {
 
     // Handle the result of the erase block operation
     if (result != MT29F_Errno ::NONE){
-        printNANDError(result);
-        return -1;
+//        printNANDError(result);
+        return LFS_ERR_IO;
     }
 
-    return 0;  // Success
+    return LFS_ERR_OK;  // Success
 }
 
+/**
+ * @Description  Low level sync function, controlled by LittleFS
+ *               not meant to be called by the user
+ *
+ * @param c : Specific configurations of the memory module
+ * @return  : 0 on success, negative error code on failure
+ */
 int lfs_nand_b_sync(const struct lfs_config *c) {
     // Perform any necessary synchronization
     if (!mt29f_part_b.getRDYstatus()) {
         return LFS_ERR_IO;  // Return an error if the sync fails
     }
 
-    return 0;  // Success
+    return LFS_ERR_OK;  // Success
 }
 
 // LFS Configuration & Mounting Functions
@@ -273,6 +343,10 @@ const struct lfs_config nand_b_cfg = {
     .lookahead_buffer = nand_b_lookahead_buffer,
 };
 
+/**
+ * @Description Mounts and if necessary format LFS on the NAND modules
+ * @return true on success
+ */
 bool configureMountFS_NAND(){
     int err_nand_a = lfs_mount(&lfs_nand_a, &nand_a_cfg);
     if (err_nand_a) {
@@ -295,7 +369,7 @@ bool configureMountFS_NAND(){
     if(err_nand_a || err_nand_b){
         return false;
     }
-    return true;
+    return true; // Success
 }
 
 void initLCLs(){
@@ -305,6 +379,10 @@ void initLCLs(){
     mramLCL.enableLCL();
 }
 
+/**
+ * Initializes and performs health checks on the NAND modules
+ * @return true on success
+ */
 bool initNAND(){
     bool flag = false;
     if(mt29f_part_a.resetNAND()!=MT29F_Errno::NONE){
@@ -331,7 +409,7 @@ bool initNAND(){
 
 // Internal R/W functions
 
-bool MemManTask::writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag){
+etl::expected<int, lfs_error> MemManTask::writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag){
     lfs_file_t file;
     int flags = 0;
     switch (flag) {
@@ -347,68 +425,69 @@ bool MemManTask::writeNANDFile(lfs *lfs, const char* filename, etl::span<const u
     }
     int error = lfs_file_open(lfs, &file, filename, flags);
     if(error < 0){
-        LOG_ERROR<<"Failed to open the selected file";
-        return false;
+//        LOG_ERROR<<"Failed to open the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     error = lfs_file_write(lfs, &file, data.data(), data.size());
     if(error < 0){
-        LOG_ERROR<<"Failed writing the selected file";
-        return false;
+//        LOG_ERROR<<"Failed writing the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     error = lfs_file_close(lfs, &file);
     if(error < 0){
-        LOG_ERROR<<"Failed syncing the selected file";
-        return false;
+//        LOG_ERROR<<"Failed syncing the selected file";
+        return etl::unexpected((lfs_error) error);
     }
-    return true;
+    return 0;
 }
 
 bool MemManTask::writeMRAM_File(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag){
     LOG_DEBUG<< "MRAM Write Not implemented yet hehe";
-    return false;
+    return true;
 }
 
-bool MemManTask::readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data){
+etl::expected<int, lfs_error> MemManTask::readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data){
     lfs_file_t file;
     int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
     if(error < 0){
-        LOG_ERROR<<"Failed to open the selected file";
-        return false;
+//        LOG_ERROR<<"Failed to open the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     error = lfs_file_read(lfs, &file, data.data(), data.size());
     if(error < 0){
-        LOG_ERROR<<"Failed reading the selected file";
-        return false;
+//        LOG_ERROR<<"Failed reading the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     error = lfs_file_close(lfs, &file);
     if(error < 0){
-        LOG_ERROR<<"Failed syncing the selected file";
-        return false;
+//        LOG_ERROR<<"Failed syncing the selected file";
+        return etl::unexpected((lfs_error) error);
     }
-    return true;
+    return 0;
 }
 
 bool MemManTask::readMRAM_File(const char* filename, etl::span<uint8_t> &data){
     LOG_DEBUG<< "MRAM Read Not implemented yet hehe";
-    return false;
+    return true;
 }
 
 bool MemManTask::eraseMRAMFile(const char* filename){
     LOG_DEBUG<<"MRAM Erase function not implemented yet, hehe";
-    return false;
+    return true;
 }
 
-size_t MemManTask::getNANDFileSize(lfs *lfs, const char* filename){
+etl::expected<size_t, lfs_error> MemManTask::getNANDFileSize(lfs *lfs, const char* filename){
     lfs_file_t file;
     int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
     if(error < 0){
-        LOG_ERROR<<"Failed to open the selected file";
-        return 0;
+//        LOG_ERROR<<"Failed to open the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     size_t file_size = lfs_file_seek(lfs, &file, 0, LFS_SEEK_END);
     error = lfs_file_close(lfs, &file);
     if(error < 0){
-        LOG_ERROR<<"Failed syncing the selected file";
+//        LOG_ERROR<<"Failed syncing the selected file";
+        return etl::unexpected((lfs_error) error);
     }
     return file_size;
 }
@@ -418,96 +497,16 @@ size_t MemManTask::getMRAMFileSize(const char* filename){
     return 0;
 }
 
-//
-
-bool MemManTask::writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags){
-    char id_byte = filename[FILE_ID_POS];
-    switch (id_byte) {
-        case 'A':
-            return writeNANDFile(&lfs_nand_a, filename, data, flags);
-        case 'B':
-            return writeNANDFile(&lfs_nand_b, filename, data, flags);
-        case 'C':
-            return writeMRAM_File(filename, data, flags);
-        default:
-            LOG_DEBUG<<"Unknown File ID";
-            return false;
-    }
-    // Should never reach here
-    return false;
-}
-
-bool MemManTask::readFromFile(const char* filename, etl::span<uint8_t> &data){
-    char id_byte = filename[FILE_ID_POS];
-    switch (id_byte) {
-        case 'A':
-            return readNANDFile(&lfs_nand_a, filename, data);
-        case 'B':
-            return readNANDFile(&lfs_nand_b, filename, data);
-        case 'C':
-            return readMRAM_File(filename, data);
-        default:
-            LOG_DEBUG<<"Unknown File ID";
-            return false;
-    }
-    // Should never reach here
-    return false;
-}
-
-bool MemManTask::eraseFile(const char* filename){
-    char id_byte = filename[FILE_ID_POS];
-    int error = -1;
-    switch (id_byte) {
-        case 'A':
-            error = lfs_remove(&lfs_nand_a, filename);
-            break;
-        case 'B':
-            error = lfs_remove(&lfs_nand_b, filename);
-            break;
-        case 'C':
-            error = eraseMRAMFile(filename);
-            break;
-        default:
-            LOG_ERROR<<"Unknown fileID";
-            break;
-    }
-    if(error < 0){
-        LOG_DEBUG<<"File erase operation failed";
-        return false;
-    }
-    return true;
-}
-
-bool MemManTask::getFileSize(const char* filename, size_t &filesize){
-    char id_byte = filename[FILE_ID_POS];
-    switch (id_byte) {
-        case 'A':
-            filesize = getNANDFileSize(&lfs_nand_a, filename);
-            return true;
-        case 'B':
-            filesize = getNANDFileSize(&lfs_nand_b, filename);
-            return true;
-        case 'C':
-            filesize = getMRAMFileSize(filename);
-            return true;
-        default:
-            LOG_ERROR<<"Unknown fileID";
-            return false;
-    }
-    // Should not reach here
-    return false;
-}
-
-float MemManTask::getUsedSpace(lfs *lfs){
+etl::expected<float, lfs_error> MemManTask::getUsedSpace(lfs *lfs){
     lfs_ssize_t used_blocks = lfs_fs_size(lfs);
     if(used_blocks<0){
-        LOG_ERROR<<"Failed retrieving FS used blocks";
-        return 0;
+        //        LOG_ERROR<<"Failed retrieving FS used blocks";
+        return etl::unexpected((lfs_error) used_blocks);
     }
     size_t used_size = used_blocks * NAND_partition_size_bytes;
     uint64_t total_size = (uint64_t) NAND_partition_blocks * NAND_partition_size_bytes;
     float percentage = ((float)used_size/total_size)*100;
-//    LOG_DEBUG<<"Used space: "<<percentage<<"%";
+    //    LOG_DEBUG<<"Used space: "<<percentage<<"%";
     return percentage;
 }
 
@@ -534,15 +533,135 @@ void MemManTask::printAvailableFiles(lfs *lfs){
     lfs_dir_close(lfs, &dir);
 }
 
+// Exposed R/W functions
+
+etl::expected<int, lfs_error> MemManTask::writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags){
+    char id_byte = filename[FILE_ID_POS];
+    switch (id_byte) {
+        case 'A': {
+            auto result = writeNANDFile(&lfs_nand_a, filename, data, flags);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            break;
+        }
+        case 'B': {
+            auto result = writeNANDFile(&lfs_nand_b, filename, data, flags);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            break;
+        }
+        case 'C':
+            return writeMRAM_File(filename, data, flags);
+        default:
+//            LOG_DEBUG<<"Unknown File ID";
+            return etl::unexpected(lfs_error::LFS_ERR_INVAL);
+    }
+    return 0;   // Success
+}
+
+etl::expected<int, lfs_error> MemManTask::readFromFile(const char* filename, etl::span<uint8_t> &data){
+    char id_byte = filename[FILE_ID_POS];
+    switch (id_byte) {
+        case 'A':
+        {
+            auto result = readNANDFile(&lfs_nand_a, filename, data);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            break;
+        }
+        case 'B':
+        {
+            auto result = readNANDFile(&lfs_nand_b, filename, data);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            break;
+        }
+        case 'C':
+            return readMRAM_File(filename, data);
+        default:
+//            LOG_DEBUG<<"Unknown File ID";
+            return etl::unexpected(lfs_error::LFS_ERR_INVAL);
+    }
+    return 0;   // Success
+}
+
+etl::expected<int, lfs_error> MemManTask::eraseFile(const char* filename){
+    char id_byte = filename[FILE_ID_POS];
+    int error = lfs_error::LFS_ERR_OK;
+    switch (id_byte) {
+        case 'A':
+            error = lfs_remove(&lfs_nand_a, filename);
+            break;
+        case 'B':
+            error = lfs_remove(&lfs_nand_b, filename);
+            break;
+        case 'C':
+            return eraseMRAMFile(filename);
+        default:
+//            LOG_ERROR<<"Unknown fileID";
+            return etl::unexpected(lfs_error::LFS_ERR_INVAL);
+    }
+    if(error < 0){
+//        LOG_DEBUG<<"File erase operation failed";
+        return etl::unexpected((lfs_error) error);
+    }
+    return 0;   //Success
+}
+
+etl::expected<size_t, lfs_error> MemManTask::getFileSize(const char* filename){
+    char id_byte = filename[FILE_ID_POS];
+
+    switch (id_byte) {
+        case 'A':
+        {
+            auto result = getNANDFileSize(&lfs_nand_a, filename);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            return result.value();
+        }
+        case 'B':
+        {
+            auto result = getNANDFileSize(&lfs_nand_b, filename);
+            if(!result.has_value()){
+                return etl::unexpected(result.error());
+            }
+            return result.value();
+        }
+        case 'C':
+            return getMRAMFileSize(filename);
+        default:
+//            LOG_ERROR<<"Unknown fileID";
+            return etl::unexpected(lfs_error::LFS_ERR_INVAL);
+    }
+    // Should not reach here
+    return 0;
+}
+
 bool MemManTask::formatNANDmodules() {
-    bool err = 0;
-    err = lfs_unmount(&lfs_nand_a);
+    bool err = lfs_unmount(&lfs_nand_a);
     err = lfs_format(&lfs_nand_a, &nand_a_cfg);
     err = lfs_unmount(&lfs_nand_b);
     err = lfs_format(&lfs_nand_b, &nand_b_cfg);
     err = !configureMountFS_NAND();
     return !err;
 }
+
+etl::expected<float, lfs_error> MemManTask::getUsedMemory() {
+    auto nand_a_fill = getUsedSpace(&lfs_nand_a);
+    auto nand_b_fill = getUsedSpace(&lfs_nand_b);
+    // @Todo Implement function to get MRAM remaining space
+    if(!nand_a_fill.has_value() || !nand_b_fill.has_value()){
+        return etl::unexpected(lfs_error::LFS_ERR_IO);
+    }
+    return (nand_a_fill.value() + nand_b_fill.value());
+}
+
+
 
 /**
  * Check if the stored version of the HASH ID is correct
@@ -565,7 +684,8 @@ bool MemManTask::updateBiosFile(){
     bios_file_content bios;
 
     etl::span<uint8_t> dataSpan(reinterpret_cast<uint8_t*>(&bios), sizeof(bios));
-    if(not readFromFile(FILE_BIOS, dataSpan)){
+    auto result = readFromFile(FILE_BIOS, dataSpan);
+    if(!result.has_value()){
         LOG_DEBUG<<"Unable to read BIOS file";
         // Continue since on the first boot it may not exist, the write function will create it
         bios.boot_count = 0;
@@ -591,7 +711,8 @@ bool MemManTask::updateBiosFile(){
     LOG_DEBUG<<"GIT_HASH  : "<<bios.git_hash_id;
 
     etl::span<const uint8_t> writeSpan(reinterpret_cast<const uint8_t*>(&bios), sizeof(bios));
-    if(not writeToFile(FILE_BIOS, writeSpan, FILE_RW_FLAGS::OVERWRITE)){
+    result = writeToFile(FILE_BIOS, writeSpan, FILE_RW_FLAGS::OVERWRITE);
+    if(!result.has_value()){
         LOG_DEBUG<<"Unable to write BIOS file";
         return false;
     }
@@ -632,16 +753,17 @@ void MemManTask::execute() {
 
     vTaskDelay(pdMS_TO_TICKS(1000));
 
-    // Print memories info
-    LOG_DEBUG<<"NAND part a Info:";
-    LOG_DEBUG<<"Used space (%): "<<getUsedSpace(&lfs_nand_a);
+    // Print memory
+    auto result = getUsedMemory();
+    if(!result.has_value()){
+        LOG_DEBUG<<"Unable to retrieve used memory, error code: "<<result.error();
+    }else{
+        LOG_DEBUG<<"Total used space (%): "<<result.value();
+    }
+    LOG_DEBUG<<"Files stored in filesystem";
     printAvailableFiles(&lfs_nand_a);
-    LOG_DEBUG<<"NAND part b Info:";
-    LOG_DEBUG<<"Used space (%): "<<getUsedSpace(&lfs_nand_b);
     printAvailableFiles(&lfs_nand_b);
-
-    // Add logic for MRAM
-
+    //@Todo add logic for MRAM
 
     //Update BIOS parameters
     if(not updateBiosFile()){

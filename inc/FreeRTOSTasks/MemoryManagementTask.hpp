@@ -9,6 +9,7 @@
 #include "NANDFlash.h"
 #include "LCLDefinitions.hpp"
 #include <etl/String.hpp>
+#include <etl/expected.h>
 #include "queue.h"
 #include "filenames.hpp"
 #include "general_definitions.hpp"
@@ -38,18 +39,92 @@ class MemManTask : public Task{
 private:
     StackType_t taskStack[MemoryManagementTaskStack];
 
-    bool writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
-    bool writeMRAM_File(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
+    /**
+     * @Description Writes the provided data to the specified file in the appropriate NAND module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param lfs       LFS instance to be used
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @param data      Data to be written
+     * @param flag      APPEND or OVERWRITE
+     * @return          0 on success, negative error code on failure
+     */
+    static etl::expected<int, lfs_error> writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
 
-    bool readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data);
-    bool readMRAM_File(const char* filename, etl::span<uint8_t> &data);
+    /**
+     * @Description Writes the provided data to the specified file to the MRAM module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @param data      Data to be written
+     * @param flag      APPEND or OVERWRITE
+     * @return          0 on success, 1 on failure [TBD]
+     */
+    static bool writeMRAM_File(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
 
-    bool eraseMRAMFile(const char* filename);
+    /**
+     * @Description Reads the requested data from the specified file from the appropriate NAND module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param lfs       LFS instance to be used
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @param data      Buffer to read data
+     * @return          0 on success, negative error code on failure
+     */
+    static etl::expected<int, lfs_error> readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data);
 
-    size_t getNANDFileSize(lfs *lfs, const char* filename);
-    size_t getMRAMFileSize(const char* filename);
+    /**
+     * @Description Reads the requested data from the specified file from the MRAM module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param data      Buffer to read data
+     * @return          0 on success, 1 on failure [TBD]
+     */
+    static bool readMRAM_File(const char* filename, etl::span<uint8_t> &data);
 
-    bool updateBiosFile();
+    /**
+     * @Description Erases the specified file from the MRAM module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @return          0 on success, 1 on failure [TBD]
+     */
+    static bool eraseMRAMFile(const char* filename);
+
+    /**
+     * @Description Returns the size of the file requested in bytes from the appropriate NAND module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param lfs       LFS instance to be used
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @return          The size of the file on success, negative error code on failure
+     */
+    static etl::expected<size_t, lfs_error> getNANDFileSize(lfs *lfs, const char* filename);
+
+    /**
+     * @Description Returns the size of the file requested in bytes from the MRAM module,
+     *              this function is meant to be used only by the MemoryManagementTask and not
+     *              to be called directly by the user.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @return          The size of the file on success, negative error code on failure [TBD]
+     */
+    static size_t getMRAMFileSize(const char* filename);
+
+    /**
+     * @Description     Returns the used space in the mounted LFS. Not meant to be used
+     *                  by the user.
+     * @param lfs       LFS instance to be used.
+     * @return          float percentage in success, negative error code on failure.
+     */
+    static etl::expected<float, lfs_error> getUsedSpace(lfs *lfs);
+
+    /**
+     * @Description     Prints the filenames stored in the specified LFS instance.
+     * @param lfs       LFS instance to be used.
+     */
+    static void printAvailableFiles(lfs *lfs);
+
+    static bool updateBiosFile();
 
 public:
     void execute();
@@ -65,13 +140,49 @@ public:
                                          &(this->taskBuffer));
     }
 
-    bool writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags);
-    bool readFromFile(const char* filename, etl::span<uint8_t> &data);
-    bool eraseFile(const char* filename);
-    bool getFileSize(const char* filename, size_t &filesize);
-    float getUsedSpace(lfs *lfs);
-    void printAvailableFiles(lfs *lfs);
-    bool formatNANDmodules();
+    /**
+     * @Description Write the provided data to the specified file,
+     *              this function handles internally the selection of the appropriate
+     *              memory module.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @param data      Data to be written
+     * @param flag      APPEND or OVERWRITE
+     * @return          0 on success, negative error code on failure.
+     */
+    static etl::expected<int, lfs_error> writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags);
+
+    /**
+     * @Description Reads the requested data from the specified file,
+     *              this function handles internally the selection of the appropriate
+     *              memory module.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @param data      Data to be written
+     * @return          0 on success, negative error code on failure.
+     */
+    static etl::expected<int, lfs_error> readFromFile(const char* filename, etl::span<uint8_t> &data);
+
+    /**
+     * @Description Erases the specified file, this function handles internally the
+     *              selection of the appropriate memory module.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @return          0 on success, negative error code on failure.
+     */
+    static etl::expected<int, lfs_error> eraseFile(const char* filename);
+
+    /**
+     * @Description Returns the size of the selected file in bytes.
+     * @param filename  Filename according to the filename convention (see filenames.hpp)
+     * @return size on success, negative error code on failure.
+     */
+    static etl::expected<size_t , lfs_error> getFileSize(const char* filename);
+
+    /**
+     * @Description Get the total memory use percentage of all memory modules available.
+     * @return float percent on success, negative error code on failure.
+     */
+    static etl::expected<float, lfs_error> getUsedMemory();
+
+    static bool formatNANDmodules();
 
 };
 
