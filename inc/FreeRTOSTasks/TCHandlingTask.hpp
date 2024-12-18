@@ -8,6 +8,7 @@
 #include "Message.hpp"
 #include "MessageParser.hpp"
 #include "OBC_Definitions.hpp"
+#include "MemoryManagementTask.hpp"
 #include "TaskConfigs.hpp"
 
 /**
