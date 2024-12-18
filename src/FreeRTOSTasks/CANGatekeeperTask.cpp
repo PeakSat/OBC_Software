@@ -1,6 +1,8 @@
 #include "CAN/Driver.hpp"
 #include "CAN/Frame.hpp"
 #include "CANGatekeeperTask.hpp"
+#include <ApplicationLayer.hpp>
+
 struct incomingFIFO incomingFIFO;
 uint8_t incomingBuffer[CANMessageSize * sizeOfIncommingFrameBuffer];
 struct localPacketHandler {
@@ -83,6 +85,9 @@ void CANGatekeeperTask::execute() {
             uint8_t frameType = metadata >> 6;
             uint8_t payloadLength = metadata & 0x3F;
             if (frameType == CAN::TPProtocol::Frame::Single) {
+                if (in_frame_handler.pointerToData[1] == CAN::Application::MessageIDs::ACK) {
+                    CAN_TRANSMIT_Handler.ACKReceived = true;
+                }
                 __NOP();
             } else if (frameType == CAN::TPProtocol::Frame::First) {
                 // // debugCounter=0;
@@ -116,6 +121,10 @@ void CANGatekeeperTask::execute() {
                         CANPacketHandler->Buffer[CANPacketHandler->TailPointer] = in_frame_handler.pointerToData[i + 2];
                         CANPacketHandler->TailPointer = CANPacketHandler->TailPointer + 1;
                     }
+                    // Send ACK
+                    CAN::TPMessage ACKmessage = {{CAN::NodeID, CAN::NodeIDs::OBC, false}};
+                    ACKmessage.appendUint8(CAN::Application::MessageIDs::ACK);
+                    CAN::TPProtocol::createCANTPMessage(ACKmessage, false);
                     // Add message to queue
                     CAN::TPMessage message;
                     message.appendUint8(CANPacketHandler->PacketID);
