@@ -36,13 +36,13 @@ namespace CAN::Application {
             newBus = Driver::Main;
         }
 
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
 
         canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
     }
 
     void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
 
         canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
     }
@@ -55,12 +55,12 @@ namespace CAN::Application {
         uint32_t ticksOfDay = static_cast<uint32_t>(msOfDay.count() / 100);
 
         UTCTimestamp utc = now.toUTCtimestamp();
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
-                                                               static_cast<uint8_t>(ticksOfDay >> 8),
-                                                               static_cast<uint8_t>(ticksOfDay >> 16),
-                                                               static_cast<uint8_t>(ticksOfDay >> 24),
-                                                               static_cast<uint8_t>(utc.day),
-                                                               static_cast<uint8_t>(utc.day >> 8)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
+                                                           static_cast<uint8_t>(ticksOfDay >> 8),
+                                                           static_cast<uint8_t>(ticksOfDay >> 16),
+                                                           static_cast<uint8_t>(ticksOfDay >> 24),
+                                                           static_cast<uint8_t>(utc.day),
+                                                           static_cast<uint8_t>(utc.day >> 8)};
 
         canGatekeeperTask->send({MessageIDs::UTCTime + CAN::NodeID, data}, false);
     }
@@ -180,7 +180,7 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void parseMessage(const CAN::Frame& message) {
+    void parseMessage(const CAN::Packet& message) {
         uint32_t id = filterMessageID(message.id);
         if (id == Heartbeat) {
             //            registerHeartbeat();

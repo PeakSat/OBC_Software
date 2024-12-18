@@ -177,10 +177,10 @@ typedef struct
     size_t  readCount;
 
     /* State */
-    TWIHS_STATE state;
+    volatile TWIHS_STATE state;
 
     /* Transfer status */
-    TWIHS_ERROR error;
+    volatile TWIHS_ERROR error;
 
     /* Transfer Event Callback */
     TWIHS_CALLBACK callback;

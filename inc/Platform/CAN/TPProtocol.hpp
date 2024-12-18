@@ -3,6 +3,18 @@
 #include "CAN/ApplicationLayer.hpp"
 #include "CAN/Frame.hpp"
 #include "CAN/TPMessage.hpp"
+#include "FreeRTOS.h"
+#include <semphr.h>
+/**
+ *
+ */
+struct CANTransactionHandler {
+    SemaphoreHandle_t CAN_TRANSMIT_SEMAPHORE;
+    bool ACKReceived = false;
+    // bool NACKReceived = false; // todo
+    uint32_t CAN_ACK_TIMEOUT = 1000; //ms
+};
+extern CANTransactionHandler CAN_TRANSMIT_Handler;
 
 namespace CAN::TPProtocol {
     /**
@@ -28,13 +40,13 @@ namespace CAN::TPProtocol {
     /**
      * The usable data length for a consecutive message.
      */
-    static constexpr uint8_t UsableDataLength = CAN::Frame::MaxDataLength - 1;
+    static constexpr uint8_t UsableDataLength = CAN::MaxPayloadLength - 2;
 
     /**
      * Creates a TPMessage object from a single frame, and passes it over to the parse function.
      * @param message A received CAN::Frame.
      */
-    void processSingleFrame(const CAN::Frame& message);
+    void processSingleFrame(const CAN::Packet& message);
 
     /**
      * Receives a collection of messages from the Gatekeeper Task's incomingQueue, and processes them.
@@ -60,5 +72,5 @@ namespace CAN::TPProtocol {
      * however idx only reaches a maximum value of 62 which makes the position in the consecutiveFrame array valid.
      * The message.data[] part reaches the maximum index of 62 for the first frame, continues from 63 up to 125 etc.
      */
-    void createCANTPMessage(const TPMessage& message, bool isISR);
+    bool createCANTPMessage(const TPMessage& message, bool isISR);
 } // namespace CAN::TPProtocol

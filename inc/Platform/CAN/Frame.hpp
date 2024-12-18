@@ -3,20 +3,56 @@
 #include "etl/array.h"
 #include "Peripheral_Definitions.hpp"
 
+#include <peripheral/mcan/plib_mcan_common.h>
+
+/**
+ * A CAN::Packet is part of a CAN message. The driver can only handle packets of 1024 bytes maximum length.
+ * Any bigger messages need to be dissected into packets by the application layer.
+ * Packets are then divided into frames by the driver.
+ */
 namespace CAN {
     /**
-     * A CAN::Frame is a single message that is going to be sent over the CAN Bus. It could be part of collection of
-     * CAN::Frames composing a CAN::TPMessage, a Single Frame TP Message, or a non-TP Message.
-     *
-     * It consists of an ID which specifies the message's function, as in DDJF_OBDH + an etl::array that contains the
-     * message payload. A CAN::Frame is merely a carrier of information and has no functionality.
-     */
+ * The maximum data length that is currently configured in the peripheral.
+ */
+    static constexpr uint8_t MaxPayloadLength = 8;
+    static constexpr uint8_t MaxPacketLength = 1024;
+
+    enum CANInstance {
+        CAN1,
+        CAN2
+    };
+
     class Frame {
     public:
         /**
-         * The maximum data length that is currently configured in the peripheral.
-         */
-        static constexpr uint8_t MaxDataLength = 64;
+     * Pointer to the bus from which the frame came from
+     */
+        CANInstance bus;
+
+        /**
+     * The header contains information about the frame,
+     * such as sender ID
+      */
+        MCAN_RX_BUFFER header;
+
+        /**
+      *Pointer to the 64 byte buffer of data
+      */
+        uint8_t* pointerToData;
+
+        Frame()
+            : pointerToData(0) {
+        }
+    };
+
+
+    /**
+* A class to handle the incoming frames and combine them into a packet (1024 bytes max).
+* The application layer does not deal with frames, only packets.
+ */
+    class Packet {
+    public:
+        // static constexpr uint8_t MaxDataLength = 8;
 
         /**
          * The right aligned ID of the message to be sent. Since the protocol doesn't make use of extended IDs,
@@ -32,13 +68,13 @@ namespace CAN {
          * @note Users should use data.push_back() instead of data[i] while adding items to avoid errors caused by
          * copying the array to the gatekeeper queue.
          */
-        etl::array<uint8_t, MaxDataLength> data = {};
+        etl::array<uint8_t, MaxPayloadLength> data = {};
 
-        Frame() = default;
+        Packet() = default;
 
-        Frame(uint32_t id) : id(id){};
+        Packet(uint32_t id) : id(id){};
 
-        Frame(uint32_t id, const etl::array<uint8_t, MaxDataLength>& data) : id(id), data(data){};
+        Packet(uint32_t id, const etl::array<uint8_t, MaxPayloadLength>& data) : id(id), data(data){};
 
         /**
          * Zeroes out the current frame. Use this if you're using a single static object in a recurring function.

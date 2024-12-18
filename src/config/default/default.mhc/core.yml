@@ -3932,12 +3932,21 @@ children:
       - type: User
         attributes: {value: 'true'}
   - type: Boolean
-    attributes: {id: PMC_CKGR_MOR_MOSCXTEN}
+    attributes: {id: PMC_CKGR_MOR_MOSCXTBY}
     children:
     - type: Values
       children:
       - type: User
         attributes: {value: 'true'}
+  - type: Boolean
+    attributes: {id: PMC_CKGR_MOR_MOSCXTEN}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+      - type: User
+        attributes: {value: 'false'}
   - type: Hex
     attributes: {id: PMC_PCER0}
     children:
@@ -4211,13 +4220,6 @@ children:
       children:
       - type: User
         attributes: {value: 'true'}
-  - type: Boolean
-    attributes: {id: SYSTICK_BUSY}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: core, value: 'true'}
   - type: String
     attributes: {id: SYSTICK_CLOCK_FREQUENCY}
     children:
