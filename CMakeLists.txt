@@ -82,6 +82,7 @@ include_directories(
         lib/Peripherals/NANDFlash/src
         lib/Peripherals/COBS
         lib/Peripherals/ADM
+        lib/Peripherals/LittleFS/inc
 )
 
 # Show and add GitHash to code
