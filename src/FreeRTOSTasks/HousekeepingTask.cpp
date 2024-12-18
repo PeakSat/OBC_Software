@@ -10,7 +10,7 @@ void HousekeepingTask::execute() {
 
     while (true) {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        nextCollection = housekeeping.reportPendingStructures(xTaskGetTickCount(), timeBeforeDelay, nextCollection);
+//        nextCollection = housekeeping.reportPendingStructures(xTaskGetTickCount(), timeBeforeDelay, nextCollection);
         timeBeforeDelay = xTaskGetTickCount();
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(nextCollection));

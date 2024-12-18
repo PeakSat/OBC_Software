@@ -242,7 +242,7 @@ namespace CAN::Application {
             return;
         }
 
-        String<ECSSMaxMessageSize> logString = message.data + 1;
+        String<ECSSMaxMessageSize> logString = message.data.data() + 1;
 
         LOG_DEBUG << logString.c_str();
     }
@@ -253,7 +253,7 @@ namespace CAN::Application {
             return;
         }
 
-        Message teleCommand = MessageParser::parseECSSTC(message.data + 1);
+        Message teleCommand = MessageParser::parseECSSTC(message.data.data() + 1);
 
         MessageParser::execute(teleCommand);
     }

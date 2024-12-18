@@ -9,6 +9,12 @@
 #include "FreeRTOSHandlers.hpp"
 
 
+// ECSS Header Files
+#include "ErrorHandler.hpp"
+#include "Message.hpp"
+
+
+
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
 #include "TimeKeepingTask.hpp"
@@ -83,7 +89,7 @@ extern "C" void main_cpp() {
      canGatekeeperTask->createTask();
      canTestTask->createTask();
      housekeepingTask->createTask();
-     tcHandlingTask->createTask();
+//     tcHandlingTask->createTask();
      mcuTemperatureTask->createTask();
     // ambientTemperatureTask->createTask();
     // mramTask->createTask();
