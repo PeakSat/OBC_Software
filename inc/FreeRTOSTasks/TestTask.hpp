@@ -2,6 +2,8 @@
 
 #include "FreeRTOS.h"
 #include <queue.h>
+#include <etl/vector.h>
+#include <sstream>
 #include "TaskConfigs.hpp"
 
 class TestTask : public Task {
