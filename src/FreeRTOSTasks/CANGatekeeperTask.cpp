@@ -134,8 +134,6 @@ void CANGatekeeperTask::execute() {
                     CAN::TPProtocol::parseMessage(message);
                     __NOP();
 
-                    // xQueueSendToBack(storedPacketQueue, &PacketToBeStored, NULL);
-                    // CAN::TPProtocol::parseMessage(message);
                 } else {
                     // Message not received correctly
                     LOG_DEBUG << "DROPPED CAN MESSAGE";
@@ -143,7 +141,6 @@ void CANGatekeeperTask::execute() {
                 __NOP();
                 CANPacketHandler->TailPointer = 0;
             }
-
             //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         }
         while (uxQueueMessagesWaiting(outgoingQueue)) {
