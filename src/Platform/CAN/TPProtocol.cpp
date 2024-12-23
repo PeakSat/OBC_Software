@@ -172,14 +172,14 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
         // ACK received
         if (CAN_TRANSMIT_Handler.ACKReceived == true) {
             xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-            return false;
             LOG_DEBUG << "CAN ACK received";
+            return false;
         }
         // Transaction timed out
         if (xTaskGetTickCount() > (CAN_TRANSMIT_Handler.CAN_ACK_TIMEOUT + startTime)) {
             xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-            return true;
             LOG_DEBUG << "CAN ACK timeout";
+            return true;
         }
     }
 }
