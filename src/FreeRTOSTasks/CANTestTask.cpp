@@ -11,19 +11,32 @@ void CANTestTask::execute() {
 
     String<ECSSMaxMessageSize> testPayload1("WHO LIVES IN A PINEAPPLE UNDER THE SEA?");
 
-    String<ECSSMaxMessageSize> testPayload2("Giati?");
+    String<ECSSMaxMessageSize> testPayload2("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi");
 
     while (true) {
 
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
-            CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
-            LOG_DEBUG << "Sent CAN message to main CAN bus";
+            for (int i = 0; i < 3; i++) {
+                if (!CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false)) {
+                    LOG_DEBUG << "CAN: ACK received";
+                    break;
+                } else if (i == 2) {
+                    LOG_ERROR << "CAN: ACK not received";
+                }
+            }
+
         } else {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
-            CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false);
-            LOG_DEBUG << "Sent CAN message to redundant CAN bus";
+            for (int i = 0; i < 3; i++) {
+                if (!CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false)) {
+                    LOG_DEBUG << "CAN: ACK received";
+                    break;
+                } else if (i == 2) {
+                    LOG_ERROR << "CAN: ACK not received";
+                }
+            }
         }
 
 
