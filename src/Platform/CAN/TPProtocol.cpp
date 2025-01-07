@@ -3,7 +3,9 @@
 
 using namespace CAN;
 
-void TPProtocol::processSingleFrame(const CAN::Frame& message) {
+CANTransactionHandler CAN_TRANSMIT_Handler;
+
+void TPProtocol::processSingleFrame(const CAN::Packet& message) {
     TPMessage tpMessage;
     tpMessage.decodeId(message.id);
 
@@ -16,7 +18,7 @@ void TPProtocol::processSingleFrame(const CAN::Frame& message) {
         tpMessage.appendUint8(message.data[idx]);
     }
 
-    parseMessage(tpMessage);
+    // parseMessage(tpMessage);
 }
 
 void TPProtocol::processMultipleFrames() {
@@ -26,7 +28,7 @@ void TPProtocol::processMultipleFrames() {
     bool receivedFirstFrame = false;
 
     for (uint8_t messageCounter = 0; messageCounter < incomingMessagesCount; messageCounter++) {
-        CAN::Frame frame = canGatekeeperTask->getFromMFQueue();
+        CAN::Packet frame = canGatekeeperTask->getFromMFQueue();
         auto frameType = static_cast<Frame>(frame.data[0] >> 6);
 
         if (not receivedFirstFrame) {
@@ -43,7 +45,7 @@ void TPProtocol::processMultipleFrames() {
                 return;
             }
 
-            for (size_t idx = 1; idx < CAN::Frame::MaxDataLength; idx++) {
+            for (size_t idx = 1; idx < CAN::MaxPayloadLength; idx++) {
                 message.appendUint8(frame.data[idx]);
                 if (message.dataSize >= dataLength) {
                     break;
@@ -56,7 +58,7 @@ void TPProtocol::processMultipleFrames() {
         return;
     }
 
-    parseMessage(message);
+    // parseMessage(message);
 }
 
 void TPProtocol::parseMessage(TPMessage& message) {
@@ -97,7 +99,7 @@ void TPProtocol::parseMessage(TPMessage& message) {
             String<ECSSMaxMessageSize> logSource = "Incoming Log from ";
             logSource.append(senderName);
             logSource.append(": ");
-            auto logData = String<ECSSMaxMessageSize>(message.data.data() + 1, message.dataSize - 1);
+            auto logData = String<ECSSMaxMessageSize>(message.data.begin() + 1, message.dataSize - 1);
             LOG_DEBUG << logSource.c_str() << logData.c_str();
         } break;
         default:
@@ -107,31 +109,41 @@ void TPProtocol::parseMessage(TPMessage& message) {
     }
 }
 
-void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     size_t messageSize = message.dataSize;
     uint32_t id = message.encodeId();
     // Data fits in a Single Frame
     if (messageSize <= UsableDataLength) {
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {
             static_cast<uint8_t>(((Single << 6) & 0xFF) | (messageSize & 0b111111))};
         for (size_t idx = 0; idx < messageSize; idx++) {
             data.at(idx + 1) = message.data[idx];
         }
-        canGatekeeperTask->send({id, data}, isISR);
-
-        return;
+        if (message.data[0] == Application::ACK) {
+            // Don't wait if it's an ack response
+            canGatekeeperTask->send({id, data}, isISR);
+        } else {
+            xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
+            canGatekeeperTask->send({id, data}, isISR);
+            xTaskNotifyGive(canGatekeeperTask->taskHandle);
+            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+        }
+        return false;
     }
 
     // First Frame
+    xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
+    CAN_TRANSMIT_Handler.ACKReceived = false;
     {
         // 4 MSB bits is the Frame Type identifier and the 4 LSB are the leftmost 4 bits of the data length.
         uint8_t firstByte = (First << 6) | ((messageSize >> 8) & 0b111111);
         // Rest of the data length.
         uint8_t secondByte = messageSize & 0xFF;
 
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> firstFrame = {firstByte, secondByte};
+        etl::array<uint8_t, CAN::MaxPayloadLength> firstFrame = {firstByte, secondByte};
 
         canGatekeeperTask->send({id, firstFrame}, isISR);
+        xTaskNotifyGive(canGatekeeperTask->taskHandle);
     }
 
     // Consecutive Frames
@@ -139,16 +151,39 @@ void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     for (uint8_t currentConsecutiveFrameCount = 1;
          currentConsecutiveFrameCount <= totalConsecutiveFramesNeeded; currentConsecutiveFrameCount++) {
 
-        uint8_t firstByte = (Consecutive << 6) | (currentConsecutiveFrameCount & 0b111111);
+        uint8_t firstByte = (Consecutive << 6);
         if (currentConsecutiveFrameCount == totalConsecutiveFramesNeeded) {
-            firstByte = ((Final << 6) & 0xFF) | (currentConsecutiveFrameCount & 0b111111);
+            firstByte = (Final << 6);
         }
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> consecutiveFrame = {firstByte};
+        etl::array<uint8_t, CAN::MaxPayloadLength> consecutiveFrame = {firstByte};
+        consecutiveFrame.at(1) = currentConsecutiveFrameCount;
 
         for (uint8_t idx = 0; idx < UsableDataLength; idx++) {
-            consecutiveFrame.at(idx + 1) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
+            consecutiveFrame.at(idx + 2) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
+        }
+
+        if (currentConsecutiveFrameCount % 4 == 3) { // Make sure the output buffers do not overflow
+            vTaskDelay(1);
         }
 
         canGatekeeperTask->send({id, consecutiveFrame}, isISR);
+        xTaskNotifyGive(canGatekeeperTask->taskHandle);
+    }
+
+    uint32_t startTime = xTaskGetTickCount();
+    while (true) {
+        vTaskDelay(1);
+        // ACK received
+        if (CAN_TRANSMIT_Handler.ACKReceived == true) {
+            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+            LOG_DEBUG << "CAN ACK received";
+            return false;
+        }
+        // Transaction timed out
+        if (xTaskGetTickCount() > (CAN_TRANSMIT_Handler.CAN_ACK_TIMEOUT + startTime)) {
+            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+            LOG_DEBUG << "CAN ACK timeout";
+            return true;
+        }
     }
 }

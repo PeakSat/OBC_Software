@@ -13,8 +13,8 @@ public:
     CANTestTask() : Task("CAN Test") {}
 
     /**
-     * Create freeRTOS Task
-     */
+   * Create freeRTOS Task
+   */
     void createTask() {
         xTaskCreateStatic(vClassTask<CANTestTask>, this->TaskName, CANTestTaskStack, this,
                           CANTestTaskPriority, this->taskStack, &(this->taskBuffer));

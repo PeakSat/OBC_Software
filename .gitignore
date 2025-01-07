@@ -64,6 +64,7 @@ Inc/version.h
 .idea/**/contentModel.xml
 
 # Sensitive or high-churn files
+.idea/vcs.xml
 .idea/**/dataSources/
 .idea/**/dataSources.ids
 .idea/**/dataSources.local.xml
