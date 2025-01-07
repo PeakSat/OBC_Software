@@ -4,8 +4,15 @@
 #include "list.h"
 #include "task.h"
 #include "definitions.h"
+#include "general_definitions.hpp"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
+
+
+// ECSS Header Files
+#include "ErrorHandler.hpp"
+#include "Message.hpp"
+
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -19,15 +26,16 @@
 #include "CANGatekeeperTask.hpp"
 #include "CANTestTask.hpp"
 #include "TCHandlingTask.hpp"
-#include "NANDTask.hpp"
-#include "MRAMTask.hpp"
+//#include "NANDTask.hpp"
+//#include "MRAMTask.hpp"
+#include "MemoryManagementTask.hpp"
 #include "PayloadTestTask.hpp"
 #include "TestTask.hpp"
+#include "OnBoardMonitoringTask.hpp"
 // Task Header files end
 
+
 #define IDLE_TASK_SIZE 1000
-
-
 #if configSUPPORT_STATIC_ALLOCATION
 /* static memory allocation for the IDLE task */
 static StaticTask_t xIdleTaskTCBBuffer;
@@ -42,21 +50,31 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
 
 #endif
 
+#if configGENERATE_RUN_TIME_STATS
+void configureDWTForRunTimeStats(void) {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT access
+    DWT->CYCCNT = 0; // Reset the cycle counter
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Enable the cycle counter
+}
+
+uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
+#endif
+
 
 extern "C" void main_cpp() {
     ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    //    nandTask.emplace();
-    //     payloadTestTask.emplace();
-    //     canGatekeeperTask.emplace();
-    //     canTestTask.emplace();
-    //     housekeepingTask.emplace();
-    tcHandlingTask.emplace();
+    payloadTestTask.emplace();
+    canGatekeeperTask.emplace();
+    canTestTask.emplace();
+    housekeepingTask.emplace();
+    onBoardMonitoringTask.emplace();
+    // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
-    ambientTemperatureTask.emplace();
-    // mramTask.emplace();
+    // ambientTemperatureTask.emplace();
+    memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -64,16 +82,16 @@ extern "C" void main_cpp() {
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    //    nandTask->createTask();
-    //     payloadTestTask->createTask();
-    //     canGatekeeperTask->createTask();
-    //     canTestTask->createTask();
-    //     housekeepingTask->createTask();
+    payloadTestTask->createTask();
+    canGatekeeperTask->createTask();
+    canTestTask->createTask();
+    housekeepingTask->createTask();
+    onBoardMonitoringTask->createTask();
     //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-    //     ambientTemperatureTask->createTask();
-    // mramTask->createTask();
-    //     timeKeepingTask->createTask();
+    // ambientTemperatureTask->createTask();
+    memManTask->createTask();
+    timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
 

@@ -74,8 +74,8 @@
 #define configUSE_MALLOC_FAILED_HOOK 1
 
 /* Run time and task stats gathering related definitions. */
-#define configGENERATE_RUN_TIME_STATS 0
-#define configUSE_TRACE_FACILITY 0
+#define configGENERATE_RUN_TIME_STATS 1
+#define configUSE_TRACE_FACILITY 1
 #define configUSE_STATS_FORMATTING_FUNCTIONS 0
 
 /* Co-routine related definitions. */
@@ -130,5 +130,7 @@ standard names. */
 #define xPortPendSVHandler PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
 
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() configureDWTForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE() getTimerValue()
 
 #endif /* FREERTOS_H */
