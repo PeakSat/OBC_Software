@@ -83,6 +83,8 @@ include_directories(
         lib/Peripherals/COBS
         lib/Peripherals/ADM
         lib/Peripherals/LittleFS/inc
+        lib/Peripherals/PeakSat_HAL/I2C_HAL/inc
+        lib/Peripherals/EPS
 )
 
 # Show and add GitHash to code
@@ -95,6 +97,7 @@ file(GLOB_RECURSE DRIVER_SOURCES
         "lib/Peripherals/LCL/*.cpp"
         "lib/Peripherals/NANDFlash/*.cpp"
         "lib/Peripherals/MRAM/*.cpp"
+        "lib/Peripherals/EPS/*.cpp"
         "lib/Peripherals/LittleFS/*.c"
         "lib/SEGGER/RTT/*.c"
 )
