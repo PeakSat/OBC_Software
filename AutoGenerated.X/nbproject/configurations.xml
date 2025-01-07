@@ -60,7 +60,6 @@
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs_master_common.h</itemPath>
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs1_master.h</itemPath>
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs0_master.h</itemPath>
-                <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs2_master.h</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="f14" displayName="uart" projectFiles="true">
@@ -288,7 +287,6 @@
               <logicalFolder name="f1" displayName="master" projectFiles="true">
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs1_master.c</itemPath>
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs0_master.c</itemPath>
-                <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs2_master.c</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="f14" displayName="uart" projectFiles="true">
@@ -348,7 +346,6 @@
         <itemPath>../src/config/default/default.mhc/rtc.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/settings.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/twihs1.yml</itemPath>
-        <itemPath>../src/config/default/default.mhc/twihs2.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/efc.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/smc.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/pwm0.yml</itemPath>

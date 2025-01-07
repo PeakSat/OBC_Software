@@ -72,7 +72,6 @@ void TWIHS1_InterruptHandler (void);
 void AFEC0_InterruptHandler (void);
 void MCAN0_INT0_InterruptHandler (void);
 void MCAN1_INT0_InterruptHandler (void);
-void TWIHS2_InterruptHandler (void);
 void UART2_InterruptHandler (void);
 void XDMAC_InterruptHandler (void);
 

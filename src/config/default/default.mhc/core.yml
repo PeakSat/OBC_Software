@@ -746,21 +746,21 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: NVIC_41_0_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: TWIHS2_InterruptHandler}
+        attributes: {id: core, value: TWIHS2_Handler}
   - type: Boolean
     attributes: {id: NVIC_41_0_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: Boolean
     attributes: {id: NVIC_44_0_ENABLE}
     children:
@@ -2981,13 +2981,6 @@ children:
       - type: User
         attributes: {value: Out}
   - type: String
-    attributes: {id: PIN_69_DRIVER}
-    children:
-    - type: Values
-      children:
-      - type: User
-        attributes: {value: ''}
-  - type: String
     attributes: {id: PIN_69_FUNCTION_NAME}
     children:
     - type: Values
@@ -3807,13 +3800,6 @@ children:
       - type: Dynamic
         attributes: {id: core, value: '150000000'}
   - type: Hex
-    attributes: {id: PIOD_DRIVER_VALUE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: core, value: '0'}
-  - type: Hex
     attributes: {id: PIOD_OER_VALUE}
     children:
     - type: Values
@@ -3951,7 +3937,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '67113512'}
+        attributes: {id: core, value: '67113000'}
   - type: Combo
     attributes: {id: PMC_PCK4_CSS}
     children:
@@ -4444,13 +4430,6 @@ children:
       children:
       - type: Dynamic
         attributes: {id: twihs1, value: 'true'}
-  - type: Boolean
-    attributes: {id: TWIHS2_CLOCK_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: twihs2, value: 'true'}
   - type: Integer
     attributes: {id: TWIHS2_CLOCK_FREQUENCY}
     children:
@@ -4459,33 +4438,12 @@ children:
       - type: Dynamic
         attributes: {id: core, value: '150000000'}
   - type: Boolean
-    attributes: {id: TWIHS2_INTERRUPT_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: twihs2, value: 'true'}
-  - type: Boolean
     attributes: {id: TWIHS2_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
-  - type: String
-    attributes: {id: TWIHS2_INTERRUPT_HANDLER}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: twihs2, value: TWIHS2_InterruptHandler}
-  - type: Boolean
-    attributes: {id: TWIHS2_INTERRUPT_HANDLER_LOCK}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: twihs2, value: 'true'}
+        attributes: {id: core, value: 'true'}
   - type: Boolean
     attributes: {id: UART0_CLOCK_ENABLE}
     children:
