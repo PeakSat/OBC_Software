@@ -14,6 +14,6 @@ void OnBoardMonitoringTask::execute() {
             if (status == PMON::CheckingStatus::BelowLowLimit) {}
                           LOG_INFO << "parameter status: BelowLowLimit ";
         }
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
