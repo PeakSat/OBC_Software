@@ -10,8 +10,9 @@ void OnBoardMonitoringTask::execute() {
         onBoardMonitoring.checkAll();
         if (onBoardMonitoring.getPMONDefinition(AcubeSATParameters::OBCPCBTemperature1).get().
                               checkingStatus != PMON::CheckingStatus::WithinLimits) {
-            LOG_INFO << "parameter status: " << Services.onBoardMonitoringService.getPMONDefinition(
-                AcubeSATParameters::OBCPCBTemperature1).get().checkingStatus;
+            auto status = onBoardMonitoring.getPMONDefinition(AcubeSATParameters::OBCPCBTemperature1).get().checkingStatus;
+            if (status == PMON::CheckingStatus::BelowLowLimit) {}
+                          LOG_INFO << "parameter status: BelowLowLimit ";
         }
         vTaskDelay(pdMS_TO_TICKS(100));
     }

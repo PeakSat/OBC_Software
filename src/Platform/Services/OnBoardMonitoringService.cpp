@@ -10,8 +10,8 @@ void OnBoardMonitoringService::initializeParameterMonitoringMap() {
         PMONLimitCheck(AcubeSATParameters::OBCPCBTemperature1, 5, 10, 0, 40, 1)
     };
     for (auto& limitCheck: limitChecksArray) {
-        addPMONLimitCheck(limitCheck.monitoredParameterId, limitCheck);
         limitCheck.monitoringEnabled = true;
+        addPMONLimitCheck(limitCheck.monitoredParameterId, limitCheck);
     }
     static etl::array<PMONExpectedValueCheck, MaximumNumberOfChecksDeltaCheck> expectedValueChecksArray{
         PMONExpectedValueCheck(AcubeSATParameters::OBCPCBTemperature1, 5, 28, 4, 0)
