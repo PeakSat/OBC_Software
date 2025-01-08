@@ -1,8 +1,8 @@
 #include "CANTestTask.hpp"
 #include "CANGatekeeperTask.hpp"
 
-void CANTestTask::execute() {
 
+void CANTestTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
     CAN::Packet frame = {CAN::NodeID};
     for (auto i = 0; i < CAN::MaxPayloadLength; i++) {
