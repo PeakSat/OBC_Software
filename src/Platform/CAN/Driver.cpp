@@ -59,24 +59,24 @@ void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
         return;
     }
 
-    if (true) { // Check if the message came from the COMMS
-        for (size_t messageNumber = 0; messageNumber < numberOfMessages; messageNumber++) {
-            /* Retrieve Rx messages from RX FIFO0 */
-            CAN::Frame newFrame;
-            if (incomingFIFO.lastItemPointer >= sizeOfIncommingFrameBuffer) {
-                incomingFIFO.lastItemPointer = 0;
-            }
-            newFrame.pointerToData = &incomingFIFO.buffer[CANMessageSize * (incomingFIFO.lastItemPointer)];
-            if (not(MCAN0_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &rxFifo0))) {
-                // ERROR
-            }
+    for (size_t messageNumber = 0; messageNumber < numberOfMessages; messageNumber++) {
+        /* Retrieve Rx messages from RX FIFO0 */
+        CAN::Frame newFrame;
+        if (incomingFIFO.lastItemPointer >= sizeOfIncommingFrameBuffer) {
+            incomingFIFO.lastItemPointer = 0;
+        }
+        newFrame.pointerToData = &incomingFIFO.buffer[CANMessageSize * (incomingFIFO.lastItemPointer)];
+        if (not(MCAN0_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &newFrame.header))) {
+            // ERROR
+        }
+        if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
 
             // Add data to the buffer
             for (int i = 0; i < MaxPayloadLength; i++) {
-                newFrame.pointerToData[i] = rxFifo0.data[i];
+                newFrame.pointerToData[i] = newFrame.header.data[i];
             }
 
-            newFrame.bus = CAN::CAN1;
+            newFrame.bus = CAN::CAN2;
 
             // Notify the gatekeeper
             if (xQueueIsQueueFullFromISR(canGatekeeperTask->incomingFrameQueue)) {
@@ -90,9 +90,9 @@ void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
                 __NOP();
             }
+        } else if (false) { // else logic for ADCS
         }
-
-    } // else logic for ADCS
+    }
 }
 
 void CAN::Driver::mcan0RxFifo1Callback(uint8_t numberOfMessages, uintptr_t context) {
@@ -141,21 +141,21 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
         return;
     }
 
-    if (true) { // Check if the message came from the COMMS
-        for (size_t messageNumber = 0; messageNumber < numberOfMessages; messageNumber++) {
-            /* Retrieve Rx messages from RX FIFO0 */
-            CAN::Frame newFrame;
-            if (incomingFIFO.lastItemPointer >= sizeOfIncommingFrameBuffer) {
-                incomingFIFO.lastItemPointer = 0;
-            }
-            newFrame.pointerToData = &incomingFIFO.buffer[CANMessageSize * (incomingFIFO.lastItemPointer)];
-            if (not(MCAN1_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &rxFifo0))) {
-                // ERROR
-            }
+    for (size_t messageNumber = 0; messageNumber < numberOfMessages; messageNumber++) {
+        /* Retrieve Rx messages from RX FIFO0 */
+        CAN::Frame newFrame;
+        if (incomingFIFO.lastItemPointer >= sizeOfIncommingFrameBuffer) {
+            incomingFIFO.lastItemPointer = 0;
+        }
+        newFrame.pointerToData = &incomingFIFO.buffer[CANMessageSize * (incomingFIFO.lastItemPointer)];
+        if (not(MCAN1_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &newFrame.header))) {
+            // ERROR
+        }
+        if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
 
             // Add data to the buffer
             for (int i = 0; i < MaxPayloadLength; i++) {
-                newFrame.pointerToData[i] = rxFifo0.data[i];
+                newFrame.pointerToData[i] = newFrame.header.data[i];
             }
 
             newFrame.bus = CAN::CAN2;
@@ -172,9 +172,9 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
                 __NOP();
             }
+        } else if (false) { // else logic for ADCS
         }
-
-    } // else logic for ADCS
+    }
 }
 
 void CAN::Driver::mcan1RxFifo1Callback(uint8_t numberOfMessages, uintptr_t context) {

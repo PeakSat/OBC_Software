@@ -132,6 +132,9 @@ void CANGatekeeperTask::execute() {
                     for (int i = 0; i < CANPacketHandler->PacketSize; i++) {
                         message.appendUint8(CANPacketHandler->Buffer[i]);
                     }
+                    if (in_frame_handler.header.id == 239077152) {
+                        message.idInfo.sourceAddress = CAN::COMMS;
+                    }
                     CAN::TPProtocol::parseMessage(message);
                     __NOP();
 
