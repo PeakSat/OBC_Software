@@ -72,7 +72,7 @@ namespace CAN::TPProtocol {
      * however idx only reaches a maximum value of 62 which makes the position in the consecutiveFrame array valid.
      * The message.data[] part reaches the maximum index of 62 for the first frame, continues from 63 up to 125 etc.
      */
-    uint32_t createCANTPMessage(const TPMessage& message, bool isISR);
+    bool createCANTPMessage(const TPMessage& message, bool isISR);
     bool createCANTPMessageWithRetry(const TPMessage& message, bool isISR, uint32_t NoOfRetries);
     bool createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR);
 } // namespace CAN::TPProtocol

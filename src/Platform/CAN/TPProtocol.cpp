@@ -109,7 +109,7 @@ void TPProtocol::parseMessage(TPMessage& message) {
     }
 }
 
-uint32_t TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     if (!createCANTPMessageWithRetry(message, isISR, 2)) {
         return 0;
     } else {

@@ -69,7 +69,8 @@ void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
         if (not(MCAN0_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &newFrame.header))) {
             // ERROR
         }
-        if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
+        // if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
+        if (true) {
 
             // Add data to the buffer
             for (int i = 0; i < MaxPayloadLength; i++) {
@@ -90,7 +91,8 @@ void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
                 __NOP();
             }
-        } else if (false) { // else logic for ADCS
+        } else if (true) { // else logic for ADCS
+            __NOP();
         }
     }
 }
@@ -151,7 +153,8 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
         if (not(MCAN1_MessageReceiveFifo(MCAN_RX_FIFO_0, 1, &newFrame.header))) {
             // ERROR
         }
-        if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
+        // if (newFrame.header.id == 239077152) { // Check if the message came from the COMMS
+        if (true) {
 
             // Add data to the buffer
             for (int i = 0; i < MaxPayloadLength; i++) {
@@ -172,7 +175,10 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
                 __NOP();
             }
-        } else if (false) { // else logic for ADCS
+        } else if (true) { // else logic for ADCS
+            __NOP();
+            __NOP();
+            __NOP();
         }
     }
 }
