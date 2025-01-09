@@ -125,7 +125,7 @@ void CANGatekeeperTask::execute() {
                     // Send ACK
                     CAN::TPMessage ACKmessage = {{CAN::NodeID, CAN::NodeIDs::OBC, false}};
                     ACKmessage.appendUint8(CAN::Application::MessageIDs::ACK);
-                    CAN::TPProtocol::createCANTPMessage(ACKmessage, false);
+                    CAN::TPProtocol::createCANTPMessageNoRetransmit(ACKmessage, false);
                     // Add message to queue
                     CAN::TPMessage message;
                     message.appendUint8(CANPacketHandler->PacketID);

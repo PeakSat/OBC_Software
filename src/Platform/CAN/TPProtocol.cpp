@@ -109,7 +109,56 @@ void TPProtocol::parseMessage(TPMessage& message) {
     }
 }
 
-bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+uint32_t TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+    if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+        return 0;
+    } else {
+        //Change CAN bus
+        if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
+            AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+        } else {
+            AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+        }
+        if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+            return 0;
+        } else {
+            //reset CAN
+            MCAN0_Initialize();
+            MCAN1_Initialize();
+            vTaskDelay(1);
+            CAN::Driver::initialize();
+            vTaskDelay(1);
+            AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+            if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+                return 0;
+            } else {
+                AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+                if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+                    return 0;
+                } else {
+                    //Packet transmit fialure
+                    LOG_ERROR << "Packet transmit fialure";
+                    return 1;
+                }
+            }
+        }
+    }
+}
+
+bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isISR, uint32_t NoOfRetries) {
+    for (uint32_t i = 0; i < NoOfRetries; i++) {
+        if (!createCANTPMessageNoRetransmit(message, isISR)) {
+            return 0;
+        }
+        if (i > 0) {
+            //number of retransmits ++
+            LOG_ERROR << "Retranmitted CAN packet";
+        }
+    }
+    return 1;
+}
+
+bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR) {
     size_t messageSize = message.dataSize;
     uint32_t id = message.encodeId();
     // Data fits in a Single Frame

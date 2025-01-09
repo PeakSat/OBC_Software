@@ -107,7 +107,7 @@ public:
         }
 
         if (status == errQUEUE_FULL) {
-            LOG_ERROR << "Tried sending CAN Message while outgoing queue is full!";
+            // LOG_ERROR << "Tried sending CAN Message while outgoing queue is full!";
         }
     }
 

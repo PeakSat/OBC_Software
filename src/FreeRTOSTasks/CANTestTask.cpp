@@ -18,24 +18,13 @@ void CANTestTask::execute() {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
-            for (int i = 0; i < 3; i++) {
-                if (!CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false)) {
-                    LOG_DEBUG << "CAN: ACK received";
-                    break;
-                } else if (i == 2) {
-                    LOG_ERROR << "CAN: ACK not received";
-                }
+            if (CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false)) {
+                LOG_ERROR << "CAN FAILURE";
             }
-
         } else {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
-            for (int i = 0; i < 3; i++) {
-                if (!CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false)) {
-                    LOG_DEBUG << "CAN: ACK received";
-                    break;
-                } else if (i == 2) {
-                    LOG_ERROR << "CAN: ACK not received";
-                }
+            if (CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false)) {
+                LOG_ERROR << "CAN FAILURE";
             }
         }
 

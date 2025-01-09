@@ -213,9 +213,18 @@ void CAN::Driver::send(const CAN::Packet& message) {
 
 
     if (AcubeSATParameters::obcCANBUSActive.getValue() == Main) {
-        MCAN0_MessageTransmitFifo(1, &Driver::txFifo);
+        if (MCAN0_TxFifoFreeLevelGet() < 1) {
+            // LOG_ERROR << "CAN0 Tx FIFO full";
+
+        } else {
+            MCAN0_MessageTransmitFifo(1, &Driver::txFifo);
+        }
     } else {
-        MCAN1_MessageTransmitFifo(1, &Driver::txFifo);
+        if (MCAN1_TxFifoFreeLevelGet() < 1) {
+            // LOG_ERROR << "CAN1 Tx FIFO full";
+        } else {
+            MCAN1_MessageTransmitFifo(1, &Driver::txFifo);
+        }
     }
 }
 
