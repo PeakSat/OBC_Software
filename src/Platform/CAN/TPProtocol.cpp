@@ -223,7 +223,7 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool i
         // Transaction timed out
         if (xTaskGetTickCount() > (CAN_TRANSMIT_Handler.CAN_ACK_TIMEOUT + startTime)) {
             xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-            LOG_DEBUG << "CAN ACK timeout";
+            LOG_ERROR << "CAN ACK timeout";
             return true;
         }
     }
