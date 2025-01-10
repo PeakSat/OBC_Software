@@ -16,6 +16,8 @@ struct CANTransactionHandler {
 };
 extern CANTransactionHandler CAN_TRANSMIT_Handler;
 
+inline uint32_t OBC_CAN_ID = 0x380;
+
 namespace CAN::TPProtocol {
     /**
      * Types of CAN-TP protocol frames.

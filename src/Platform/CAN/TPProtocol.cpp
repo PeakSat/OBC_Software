@@ -160,7 +160,7 @@ bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isIS
 
 bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR) {
     size_t messageSize = message.dataSize;
-    uint32_t id = message.encodeId();
+    uint32_t id = OBC_CAN_ID; //
     // Data fits in a Single Frame
     if (messageSize <= UsableDataLength) {
         etl::array<uint8_t, CAN::MaxPayloadLength> data = {
