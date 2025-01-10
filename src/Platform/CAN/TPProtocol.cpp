@@ -122,6 +122,8 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
         if (!createCANTPMessageWithRetry(message, isISR, 2)) {
             return 0;
         } else {
+            uint32_t error = MCAN1_ErrorGet();
+            LOG_ERROR << "Resetting CAN. Error code: " << error;
             //reset CAN
             MCAN0_Initialize();
             MCAN1_Initialize();
