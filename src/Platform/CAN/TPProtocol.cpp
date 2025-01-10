@@ -161,22 +161,14 @@ bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isIS
 bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR) {
     size_t messageSize = message.dataSize;
     uint32_t id = OBC_CAN_ID; //
-    // Data fits in a Single Frame
-    if (messageSize <= UsableDataLength) {
+
+    if (message.data[0] == Application::ACK) {
         etl::array<uint8_t, CAN::MaxPayloadLength> data = {
             static_cast<uint8_t>(((Single << 6) & 0xFF) | (messageSize & 0b111111))};
         for (size_t idx = 0; idx < messageSize; idx++) {
             data.at(idx + 1) = message.data[idx];
         }
-        if (message.data[0] == Application::ACK) {
-            // Don't wait if it's an ack response
-            canGatekeeperTask->send({id, data}, isISR);
-        } else {
-            xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
-            canGatekeeperTask->send({id, data}, isISR);
-            xTaskNotifyGive(canGatekeeperTask->taskHandle);
-            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-        }
+        canGatekeeperTask->send({id, data}, isISR);
         return false;
     }
 

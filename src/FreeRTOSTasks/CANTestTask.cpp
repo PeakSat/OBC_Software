@@ -9,7 +9,7 @@ void CANTestTask::execute() {
         frame.data.at(i) = i;
     }
 
-    String<ECSSMaxMessageSize> testPayload1("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    String<ECSSMaxMessageSize> testPayload1("a");
 
     String<ECSSMaxMessageSize> testPayload2("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 
