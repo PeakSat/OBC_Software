@@ -33,6 +33,10 @@ void OnBoardMonitoringTask::execute() {
         status = eps.getSystemStatus();
         onBoardMonitoring.checkAll();
         if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().
+                              checkingStatus != PMON::CheckingStatus::WithinLimits) {
+            auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().checkingStatus;
+            if (status == PMON::CheckingStatus::BelowLowLimit) {}
+                          LOG_INFO << "parameter status: BelowLowLimit ";
             checkingStatus != PMON::CheckingStatus::WithinLimits) {
             status2 = onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().
                     checkingStatus; //TODO: ADD MORE
