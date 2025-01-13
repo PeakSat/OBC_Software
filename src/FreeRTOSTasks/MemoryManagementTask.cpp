@@ -7,7 +7,9 @@ MRAM mram(SMC::NCS0);
 MT29F mt29f_part_a(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
 MT29F mt29f_part_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
 
-// Static buffer allocations (aligned to requirements)
+//// Static buffer allocations (aligned to requirements)
+static uint8_t file_buffer[MaxMemoryElementByteSize];
+
 static uint8_t nand_a_read_buffer[MaxMemoryElementByteSize];    // Must match read_size
 static uint8_t nand_a_prog_buffer[MaxMemoryElementByteSize];    // Must match prog_size
 static uint8_t nand_a_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must match lookahead_size
@@ -337,7 +339,6 @@ const struct lfs_config nand_b_cfg = {
     .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
     .lookahead_size = MaxMemoryLookaheadByteSize,
 
-    // Static memory buffers
     .read_buffer = nand_b_read_buffer,
     .prog_buffer = nand_b_prog_buffer,
     .lookahead_buffer = nand_b_lookahead_buffer,
@@ -423,7 +424,15 @@ etl::expected<int, lfs_error> MemManTask::writeNANDFile(lfs *lfs, const char* fi
             flags = LFS_O_WRONLY;
             break;
     }
-    int error = lfs_file_open(lfs, &file, filename, flags);
+
+    struct lfs_file_config config;
+    memset(&config, 0, sizeof(config));
+    config.buffer = file_buffer;
+    config.attr_count = 0;
+    config.attrs = NULL;
+
+    int error = lfs_file_opencfg(lfs, &file, filename, flags, &config);
+
     if(error < 0){
 //        LOG_ERROR<<"Failed to open the selected file";
         return etl::unexpected((lfs_error) error);
@@ -448,7 +457,15 @@ bool MemManTask::writeMRAM_File(const char* filename, etl::span<const uint8_t> &
 
 etl::expected<int, lfs_error> MemManTask::readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data){
     lfs_file_t file;
-    int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
+
+    struct lfs_file_config config;
+    memset(&config, 0, sizeof(config));
+    config.buffer = file_buffer;
+    config.attr_count = 0;
+    config.attrs = NULL;
+
+    int error = lfs_file_opencfg(lfs, &file, filename, LFS_O_RDONLY, &config);
+
     if(error < 0){
 //        LOG_ERROR<<"Failed to open the selected file";
         return etl::unexpected((lfs_error) error);
@@ -478,7 +495,15 @@ bool MemManTask::eraseMRAMFile(const char* filename){
 
 etl::expected<size_t, lfs_error> MemManTask::getNANDFileSize(lfs *lfs, const char* filename){
     lfs_file_t file;
-    int error = lfs_file_open(lfs, &file, filename, LFS_O_RDONLY);
+
+    struct lfs_file_config config;
+    memset(&config, 0, sizeof(config));
+    config.buffer = file_buffer;
+    config.attr_count = 0;
+    config.attrs = NULL;
+
+    int error = lfs_file_opencfg(lfs, &file, filename, LFS_O_RDONLY, &config);
+
     if(error < 0){
 //        LOG_ERROR<<"Failed to open the selected file";
         return etl::unexpected((lfs_error) error);
@@ -730,7 +755,7 @@ void MemManTask::execute() {
         // Error Handling?
         vTaskSuspend(NULL);
     }
-    LOG_DEBUG << "NAND part initialised";
+    LOG_DEBUG << "NAND initialised";
 
     MRAM_Errno error = mram.isMRAMAlive();
     if( error != MRAM_Errno ::MRAM_READY){

@@ -365,14 +365,14 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: 'true'}
+        attributes: {value: 'false'}
   - type: Boolean
     attributes: {id: SMC_PMEN_CS3}
     children:
     - type: Values
       children:
       - type: User
-        attributes: {value: 'true'}
+        attributes: {value: 'false'}
   - type: KeyValueSet
     attributes: {id: SMC_PS_CS0}
     children:
@@ -389,12 +389,6 @@ children:
   - type: KeyValueSet
     attributes: {id: SMC_PS_CS1}
     children:
-    - type: Attributes
-      children:
-      - type: Boolean
-        attributes: {id: visible}
-        children:
-        - {type: Value, value: 'true'}
     - type: Values
       children:
       - type: Dynamic
@@ -411,17 +405,11 @@ children:
   - type: KeyValueSet
     attributes: {id: SMC_PS_CS3}
     children:
-    - type: Attributes
-      children:
-      - type: Boolean
-        attributes: {id: visible}
-        children:
-        - {type: Value, value: 'true'}
     - type: Values
       children:
       - type: Dynamic
         attributes: {id: smc, value: '0'}
       - type: User
-        attributes: {value: '3'}
+        attributes: {value: '1'}
 - type: ElementPosition
   attributes: {x: '920', y: '20', id: smc}

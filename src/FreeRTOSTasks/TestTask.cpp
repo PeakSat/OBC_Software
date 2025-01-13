@@ -31,7 +31,7 @@ void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
 
     while (true) {
-        monitorAllTasks();
+        //monitorAllTasks();
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
 }
