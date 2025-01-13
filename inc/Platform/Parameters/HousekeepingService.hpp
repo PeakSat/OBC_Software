@@ -36,7 +36,6 @@ namespace HousekeepingStructures {
                     OBCRAMScrubbingFrequency, OBCProgramFlashScrubbingFrequency
                 }
             },
-
             //EPS getStatus Parameters
             {
                 3, 4000, true, {
