@@ -68,6 +68,7 @@
 #include "peripheral/twihs/master/plib_twihs0_master.h"
 #include "peripheral/mcan/plib_mcan1.h"
 #include "peripheral/twihs/master/plib_twihs1_master.h"
+#include "peripheral/twihs/master/plib_twihs2_master.h"
 #include "system/int/sys_int.h"
 #include "system/cache/sys_cache.h"
 #include "osal/osal.h"

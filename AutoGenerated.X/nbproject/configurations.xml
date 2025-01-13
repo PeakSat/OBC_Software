@@ -60,6 +60,7 @@
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs_master_common.h</itemPath>
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs1_master.h</itemPath>
                 <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs0_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/twihs/master/plib_twihs2_master.h</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="f14" displayName="uart" projectFiles="true">

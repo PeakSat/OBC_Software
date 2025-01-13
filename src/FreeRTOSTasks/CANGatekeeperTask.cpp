@@ -8,7 +8,7 @@ uint8_t incomingBuffer[CANMessageSize * sizeOfIncommingFrameBuffer];
 struct localPacketHandler {
     uint8_t Buffer[1024];
     uint32_t TailPointer = 0;
-    uint32_t PacketSize = 0;
+    uint16_t PacketSize = 0;
     uint8_t PacketID = 0;
 };
 struct localPacketHandler CAN1PacketHandler;
@@ -52,20 +52,12 @@ void CANGatekeeperTask::execute() {
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         xTaskNotifyWait(0, 0, &ulNotifiedValue, 1000);
 
-        if (xTaskGetTickCount() - lastTransmissionTime > 8000) {
-            LOG_ERROR << "Resetting CAN LCLs";
-            LCLDefinitions::lclArray[LCLDefinitions::CAN1].enableLCL();
-            LCLDefinitions::lclArray[LCLDefinitions::CAN2].enableLCL();
-            MCAN0_Initialize();
-            MCAN1_Initialize();
-        }
-
         while (uxQueueMessagesWaiting(incomingFrameQueue)) {
 
             // Get the message pointer from the queue
             xQueueReceive(incomingFrameQueue, &in_frame_handler, portMAX_DELAY);
 
-            if (in_frame_handler.header.id >> 18 == 0x390) { // Check if the message came from the COMMS
+            if (in_frame_handler.header.id >> 18 == COMMS_CAN_ID) { // Check if the message came from the COMMS
 
                 struct localPacketHandler* CANPacketHandler;
                 if (in_frame_handler.bus == CAN::CAN1) {
@@ -82,7 +74,6 @@ void CANGatekeeperTask::execute() {
                     if (in_frame_handler.pointerToData[1] == CAN::Application::MessageIDs::ACK) {
                         CAN_TRANSMIT_Handler.ACKReceived = true;
                     }
-                    __NOP();
                 } else if (frameType == CAN::TPProtocol::Frame::First) {
                     // // debugCounter=0;
                     CANPacketHandler->PacketSize = payloadLength << 8;
@@ -90,19 +81,18 @@ void CANGatekeeperTask::execute() {
                     CANPacketHandler->PacketSize -= 1; //compensate for ID byte
                     // currenConsecutiveFrameCounter=0;
                     CANPacketHandler->TailPointer = 0;
-                    __NOP();
                 } else if (frameType == CAN::TPProtocol::Frame::Consecutive) {
 
                     uint8_t FrameNumber = in_frame_handler.pointerToData[1] - 1;
                     // Add frame to local buffer
-                    __NOP();
 
                     for (uint32_t i = 0; i < (CAN::MaxPayloadLength - 2); i++) {
-                        __NOP();
                         if (i + FrameNumber == 0) {
+                            // first consecutive frame has the message ID in its first byte
                             CANPacketHandler->PacketID = in_frame_handler.pointerToData[2];
                         } else {
                             if (sizeof(CANPacketHandler->Buffer) / sizeof(CANPacketHandler->Buffer[0]) > (FrameNumber * (CAN::MaxPayloadLength - 2)) + i - 1) {
+                                //add the rest of the bytes to the local buffer
                                 CANPacketHandler->Buffer[(FrameNumber * (CAN::MaxPayloadLength - 2)) + i - 1] = in_frame_handler.pointerToData[i + 2];
                                 CANPacketHandler->TailPointer = CANPacketHandler->TailPointer + 1;
                             } else {
@@ -111,15 +101,18 @@ void CANGatekeeperTask::execute() {
                             }
                         }
                     }
-                    __NOP();
 
                 } else if (frameType == CAN::TPProtocol::Frame::Final) {
+                    // check if the number of received bytes matches the message length
                     if ((CANPacketHandler->PacketSize - CANPacketHandler->TailPointer) <= (CAN::MaxPayloadLength - 2) && CANPacketHandler->PacketSize != 0) {
+                        // add the last bytes to the local buffer
                         for (uint32_t i = 0; (CANPacketHandler->PacketSize > CANPacketHandler->TailPointer); i++) {
                             uint8_t FrameNumber = in_frame_handler.pointerToData[1] - 1;
                             if (i + FrameNumber == 0) {
+                                // if there are no consecutive frames, the message ID is the first byte of this frame
                                 CANPacketHandler->PacketID = in_frame_handler.pointerToData[2];
                             } else if (sizeof(CANPacketHandler->Buffer) / sizeof(CANPacketHandler->Buffer[0]) > CANPacketHandler->TailPointer) {
+                                //add the rest of the bytes in the local buffer
                                 CANPacketHandler->Buffer[CANPacketHandler->TailPointer] = in_frame_handler.pointerToData[i + 2];
                                 CANPacketHandler->TailPointer = CANPacketHandler->TailPointer + 1;
                             } else {
@@ -137,17 +130,13 @@ void CANGatekeeperTask::execute() {
                         for (int i = 0; i < CANPacketHandler->PacketSize; i++) {
                             message.appendUint8(CANPacketHandler->Buffer[i]);
                         }
-                        if (in_frame_handler.header.id == 239077152) {
-                            message.idInfo.sourceAddress = CAN::COMMS;
-                        }
+                        message.idInfo.sourceAddress = CAN::COMMS;
                         CAN::TPProtocol::parseMessage(message);
-                        __NOP();
 
                     } else {
                         // Message not received correctly
                         LOG_ERROR << "DROPPED CAN MESSAGE";
                     }
-                    __NOP();
                     CANPacketHandler->TailPointer = 0;
                 }
             } // else logic for the ADCS
