@@ -16,12 +16,12 @@ void CANTestTask::execute() {
     while (true) {
 
         //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
-            AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+        if (PeakSatParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
+            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
             CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
             LOG_DEBUG << "Sent CAN message to main CAN bus";
         } else {
-            AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
             CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false);
             LOG_DEBUG << "Sent CAN message to redundant CAN bus";
         }
