@@ -233,7 +233,7 @@ namespace CAN::Application {
             parameterIDs[idx] = message.readUint16();
         }
 
-        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, true);
+        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, false);
     }
 
     void parseTMMessage(TPMessage& message) {

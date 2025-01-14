@@ -15,7 +15,7 @@ void CANTestTask::execute() {
 
     while (true) {
 
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         if (AcubeSATParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
             AcubeSATParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
             if (CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false)) {

@@ -4,7 +4,7 @@
 #include <ApplicationLayer.hpp>
 
 struct incomingFIFO incomingFIFO;
-uint8_t incomingBuffer[CANMessageSize * sizeOfIncommingFrameBuffer];
+uint8_t incomingBuffer[CAN::MaxPayloadLength * sizeOfIncommingFrameBuffer];
 struct localPacketHandler {
     uint8_t Buffer[1024];
     uint32_t TailPointer = 0;
