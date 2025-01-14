@@ -75,6 +75,8 @@ namespace CAN::Application {
             if (Services.parameterManagement.getParameter(parameterID)) {
                 message.append(parameterID);
                 Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
+                LOG_DEBUG << "param: " << Services.parameterManagement.getParameter(parameterID)->get().getValueAsUint64();
+                // LOG_DEBUG<< AcubeSATParameters::obcPCBTemperature1;
             } else if (parameterID == 0) {
                 continue;
             } else {
