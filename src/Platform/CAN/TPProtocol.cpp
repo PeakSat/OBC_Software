@@ -228,5 +228,11 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool i
             LOG_ERROR << "CAN ACK timeout";
             return true;
         }
+        if (uxQueueMessagesWaiting(canGatekeeperTask->outgoingQueue)) {
+            // vTaskDelay(1);
+            CAN::Packet out_message = {};
+            xQueueReceive(canGatekeeperTask->outgoingQueue, &out_message, portMAX_DELAY);
+            CAN::Driver::send(out_message);
+        }
     }
 }

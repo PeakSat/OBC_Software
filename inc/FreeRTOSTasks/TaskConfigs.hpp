@@ -26,7 +26,7 @@ constexpr BaseType_t OnBoardMonitoringTaskPriority = tskIDLE_PRIORITY + 2;
 * architecture with 4 byte stack, assigning 100 to the usStackDepth argument, will allocate 4x100=400 bytes.
 */
 const uint16_t AmbientTemperatureTaskStack = 2000;
-const uint16_t CANGatekeeperTaskStack = 5000;
+const uint16_t CANGatekeeperTaskStack = 6000;
 const uint16_t CANTestTaskStack = 3300;
 const uint16_t HousekeepingTaskStack = 2000;
 const uint16_t MCUTemperatureTaskStack = 1000;

@@ -77,7 +77,7 @@ extern "C" void main_cpp() {
     memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
-    watchdogTask.emplace();
+    // watchdogTask.emplace();
 
 
     __disable_irq();
@@ -93,7 +93,7 @@ extern "C" void main_cpp() {
     memManTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
-    watchdogTask->createTask();
+    // watchdogTask->createTask();
 
     __enable_irq();
 

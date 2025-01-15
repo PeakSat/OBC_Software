@@ -62,7 +62,7 @@ void CANGatekeeperTask::execute() {
                 struct localPacketHandler* CANPacketHandler;
                 if (in_frame_handler.bus == CAN::CAN1) {
                     CANPacketHandler = &CAN1PacketHandler;
-                } else if (in_frame_handler.bus == CAN::CAN2) {
+                } else {
                     CANPacketHandler = &CAN2PacketHandler;
                 }
 
