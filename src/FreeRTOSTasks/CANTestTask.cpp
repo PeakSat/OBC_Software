@@ -1,33 +1,34 @@
 #include "CANTestTask.hpp"
 #include "CANGatekeeperTask.hpp"
 
-void CANTestTask::execute() {
 
+void CANTestTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
-    CAN::Frame frame = {CAN::NodeID};
-    for (auto i = 0; i < CAN::Frame::MaxDataLength; i++) {
+    CAN::Packet frame = {CAN::NodeID};
+    for (auto i = 0; i < CAN::MaxPayloadLength; i++) {
         frame.data.at(i) = i;
     }
 
-    String<ECSSMaxMessageSize> testPayload1("WHO LIVES IN A PINEAPPLE UNDER THE SEA?");
+    String<ECSSMaxMessageSize> testPayload1("a");
 
-    String<ECSSMaxMessageSize> testPayload2("Giati?");
+    String<ECSSMaxMessageSize> testPayload2("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 
     while (true) {
 
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        LOG_DEBUG << "Runtime entered: " << this->TaskName;
         if (PeakSatParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
             PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
-            CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
-            LOG_DEBUG << "Sent CAN message to main CAN bus";
+            if (CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false)) {
+                LOG_ERROR << "CAN FAILURE";
+            }
         } else {
             PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
-            CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false);
-            LOG_DEBUG << "Sent CAN message to redundant CAN bus";
+            if (CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false)) {
+                LOG_ERROR << "CAN FAILURE";
+            }
         }
 
-
-                xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
+        xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
 
         //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(5000));

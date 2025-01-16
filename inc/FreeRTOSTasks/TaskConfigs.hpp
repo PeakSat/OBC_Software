@@ -18,8 +18,8 @@ const BaseType_t TimeKeepingTaskPriority = tskIDLE_PRIORITY + 2;
 const BaseType_t UARTGatekeeperTaskPriority = tskIDLE_PRIORITY + 3;
 const BaseType_t WatchdogTaskPriority = configMAX_PRIORITIES - 1;
 
-const BaseType_t TestTaskPriority               =   tskIDLE_PRIORITY+1;
-constexpr BaseType_t OnBoardMonitoringTaskPriority               =   tskIDLE_PRIORITY+2;
+const BaseType_t TestTaskPriority = tskIDLE_PRIORITY + 1;
+constexpr BaseType_t OnBoardMonitoringTaskPriority = tskIDLE_PRIORITY + 2;
 
 /**
 * The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
@@ -27,13 +27,13 @@ constexpr BaseType_t OnBoardMonitoringTaskPriority               =   tskIDLE_PRI
 */
 const uint16_t AmbientTemperatureTaskStack = 2000;
 const uint16_t CANGatekeeperTaskStack = 5000;
-const uint16_t CANTestTaskStack = 2300;
+const uint16_t CANTestTaskStack = 3300;
 const uint16_t HousekeepingTaskStack = 2000;
 const uint16_t MCUTemperatureTaskStack = 1000;
 //const uint16_t MRAMTaskStack = 5000;
 const uint16_t NANDTaskStack = 4000;
-const uint16_t MemoryManagementTaskStack = 8000;
-const uint16_t PayloadTestTaskStack = 3000;
+const uint16_t MemoryManagementTaskStack = 4000;
+const uint16_t PayloadTestTaskStack = 500;
 const uint16_t StatisticsReportingTaskStack = 2000;
 const uint16_t TCHandlingTaskStack = 3000;
 const uint16_t TimeBasedSchedulingTaskStack = 2500;

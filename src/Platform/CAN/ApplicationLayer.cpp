@@ -36,13 +36,13 @@ namespace CAN::Application {
             newBus = Driver::Main;
         }
 
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
 
         canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
     }
 
     void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
 
         canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
     }
@@ -55,12 +55,12 @@ namespace CAN::Application {
         uint32_t ticksOfDay = static_cast<uint32_t>(msOfDay.count() / 100);
 
         UTCTimestamp utc = now.toUTCtimestamp();
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
-                                                               static_cast<uint8_t>(ticksOfDay >> 8),
-                                                               static_cast<uint8_t>(ticksOfDay >> 16),
-                                                               static_cast<uint8_t>(ticksOfDay >> 24),
-                                                               static_cast<uint8_t>(utc.day),
-                                                               static_cast<uint8_t>(utc.day >> 8)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
+                                                           static_cast<uint8_t>(ticksOfDay >> 8),
+                                                           static_cast<uint8_t>(ticksOfDay >> 16),
+                                                           static_cast<uint8_t>(ticksOfDay >> 24),
+                                                           static_cast<uint8_t>(utc.day),
+                                                           static_cast<uint8_t>(utc.day >> 8)};
 
         canGatekeeperTask->send({MessageIDs::UTCTime + CAN::NodeID, data}, false);
     }
@@ -75,6 +75,8 @@ namespace CAN::Application {
             if (Services.parameterManagement.getParameter(parameterID)) {
                 message.append(parameterID);
                 Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
+                LOG_DEBUG << "param: " << Services.parameterManagement.getParameter(parameterID)->get().getValueAsUint64();
+                // LOG_DEBUG<< AcubeSATParameters::obcPCBTemperature1;
             } else if (parameterID == 0) {
                 continue;
             } else {
@@ -170,17 +172,17 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
+    bool createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
                           bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         message.appendUint8(MessageIDs::LogMessage);
         message.appendString(log);
 
-        CAN::TPProtocol::createCANTPMessage(message, isISR);
+        return CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void parseMessage(const CAN::Frame& message) {
+    void parseMessage(const CAN::Packet& message) {
         uint32_t id = filterMessageID(message.id);
         if (id == Heartbeat) {
             //            registerHeartbeat();
@@ -222,6 +224,7 @@ namespace CAN::Application {
     }
 
     void parseRequestParametersMessage(TPMessage& message) {
+        uint32_t start = xTaskGetTickCount();
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == RequestParameters, ErrorHandler::UnknownMessageType)) {
             return;
@@ -232,8 +235,11 @@ namespace CAN::Application {
         for (uint16_t idx = 0; idx < parameterCount; idx++) {
             parameterIDs[idx] = message.readUint16();
         }
-
-        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, true);
+        LOG_DEBUG << "parse time elapsed 1:" << xTaskGetTickCount() - start;
+        String<ECSSMaxMessageSize> testPayload1("*******The flow works*******");
+        CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
+        // createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, false);
+        LOG_DEBUG << "parse time elapsed 2:" << xTaskGetTickCount() - start;
     }
 
     void parseTMMessage(TPMessage& message) {
@@ -242,7 +248,7 @@ namespace CAN::Application {
             return;
         }
 
-        String<ECSSMaxMessageSize> logString = message.data.data() + 1;
+        String<ECSSMaxMessageSize> logString = message.data.begin() + 1;
 
         LOG_DEBUG << logString.c_str();
     }
@@ -253,7 +259,7 @@ namespace CAN::Application {
             return;
         }
 
-        Message teleCommand = MessageParser::parseECSSTC(message.data.data() + 1);
+        Message teleCommand = MessageParser::parseECSSTC(message.data.begin() + 1);
 
         MessageParser::execute(teleCommand);
     }
