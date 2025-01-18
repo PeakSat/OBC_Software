@@ -24,7 +24,7 @@
 #include "TimeBasedSchedulingTask.hpp"
 #include "StatisticsReportingTask.hpp"
 #include "CANGatekeeperTask.hpp"
-#include "CANTestTask.hpp"
+#include "CANParserTask.hpp"
 #include "TCHandlingTask.hpp"
 #include "NANDTask.hpp"
 //#include "MRAMTask.hpp"
@@ -62,20 +62,19 @@ uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 
 
 extern "C" void main_cpp() {
-    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
     // payloadTestTask.emplace();
     canGatekeeperTask.emplace();
-    canTestTask.emplace();
+    canParserTask.emplace();
     housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
-    nandTask.emplace();
-    memManTask.emplace();
+    // nandTask.emplace();
+    // memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -85,16 +84,16 @@ extern "C" void main_cpp() {
     uartGatekeeperTask->createTask();
     //    payloadTestTask->createTask();
     canGatekeeperTask->createTask();
-    canTestTask->createTask();
+    canParserTask->createTask();
     //    housekeepingTask->createTask();
     //    onBoardMonitoringTask->createTask();
     //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-    //  ambientTemperatureTask->createTask();
-    memManTask->createTask();
+    // ambientTemperatureTask->createTask();
+    // memManTask->createTask();
     //    nandTask->createTask();
     timeKeepingTask->createTask();
-    //    TestTask->createTask();
+    TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();

@@ -9,6 +9,12 @@
 #ifdef OBC_EQM_LCL
 #include "LCLDefinitions.hpp"
 #endif
+struct localPacketHandler {
+    uint8_t Buffer[1024];
+    uint32_t TailPointer = 0;
+    uint16_t PacketSize = 0;
+    uint8_t PacketID = 0;
+};
 /**
 * Every variable needed to control the incoming frames' fifo buffer
 * will be stored in this struct.
@@ -49,6 +55,10 @@ public:
      * Storage area given to freeRTOS to manage the queue items.
      */
     static inline uint8_t outgoingQueueStorageArea[CAN::FrameQueueSize * sizeof(CAN::Frame)];
+
+    QueueHandle_t incomingPacketQueue;
+    static inline StaticQueue_t incomingPacketBuffer;
+    static inline uint8_t incomingPacketStorageArea[1 * sizeof(localPacketHandler*)];
 
     /**
 * A freeRTOS queue to handle incoming CAN frames.

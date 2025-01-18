@@ -2,15 +2,11 @@
 #include "CAN/Frame.hpp"
 #include "CANGatekeeperTask.hpp"
 #include <ApplicationLayer.hpp>
+#include <CANParserTask.hpp>
 
 struct incomingFIFO incomingFIFO;
 uint8_t incomingBuffer[CAN::MaxPayloadLength * sizeOfIncommingFrameBuffer];
-struct localPacketHandler {
-    uint8_t Buffer[1024];
-    uint32_t TailPointer = 0;
-    uint16_t PacketSize = 0;
-    uint8_t PacketID = 0;
-};
+
 struct localPacketHandler CAN1PacketHandler;
 struct localPacketHandler CAN2PacketHandler;
 CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
@@ -24,6 +20,10 @@ CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
     vQueueAddToRegistry(outgoingQueue, "CAN Outgoing");
     configASSERT(outgoingQueue);
 
+    incomingPacketQueue = xQueueCreateStatic(1, sizeof(localPacketHandler*), incomingPacketStorageArea,
+                                             &incomingPacketBuffer);
+    vQueueAddToRegistry(incomingPacketQueue, "CAN Outgoing");
+    configASSERT(incomingPacketQueue);
 
     incomingFrameQueue = xQueueCreateStatic(sizeOfIncommingFrameBuffer, sizeof(CAN::Frame), incomingFrameQueueStorageArea,
                                             &incomingFrameQueueBuffer);
@@ -120,21 +120,8 @@ void CANGatekeeperTask::execute() {
                                 CANPacketHandler->TailPointer = 0;
                             }
                         }
-                        // Send ACK
-                        CAN::TPMessage ACKmessage = {{CAN::NodeID, CAN::NodeIDs::OBC, false}};
-                        ACKmessage.appendUint8(CAN::Application::MessageIDs::ACK);
-                        CAN::TPProtocol::createCANTPMessageNoRetransmit(ACKmessage, false);
-                        // Add message to queue
-                        CAN::TPMessage message;
-                        message.appendUint8(CANPacketHandler->PacketID);
-                        for (int i = 0; i < CANPacketHandler->PacketSize; i++) {
-                            message.appendUint8(CANPacketHandler->Buffer[i]);
-                        }
-                        message.idInfo.sourceAddress = CAN::COMMS;
-
-                        // CAN::TPProtocol::parseMessage(message);
-
-
+                        xQueueSendToBack(incomingPacketQueue, (void*) &CANPacketHandler, NULL);
+                        xTaskNotify(canParserTask->taskHandle, 0, eNoAction);
                     } else {
                         // Message not received correctly
                         LOG_ERROR << "DROPPED CAN MESSAGE";

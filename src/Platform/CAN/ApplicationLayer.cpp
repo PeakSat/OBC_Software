@@ -224,7 +224,6 @@ namespace CAN::Application {
     }
 
     void parseRequestParametersMessage(TPMessage& message) {
-        uint32_t start = xTaskGetTickCount();
         uint8_t messageType = message.readUint8();
         if (not ErrorHandler::assertInternal(messageType == RequestParameters, ErrorHandler::UnknownMessageType)) {
             return;
@@ -235,11 +234,7 @@ namespace CAN::Application {
         for (uint16_t idx = 0; idx < parameterCount; idx++) {
             parameterIDs[idx] = message.readUint16();
         }
-        LOG_DEBUG << "parse time elapsed 1:" << xTaskGetTickCount() - start;
-        String<ECSSMaxMessageSize> testPayload1("*******The flow works*******");
-        CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
-        // createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, false);
-        LOG_DEBUG << "parse time elapsed 2:" << xTaskGetTickCount() - start;
+        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, false);
     }
 
     void parseTMMessage(TPMessage& message) {
