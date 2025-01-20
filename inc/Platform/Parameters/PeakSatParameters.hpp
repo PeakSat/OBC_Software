@@ -650,43 +650,85 @@ namespace PeakSatParameters {
         EPS_ADC_MCU_TEMP_V25T85 = 3614,
 
         /* COMMS Parameters */
-        COMMSUHFBandPATemperature = 2000,
-        COMMSSBandPATemperature = 2001,
-        COMMSPCBTemperature = 2002,
-        COMMSAntennaDeploymentStatus = 2003,
-        COMMSDataRateUHFTX = 2004,
-        COMMSDataRateUHFRX = 2005,
-        COMMSSymbolRateSBand = 2006,
-        COMMSCWInterval = 2007,
-        COMMSGMSKBeaconInterval = 2008,
-        COMMSUHFBandTXPower = 2009,
-        COMMSSBandTXPower = 2010,
-        COMMSChannelNumberUHFBand = 2011,
-        COMMSChannelNumberSBand = 2012,
-        COMMSLNAGain = 2013,
-        COMMSPAGainUHFBand = 2014,
-        COMMSPAGainSBand = 2015,
-        COMMSVGAGain = 2016,
-        COMMSRSSI = 2017,
-        COMMSUHFBandTXOnOff = 2018,
-        COMMSUHFBandRXOnOff = 2019,
-        COMMSSBandTXOnOff = 2020,
-        COMMSPacketsRejectedCOMMS = 2021,
-        COMMSInvalidHMAC = 2022,
-        COMMSInvalidPacketStructure = 2023,
-        COMMSInvalidSpacecraftID = 2024,
-        COMMSFrameSequenceCounter = 2025,
-        COMMSPCBTemperature1 = 2026,
-        COMMSPCBTemperature2 = 2027,
-        COMMSMCUTemperature = 2028,
-        COMMSMCUInputVoltage = 2029,
-        COMMSMCUBootCounter = 2030,
-        COMMSOnBoardTime = 2031,
-        COMMSNANDCurrentlyUsedMemoryPartition = 2032,
-        COMMSLastFailedEvent = 2033,
-        COMMSMCUSystick = 2034,
-        COMMSFlashInt = 2035,
-        COMMSSRAMInt = 2036
+        COMMS_UHFBandPATemperatureID = 10010,
+        COMMS_PCBTemperatureID = 10020,
+        COMMS_GNSSTemperatureID = 10030,
+        Antenna_Deployment_StatusID = 10050,
+
+        /* PAYLOAD Parameters */
+        PAY_xID = 15010,
+        PAY_yID = 15020,
+        PAY_zID = 15030,
+        PAY_uptimeID = 15040,
+        PAY_timeID = 15050,
+        PAY_psu_12vID = 15060,
+        PAY_psu_5vID = 15070,
+        PAY_psu_33vID = 15080,
+        PAY_mcu_die_temperatureID = 15090,
+        PAY_main_board_temperatureID = 15100,
+        PAY_seed_ld_output_powerID = 15110,
+        PAY_fsm_chamber_temperatureID = 15120,
+        PAY_fsm_chamber_pressureID = 15130,
+        PAY_fsmd_voltage_converter_temperatureID = 15140,
+        PAY_fsmd_drivers_temperatureID = 15150,
+        PAY_camera_pcb_temperatureID = 15160,
+        PAY_camera_sensor_temperatureID = 15170,
+        PAY_fso_aux_temperature_1ID = 15171,
+        PAY_fso_aux_temperature_2ID = 15172,
+        PAY_oad_temperatureID = 15180,
+        PAY_optical_amplifier_combiner_heater_temperatureID = 15181,
+        PAY_optical_amplifier_fiber_mirror_temperatureID = 15182,
+        PAY_optical_amplifier_circulator_heater_temperatureID = 15183,
+        PAY_ldd_temperatureID = 15190,
+        PAY_ld_temperatureID = 15200,
+        PAY_ldd_12v_currentID = 15210,
+        PAY_ldd_psu_12vID = 15211,
+        PAY_ldd_converter_input_currentID = 15212,
+        PAY_ldd_ld_vID = 15213,
+        PAY_ldd_ld_dac_set_vID = 15214,
+        PAY_fsm_driver_12v_currentID = 15220,
+        PAY_flashes_33v_currentID = 15230,
+        PAY_fpga_5v_currentID = 15240,
+        PAY_sdd_33v_currentID = 15250,
+        PAY_pump_ld_powerID = 15260,
+        PAY_mcu_33v_currentID = 15270,
+        PAY_fpga_die_temperatureID = 15280,
+        PAY_fpga_vdd1_voltageID = 15290,
+        PAY_fpga_vdd18_voltageID = 15300,
+        PAY_fpga_vdd25_voltageID = 15310,
+        PAY_seed_ld_incoming_powerID = 15320,
+        PAY_amplifier_output_powerID = 15321,
+        PAY_amplifier_output_reflected_powerID = 15322,
+        PAY_seed_diode_bias_currentID = 15323,
+        PAY_tec_currentID = 15330,
+        PAY_ldd_output_currentID = 15340,
+        PAY_sd_temperature_violationsID = 15341,
+        PAY_end_uptimeID = 15350,
+        PAY_responseID = 15360,
+        PAY_deviceID = 15390,
+        PAY_firmwareID = 15400,
+        PAY_firmware_is_confirmedID = 15410,
+        PAY_bitstreamID = 15420,
+        PAY_softcpu_1_firmwareID = 15430,
+        PAY_softcpu_2_firmwareID = 15440,
+        PAY_softcpu_3_firmwareID = 15450,
+        PAY_softcpu_4_firmwareID = 15460,
+        PAY_softcpu_5_firmwareID = 15470,
+        PAY_softcpu_6_firmwareID = 15480,
+        PAY_softcpu_7_firmwareID = 15490,
+        PAY_softcpu_8_firmwareID = 15500,
+        PAY_boot_countID = 15510,
+        PAY_transmission_countID = 15520,
+        PAY_hw_detID = 15530,
+        PAY_storage0ID = 15540,
+        PAY_storage1ID = 15550,
+        PAY_storage2ID = 15560,
+        PAY_storage3ID = 15570,
+        PAY_ldd_faultID = 15580,
+        PAY_fsm_faultID = 15590,
+        PAY_fpga_faultID = 15600,
+        PAY_v_cam_faultID = 15620,
+        PAY_sdd_faultID = 15630
     };
 
     /******************* OBDH ENUMS *******************/
@@ -718,7 +760,7 @@ namespace PeakSatParameters {
     };
 
     /******************* COMMS ENUMS *******************/
-    enum AntennaDeploymentStatus : uint8_t {
+    enum Antenna_Deployment_Status_enum : uint8_t {
         Closed = 0,
         OneDoorOpen = 1,
         TwoDoorOpen = 2,
@@ -1459,55 +1501,86 @@ namespace PeakSatParameters {
 
     inline Parameter<int8_t> epsCONF_PARAM_CHANGED(0);
 
-
     /****************** COMMS PARAMETERS *******************/
     inline Parameter<float> commsUHFBandPATemperature(0);
-    inline Parameter<float> commsSBandPATemperature(0);
     inline Parameter<float> commsPCBTemperature(0);
+    inline Parameter<float> commsGNSSTemperature(0);
+    inline Parameter<Antenna_Deployment_Status_enum> Antenna_Deployment_Status(Closed);
 
-    inline Parameter<AntennaDeploymentStatus> commsAntennaDeploymentStatus(Closed); // enum
-
-    inline Parameter<SampleRateUHFTX> commsDataRateUHFTX(Rate); // enum
-    inline Parameter<uint32_t> commsDataRateUHFRX(0);
-    inline Parameter<uint32_t> commsSymbolRateSBand(0);
-    inline Parameter<uint16_t> commsCWInterval(0);
-    inline Parameter<uint16_t> commsGMSKBeaconInterval(0);
-    inline Parameter<uint32_t> commsUHFBandTXPower(0);
-    inline Parameter<uint32_t> commsSBandTXPower(0);
-    inline Parameter<uint32_t> commsChannelNumberUHFBand(0);
-    inline Parameter<uint32_t> commsChannelNumberSBand(0);
-
-    inline Parameter<AntennaGains> commsLNAGain(Gain);       // enum
-    inline Parameter<AntennaGains> commsPAGainUHFBand(Gain); // enum
-    inline Parameter<AntennaGains> commsPAGainSBand(Gain);   // enum
-
-    inline Parameter<uint8_t> commsVGAGain(0);
-    inline Parameter<float> commsRSSI(0);
-
-    inline Parameter<bool> commsUHFBandTXOnOff(0);
-    inline Parameter<bool> commsUHFBandRXOnOff(0);
-    inline Parameter<bool> commsSBandTXOnOff(0);
-
-    inline Parameter<uint16_t> commsPacketsRejectedCOMMS(0);
-    inline Parameter<uint16_t> commsInvalidHMAC(0);
-    inline Parameter<uint16_t> commsInvalidPacketStructure(0);
-    inline Parameter<uint16_t> commsInvalidSpacecraftID(0);
-    inline Parameter<uint16_t> commsFrameSequenceCounter(0);
-
-    inline Parameter<float> commsPCBTemperature1(0);
-    inline Parameter<float> commsPCBTemperature2(0);
-    inline Parameter<float> commsMCUTemperature(0);
-    inline Parameter<float> commsMCUInputVoltage(0);
-
-    inline Parameter<uint32_t> commsMCUBootCounter(0);
-    inline Parameter<Time::DefaultCUC> commsOnBoardTime(Time::DefaultCUC(0));
-
-    inline Parameter<MemoryPartition> commsNANDCurrentlyUsedMemoryPartition(First); // enum
-
-    inline Parameter<uint16_t> commsLastFailedEvent(0);
-    inline Parameter<uint32_t> commsMCUSystick(0);
-    inline Parameter<uint32_t> commsFlashInt(0);
-    inline Parameter<uint32_t> commsSRAMInt(0);
+    /****************** PAYLOAD PARAMETERS *******************/
+    inline Parameter<int32_t> pay_x(0);
+    inline Parameter<int32_t> pay_y(0);
+    inline Parameter<int32_t> pay_z(0);
+    inline Parameter<int32_t> pay_uptime(0);
+    inline Parameter<int32_t> pay_time(0);
+    inline Parameter<int32_t> pay_psu_12v(0);
+    inline Parameter<int32_t> pay_psu_5v(0);
+    inline Parameter<int32_t> pay_psu_33v(0);
+    inline Parameter<int32_t> pay_mcu_die_temperature(0);
+    inline Parameter<int32_t> pay_main_board_temperature(0);
+    inline Parameter<int32_t> pay_seed_ld_output_power(0);
+    inline Parameter<int32_t> pay_fsm_chamber_temperature(0);
+    inline Parameter<int32_t> pay_fsm_chamber_pressure(0);
+    inline Parameter<int32_t> pay_fsmd_voltage_converter_temperature(0);
+    inline Parameter<int32_t> pay_fsmd_drivers_temperature(0);
+    inline Parameter<int32_t> pay_camera_pcb_temperature(0);
+    inline Parameter<int32_t> pay_camera_sensor_temperature(0);
+    inline Parameter<int32_t> pay_fso_aux_temperature_1(0);
+    inline Parameter<int32_t> pay_fso_aux_temperature_2(0);
+    inline Parameter<int32_t> pay_oad_temperature(0);
+    inline Parameter<int32_t> pay_optical_amplifier_combiner_heater_temperature(0);
+    inline Parameter<int32_t> pay_optical_amplifier_fiber_mirror_temperature(0);
+    inline Parameter<int32_t> pay_optical_amplifier_circulator_heater_temperature(0);
+    inline Parameter<int32_t> pay_ldd_temperature(0);
+    inline Parameter<int32_t> pay_ld_temperature(0);
+    inline Parameter<int32_t> pay_ldd_12v_current(0);
+    inline Parameter<int32_t> pay_ldd_psu_12v(0);
+    inline Parameter<int32_t> pay_ldd_converter_input_current(0);
+    inline Parameter<int32_t> pay_ldd_ld_v(0);
+    inline Parameter<int32_t> pay_ldd_ld_dac_set_v(0);
+    inline Parameter<int32_t> pay_fsm_driver_12v_current(0);
+    inline Parameter<int32_t> pay_flashes_33v_current(0);
+    inline Parameter<int32_t> pay_fpga_5v_current(0);
+    inline Parameter<int32_t> pay_sdd_33v_current(0);
+    inline Parameter<int32_t> pay_pump_ld_power(0);
+    inline Parameter<int32_t> pay_mcu_33v_current(0);
+    inline Parameter<int32_t> pay_fpga_die_temperature(0);
+    inline Parameter<int32_t> pay_fpga_vdd1_voltage(0);
+    inline Parameter<int32_t> pay_fpga_vdd18_voltage(0);
+    inline Parameter<int32_t> pay_fpga_vdd25_voltage(0);
+    inline Parameter<int32_t> pay_seed_ld_incoming_power(0);
+    inline Parameter<int32_t> pay_amplifier_output_power(0);
+    inline Parameter<int32_t> pay_amplifier_output_reflected_power(0);
+    inline Parameter<int32_t> pay_seed_diode_bias_current(0);
+    inline Parameter<int32_t> pay_tec_current(0);
+    inline Parameter<int32_t> pay_ldd_output_current(0);
+    inline Parameter<int32_t> pay_sd_temperature_violations(0);
+    inline Parameter<int32_t> pay_end_uptime(0);
+    inline Parameter<int32_t> pay_response(0);
+    inline Parameter<int32_t> pay_device(0);
+    inline Parameter<int32_t> pay_firmware(0);
+    inline Parameter<int32_t> pay_firmware_is_confirmed(0);
+    inline Parameter<int32_t> pay_bitstream(0);
+    inline Parameter<int32_t> pay_softcpu_1_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_2_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_3_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_4_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_5_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_6_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_7_firmware(0);
+    inline Parameter<int32_t> pay_softcpu_8_firmware(0);
+    inline Parameter<int32_t> pay_boot_count(0);
+    inline Parameter<int32_t> pay_transmission_count(0);
+    inline Parameter<int32_t> pay_hw_det(0);
+    inline Parameter<int32_t> pay_storage0(0);
+    inline Parameter<int32_t> pay_storage1(0);
+    inline Parameter<int32_t> pay_storage2(0);
+    inline Parameter<int32_t> pay_storage3(0);
+    inline Parameter<int32_t> pay_ldd_fault(0);
+    inline Parameter<int32_t> pay_fsm_fault(0);
+    inline Parameter<int32_t> pay_fpga_fault(0);
+    inline Parameter<int32_t> pay_v_cam_fault(0);
+    inline Parameter<int32_t> pay_sdd_fault(0);
 } // namespace PeakSatParameters
 
 #pragma GCC diagnostic pop

@@ -44,6 +44,15 @@ namespace HousekeepingStructures {
                     EPS_UNIX_YEAR, EPS_UNIX_MONTH, EPS_UNIX_DAY, EPS_UNIX_HOUR, EPS_UNIX_MINUTE, EPS_UNIX_SECOND
                 }
             },
+
+            {
+                4, 5000, false,
+                {
+                    COMMS_UHFBandPATemperatureID, COMMS_PCBTemperatureID,
+                    COMMS_GNSSTemperatureID,
+                    Antenna_Deployment_StatusID
+                }
+            },
         }
     };
 } // namespace HousekeepingStructures
