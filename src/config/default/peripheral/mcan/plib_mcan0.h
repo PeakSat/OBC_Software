@@ -76,18 +76,18 @@
 #define MCAN0_CLOCK_FREQUENCY    50000000U
 
 /* MCAN0 Message RAM Configuration Size */
-#define MCAN0_RX_FIFO0_ELEMENT_SIZE       72U
-#define MCAN0_RX_FIFO0_SIZE               1440U
-#define MCAN0_RX_FIFO1_ELEMENT_SIZE       72U
-#define MCAN0_RX_FIFO1_SIZE               720U
-#define MCAN0_TX_FIFO_BUFFER_ELEMENT_SIZE 72U
-#define MCAN0_TX_FIFO_BUFFER_SIZE         720U
+#define MCAN0_RX_FIFO0_ELEMENT_SIZE       16U
+#define MCAN0_RX_FIFO0_SIZE               320U
+#define MCAN0_RX_FIFO1_ELEMENT_SIZE       16U
+#define MCAN0_RX_FIFO1_SIZE               160U
+#define MCAN0_TX_FIFO_BUFFER_ELEMENT_SIZE 16U
+#define MCAN0_TX_FIFO_BUFFER_SIZE         160U
 #define MCAN0_TX_EVENT_FIFO_SIZE          80U
 #define MCAN0_STD_MSG_ID_FILTER_SIZE      4U
 
 /* MCAN0_MESSAGE_RAM_CONFIG_SIZE to be used by application or driver
    for allocating buffer from non-cached contiguous memory */
-#define MCAN0_MESSAGE_RAM_CONFIG_SIZE     2964U
+#define MCAN0_MESSAGE_RAM_CONFIG_SIZE     724U
 
 // *****************************************************************************
 // *****************************************************************************

@@ -47,7 +47,7 @@ children:
       - type: Boolean
         attributes: {id: visible}
         children:
-        - {type: Value, value: 'true'}
+        - {type: Value, value: 'false'}
   - type: Float
     attributes: {id: DATA_SAMPLE_POINT}
     children:
@@ -222,7 +222,7 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: CAN FD}
+        attributes: {value: NORMAL}
   - type: Comment
     attributes: {id: MCAN_TIME_QUANTA_INVALID_COMMENT}
     children:
@@ -285,13 +285,13 @@ children:
     - type: Attributes
       children:
       - type: Boolean
-        attributes: {id: visible}
+        attributes: {id: readOnly}
         children:
         - {type: Value, value: 'true'}
-    - type: Values
-      children:
-      - type: User
-        attributes: {value: '7'}
+      - type: Boolean
+        attributes: {id: visible}
+        children:
+        - {type: Value, value: 'false'}
   - type: Integer
     attributes: {id: RXF0_ELEMENTS}
     children:
@@ -312,13 +312,13 @@ children:
     - type: Attributes
       children:
       - type: Boolean
-        attributes: {id: visible}
+        attributes: {id: readOnly}
         children:
         - {type: Value, value: 'true'}
-    - type: Values
-      children:
-      - type: User
-        attributes: {value: '7'}
+      - type: Boolean
+        attributes: {id: visible}
+        children:
+        - {type: Value, value: 'false'}
   - type: Integer
     attributes: {id: RXF1_ELEMENTS}
     children:
@@ -348,13 +348,13 @@ children:
     - type: Attributes
       children:
       - type: Boolean
-        attributes: {id: visible}
+        attributes: {id: readOnly}
         children:
         - {type: Value, value: 'true'}
-    - type: Values
-      children:
-      - type: User
-        attributes: {value: '7'}
+      - type: Boolean
+        attributes: {id: visible}
+        children:
+        - {type: Value, value: 'false'}
   - type: Integer
     attributes: {id: TX_FIFO_ELEMENTS}
     children:

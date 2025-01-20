@@ -118,22 +118,14 @@ void MCAN0_Initialize(void)
     /* Set CCE to unlock the configuration registers */
     MCAN0_REGS->MCAN_CCCR |= MCAN_CCCR_CCE_Msk;
 
-    /* Set Data Bit Timing and Prescaler Register */
-    MCAN0_REGS->MCAN_DBTP = MCAN_DBTP_DTSEG2(0) | MCAN_DBTP_DTSEG1(22) | MCAN_DBTP_DBRP(3) | MCAN_DBTP_DSJW(0);
-
     /* Set Nominal Bit timing and Prescaler Register */
     MCAN0_REGS->MCAN_NBTP  = MCAN_NBTP_NTSEG2(4) | MCAN_NBTP_NTSEG1(13) | MCAN_NBTP_NBRP(4) | MCAN_NBTP_NSJW(4);
 
-    /* Receive Buffer / FIFO Element Size Configuration Register */
-    MCAN0_REGS->MCAN_RXESC = 0UL  | MCAN_RXESC_F0DS(7UL) | MCAN_RXESC_F1DS(7UL);
-    /* Transmit Buffer/FIFO Element Size Configuration Register */
-    MCAN0_REGS->MCAN_TXESC = MCAN_TXESC_TBDS(7UL);
 
     /* Global Filter Configuration Register */
     MCAN0_REGS->MCAN_GFC = MCAN_GFC_ANFS_RX_FIFO_1 | MCAN_GFC_ANFE(2);
 
     /* Set the operation mode */
-    MCAN0_REGS->MCAN_CCCR |= MCAN_CCCR_FDOE_ENABLED | MCAN_CCCR_BRSE_ENABLED;
 
 
     MCAN0_REGS->MCAN_CCCR &= ~MCAN_CCCR_INIT_Msk;
@@ -676,31 +668,6 @@ bool MCAN0_BitTimingCalculationGet(MCAN_BIT_TIMING_SETUP *setup, MCAN_BIT_TIMING
                 bitTiming->nominalBitTimingSet = false;
             }
         }
-        if (setup->dataBitTimingSet == true)
-        {
-            numOfTimeQuanta = MCAN0_CLOCK_FREQUENCY / (setup->dataBitRate * ((uint32_t)setup->dataPrescaler + 1U));
-            if ((numOfTimeQuanta >= 4U) && (numOfTimeQuanta <= 49U))
-            {
-                if (setup->dataSamplePoint < 50.0f)
-                {
-                    setup->dataSamplePoint = 50.0f;
-                }
-                temp1 = (float)numOfTimeQuanta;
-                temp2 = (temp1 * setup->dataSamplePoint) / 100.0f;
-                tseg1 = (uint8_t)temp2;
-                bitTiming->dataBitTiming.dataTimeSegment2 = (uint8_t)(numOfTimeQuanta - tseg1 - 1U);
-                bitTiming->dataBitTiming.dataTimeSegment1 = tseg1 - 2U;
-                bitTiming->dataBitTiming.dataSJW = bitTiming->dataBitTiming.dataTimeSegment2;
-                bitTiming->dataBitTiming.dataPrescaler = setup->dataPrescaler;
-                bitTiming->dataBitTimingSet = true;
-                status = true;
-            }
-            else
-            {
-                bitTiming->dataBitTimingSet = false;
-                status = false;
-            }
-        }
     }
 
     return status;
@@ -710,7 +677,6 @@ bool MCAN0_BitTimingSet(MCAN_BIT_TIMING *bitTiming)
 {
     bool status = false;
     bool nominalBitTimingSet = false;
-    bool dataBitTimingSet = false;
 
     if ((bitTiming->nominalBitTimingSet == true)
     && (bitTiming->nominalBitTiming.nominalTimeSegment1 >= 0x1U)
@@ -721,16 +687,7 @@ bool MCAN0_BitTimingSet(MCAN_BIT_TIMING *bitTiming)
         nominalBitTimingSet = true;
     }
 
-    if  ((bitTiming->dataBitTimingSet == true)
-    &&  ((bitTiming->dataBitTiming.dataTimeSegment1 >= 0x1U) && (bitTiming->dataBitTiming.dataTimeSegment1 <= 0x1FU))
-    &&  (bitTiming->dataBitTiming.dataTimeSegment2 <= 0xFU)
-    &&  (bitTiming->dataBitTiming.dataPrescaler <= 0x1FU)
-    &&  (bitTiming->dataBitTiming.dataSJW <= 0xFU))
-    {
-        dataBitTimingSet = true;
-    }
-
-    if ((nominalBitTimingSet == true) || (dataBitTimingSet == true))
+    if (nominalBitTimingSet == true)
     {
         /* Start MCAN initialization */
         MCAN0_REGS->MCAN_CCCR = MCAN_CCCR_INIT_Msk;
@@ -742,20 +699,10 @@ bool MCAN0_BitTimingSet(MCAN_BIT_TIMING *bitTiming)
         /* Set CCE to unlock the configuration registers */
         MCAN0_REGS->MCAN_CCCR |= MCAN_CCCR_CCE_Msk;
 
-        if (dataBitTimingSet == true)
-        {
-            /* Set Data Bit Timing and Prescaler Register */
-            MCAN0_REGS->MCAN_DBTP = MCAN_DBTP_DTSEG2(bitTiming->dataBitTiming.dataTimeSegment2) | MCAN_DBTP_DTSEG1(bitTiming->dataBitTiming.dataTimeSegment1) | MCAN_DBTP_DBRP(bitTiming->dataBitTiming.dataPrescaler) | MCAN_DBTP_DSJW(bitTiming->dataBitTiming.dataSJW);
-
-        }
-        if (nominalBitTimingSet == true)
-        {
-            /* Set Nominal Bit timing and Prescaler Register */
-            MCAN0_REGS->MCAN_NBTP  = MCAN_NBTP_NTSEG2(bitTiming->nominalBitTiming.nominalTimeSegment2) | MCAN_NBTP_NTSEG1(bitTiming->nominalBitTiming.nominalTimeSegment1) | MCAN_NBTP_NBRP(bitTiming->nominalBitTiming.nominalPrescaler) | MCAN_NBTP_NSJW(bitTiming->nominalBitTiming.nominalSJW);
-        }
+        /* Set Nominal Bit timing and Prescaler Register */
+        MCAN0_REGS->MCAN_NBTP  = MCAN_NBTP_NTSEG2(bitTiming->nominalBitTiming.nominalTimeSegment2) | MCAN_NBTP_NTSEG1(bitTiming->nominalBitTiming.nominalTimeSegment1) | MCAN_NBTP_NBRP(bitTiming->nominalBitTiming.nominalPrescaler) | MCAN_NBTP_NSJW(bitTiming->nominalBitTiming.nominalSJW);
 
         /* Set the operation mode */
-        MCAN0_REGS->MCAN_CCCR |= MCAN_CCCR_FDOE_ENABLED | MCAN_CCCR_BRSE_ENABLED;
 
 
         MCAN0_REGS->MCAN_CCCR &= ~MCAN_CCCR_INIT_Msk;
