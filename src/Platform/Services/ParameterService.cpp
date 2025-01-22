@@ -1,9 +1,9 @@
-#include "COMMS_ECSS_Configuration.hpp"
+#include "ECSS_Configuration.hpp"
 
 #ifdef SERVICE_PARAMETER
 
 #include "Services/ParameterService.hpp"
-#include "PlatformParameters.hpp"
+#include "PeakSatParameters.hpp"
 
 void ParameterService::initializeParameterMap() {
     parameters = {
@@ -80,10 +80,10 @@ void ParameterService::initializeParameterMap() {
         {PAYParameters::fpga_faultID, PAYParameters::fpga_fault},
         {PAYParameters::v_cam_faultID, PAYParameters::v_cam_fault},
         {PAYParameters::sdd_faultID, PAYParameters::sdd_fault},
-        {OBDHParameters::OBCPCBTemperature1ID, OBDHParameters::OBCPCBTemperature1},
-        {OBDHParameters::OBCPCBTemperature2ID, OBDHParameters::OBCPCBTemperature2},
-        {OBDHParameters::OBCMCUTemperatureID, OBDHParameters::OBCMCUTemperature},
-        {OBDHParameters::OBCMCUBootCounterID, OBDHParameters::OBCMCUBootCounter},
+        {OBDHParameters::PCBTemperature1ID, OBDHParameters::PCBTemperature1},
+        {OBDHParameters::PCBTemperature2ID, OBDHParameters::PCBTemperature2},
+        {OBDHParameters::MCUTemperatureID, OBDHParameters::MCUTemperature},
+        {OBDHParameters::MCUBootCounterID, OBDHParameters::MCUBootCounter},
         {OBDHParameters::SpacecraftTimeRefID, OBDHParameters::SpacecraftTimeRef},
         {OBDHParameters::OnBoardTimeID, OBDHParameters::OnBoardTime},
         {OBDHParameters::CANBUSLoad1ID, OBDHParameters::CANBUSLoad1},
@@ -102,18 +102,53 @@ void ParameterService::initializeParameterMap() {
         {OBDHParameters::CAN_ACK_timeoutID, OBDHParameters::CAN_ACK_timeout},
         {OBDHParameters::CAN_FrameRetransimtCountID, OBDHParameters::CAN_FrameRetransimtCount},
         {OBDHParameters::CAN_TransmitFailureCountID, OBDHParameters::CAN_TransmitFailureCount},
+        {OBDHParameters::UseRTTID, OBDHParameters::UseRTT},
+        {OBDHParameters::UseUARTID, OBDHParameters::UseUART},
+        {OBDHParameters::UseCANID, OBDHParameters::UseCAN},
+        {ADCSParameters::ResetTypeID, ADCSParameters::ResetType},
+        {ADCSParameters::EstRpyRollID, ADCSParameters::EstRpyRoll},
+        {ADCSParameters::EstRpyPitchID, ADCSParameters::EstRpyPitch},
+        {ADCSParameters::EstRpyYawID, ADCSParameters::EstRpyYaw},
+        {ADCSParameters::EstRateIrcXID, ADCSParameters::EstRateIrcX},
+        {ADCSParameters::EstRateIrcYID, ADCSParameters::EstRateIrcY},
+        {ADCSParameters::EstRateIrcZID, ADCSParameters::EstRateIrcZ},
+        {ADCSParameters::EstStdDevQ0ID, ADCSParameters::EstStdDevQ0},
+        {ADCSParameters::EstStdDevQ1ID, ADCSParameters::EstStdDevQ1},
+        {ADCSParameters::EstStdDevQ2ID, ADCSParameters::EstStdDevQ2},
+        {ADCSParameters::Str0Quat1ID, ADCSParameters::Str0Quat1},
+        {ADCSParameters::Str0Quat2ID, ADCSParameters::Str0Quat2},
+        {ADCSParameters::Str0Quat3ID, ADCSParameters::Str0Quat3},
+        {ADCSParameters::Str0Quat4ID, ADCSParameters::Str0Quat4},
+        {ADCSParameters::Str0AngVelXID, ADCSParameters::Str0AngVelX},
+        {ADCSParameters::Str0AngVelYID, ADCSParameters::Str0AngVelY},
+        {ADCSParameters::Str0AngVelZID, ADCSParameters::Str0AngVelZ},
+        {ADCSParameters::ConModeSelectID, ADCSParameters::ConModeSelect},
+        {ADCSParameters::ConModeDefaultID, ADCSParameters::ConModeDefault},
         {ADCSParameters::RWL0_power_stateID, ADCSParameters::RWL0_power_state},
         {ADCSParameters::RWL1_power_stateID, ADCSParameters::RWL1_power_state},
         {ADCSParameters::RWL2_power_stateID, ADCSParameters::RWL2_power_state},
-        {ADCSParameters::ilia_test4ID, ADCSParameters::ilia_test4},
-        {ADCSParameters::ilia_test5ID, ADCSParameters::ilia_test5},
-        {ADCSParameters::ilia_test6ID, ADCSParameters::ilia_test6},
-        {ADCSParameters::ilia_test7ID, ADCSParameters::ilia_test7},
-        {ADCSParameters::ilia_test8ID, ADCSParameters::ilia_test8},
-        {ADCSParameters::ilia_test9ID, ADCSParameters::ilia_test9},
+        {ADCSParameters::Mag0PowerID, ADCSParameters::Mag0Power},
+        {ADCSParameters::Gyro0PowerID, ADCSParameters::Gyro0Power},
+        {ADCSParameters::Gyro1PowerID, ADCSParameters::Gyro1Power},
+        {ADCSParameters::Fss0PowerID, ADCSParameters::Fss0Power},
+        {ADCSParameters::Hss0PowerID, ADCSParameters::Hss0Power},
+        {ADCSParameters::Str0PowerID, ADCSParameters::Str0Power},
+        {ADCSParameters::SatPosEciXID, ADCSParameters::SatPosEciX},
+        {ADCSParameters::SatPosEciYID, ADCSParameters::SatPosEciY},
+        {ADCSParameters::SatPosEciZID, ADCSParameters::SatPosEciZ},
+        {ADCSParameters::SatVelEciXID, ADCSParameters::SatVelEciX},
+        {ADCSParameters::SatVelEciYID, ADCSParameters::SatVelEciY},
+        {ADCSParameters::SatVelEciZID, ADCSParameters::SatVelEciZ},
+        {ADCSParameters::TgtTrackBodyVecXID, ADCSParameters::TgtTrackBodyVecX},
+        {ADCSParameters::TgtTrackBodyVecYID, ADCSParameters::TgtTrackBodyVecY},
+        {ADCSParameters::TgtTrackBodyVecZID, ADCSParameters::TgtTrackBodyVecZ},
+        {ADCSParameters::TgtRefLatID, ADCSParameters::TgtRefLat},
+        {ADCSParameters::TgtRefLonID, ADCSParameters::TgtRefLon},
+        {ADCSParameters::TgtRefAltID, ADCSParameters::TgtRefAlt},
         {COMMSParameters::commsUHFBandPATemperatureID, COMMSParameters::commsUHFBandPATemperature},
         {COMMSParameters::commsPCBTemperatureID, COMMSParameters::commsPCBTemperature},
         {COMMSParameters::commsGNSSTemperatureID, COMMSParameters::commsGNSSTemperature},
-        {COMMSParameters::Antenna_Deployment_StatusID, COMMSParameters::Antenna_Deployment_Status}};
+        {COMMSParameters::Antenna_Deployment_StatusID, COMMSParameters::Antenna_Deployment_Status},
+        {COMMSParameters::commit_hashID, COMMSParameters::commit_hash}};
 }
 #endif

@@ -114,10 +114,10 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
         return 0;
     } else {
         //Change CAN bus
-        if (PeakSatParameters::obcCANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
-            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+        if (OBDHParameters::CANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
+            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
         } else {
-            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
         }
         if (!createCANTPMessageWithRetry(message, isISR, 2)) {
             return 0;
@@ -130,11 +130,11 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
             vTaskDelay(1);
             CAN::Driver::initialize();
             vTaskDelay(1);
-            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
             if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                 return 0;
             } else {
-                PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+                OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
                 if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                     return 0;
                 } else {

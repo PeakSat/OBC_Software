@@ -8,7 +8,7 @@ namespace CommonParameters {
     inline auto& boardTemperature2 = OBDHParameters::PCBTemperature2;
     inline auto& mcuTemperature = OBDHParameters::MCUTemperature;
     inline auto& time = OBDHParameters::OnBoardTime;
-    inline auto& useRTT = PeakSatParameters::obcUseRTT;
-    inline auto& useUART = PeakSatParameters::obcUseUART;
-    inline auto& useCAN = PeakSatParameters::obcUseCAN;
+    inline auto& useRTT = OBDHParameters::UseRTT;
+    inline auto& useUART = OBDHParameters::UseUART;
+    inline auto& useCAN = OBDHParameters::UseCAN;
 } // namespace CommonParameters

@@ -58,10 +58,10 @@ cpp_lines = []
 hhp_lines = []
 
 # Add the header lines for the .cpp file
-cpp_lines.append('#include "COMMS_ECSS_Configuration.hpp"')
+cpp_lines.append('#include "ECSS_Configuration.hpp"')
 cpp_lines.append("\n#ifdef SERVICE_PARAMETER\n")
 cpp_lines.append('#include "Services/ParameterService.hpp"')
-cpp_lines.append('#include "PlatformParameters.hpp"')
+cpp_lines.append('#include "PeakSatParameters.hpp"')
 cpp_lines.append("\nvoid ParameterService::initializeParameterMap() {")
 cpp_lines.append("    parameters = {")
 
@@ -69,6 +69,7 @@ cpp_lines.append("    parameters = {")
 hhp_lines.append("#pragma once")
 hhp_lines.append("#pragma GCC diagnostic push")
 hhp_lines.append('#pragma GCC diagnostic ignored "-Wpsabi" // Suppress: parameter passing for argument of type \'Time::DefaultCUC\' {aka \'TimeStamp<4, 0, 1, 10>\'} changed in GCC 7.1')
+hhp_lines.append('#include <Driver.hpp>')
 hhp_lines.append('#include "Helpers/Parameter.hpp"')
 
 # Process each subsystem separately
