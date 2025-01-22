@@ -82,8 +82,8 @@ extern "C" {
 /* TIME System Service Configuration Options */
 #define SYS_TIME_INDEX_0                            (0)
 #define SYS_TIME_MAX_TIMERS                         (5)
-#define SYS_TIME_HW_COUNTER_WIDTH                   (24)
-#define SYS_TIME_TICK_FREQ_IN_HZ                    (1000)
+#define SYS_TIME_HW_COUNTER_WIDTH                   (16)
+#define SYS_TIME_TICK_FREQ_IN_HZ                    (2288.85328)
 
 
 

@@ -43,85 +43,80 @@
 #include "interrupts.h"
 
 /* Macro for limiting XDMAC objects to highest channel enabled */
-#define XDMAC_ACTIVE_CHANNELS_MAX (2U)
+#define XDMAC_ACTIVE_CHANNELS_MAX 2
 
 
 typedef struct
 {
-    bool inUse;
+    uint8_t                inUse;
     XDMAC_CHANNEL_CALLBACK callback;
-    uintptr_t context;
-    bool busyStatus;
+    uintptr_t              context;
+    uint8_t                busyStatus;
 } XDMAC_CH_OBJECT ;
 
-volatile static XDMAC_CH_OBJECT xdmacChannelObj[XDMAC_ACTIVE_CHANNELS_MAX];
+XDMAC_CH_OBJECT xdmacChannelObj[XDMAC_ACTIVE_CHANNELS_MAX];
 
 // *****************************************************************************
 // *****************************************************************************
 // Section: XDMAC Implementation
 // *****************************************************************************
 // *****************************************************************************
-void __attribute__((used)) XDMAC_InterruptHandler( void )
+void XDMAC_InterruptHandler( void )
 {
-    uint32_t chanIntStatus;
-    uint32_t channel;
-
-    /* Additional temporary variables used to prevent MISRA violations (Rule 13.x) */
-    bool channelInUse;
-    uintptr_t channelContext;
+    XDMAC_CH_OBJECT *xdmacChObj = (XDMAC_CH_OBJECT *)&xdmacChannelObj[0];
+    uint8_t channel = 0U;
+    volatile uint32_t chanIntStatus = 0U;
 
     /* Iterate all channels */
     for (channel = 0U; channel < XDMAC_ACTIVE_CHANNELS_MAX; channel++)
     {
-        channelInUse = xdmacChannelObj[channel].inUse;
-        channelContext = xdmacChannelObj[channel].context;
-
         /* Process events only channels that are active and has global interrupt enabled */
-        if (channelInUse && ((XDMAC_REGS->XDMAC_GIM & (XDMAC_GIM_IM0_Msk << (uint32_t)channel)) != 0U))
+        if ((1 == xdmacChObj->inUse) && (XDMAC_REGS->XDMAC_GIM & (XDMAC_GIM_IM0_Msk << channel)) )
         {
             /* Read the interrupt status for the active DMA channel */
             chanIntStatus = XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CIS;
 
-            if ((chanIntStatus & ( XDMAC_CIS_RBEIS_Msk | XDMAC_CIS_WBEIS_Msk | XDMAC_CIS_ROIS_Msk)) != 0U)
+            if (chanIntStatus & ( XDMAC_CIS_RBEIS_Msk | XDMAC_CIS_WBEIS_Msk | XDMAC_CIS_ROIS_Msk))
             {
-                xdmacChannelObj[channel].busyStatus = false;
+                xdmacChObj->busyStatus = false;
 
                 /* It's an error interrupt */
-                if (NULL != xdmacChannelObj[channel].callback)
+                if (NULL != xdmacChObj->callback)
                 {
-                    xdmacChannelObj[channel].callback(XDMAC_TRANSFER_ERROR, channelContext);
+                    xdmacChObj->callback(XDMAC_TRANSFER_ERROR, xdmacChObj->context);
                 }
             }
-            else if ((chanIntStatus & XDMAC_CIS_BIS_Msk) != 0U)
+            else if (chanIntStatus & XDMAC_CIS_BIS_Msk)
             {
-                xdmacChannelObj[channel].busyStatus = false;
+                xdmacChObj->busyStatus = false;
 
                 /* It's a block transfer complete interrupt */
-                if (NULL != xdmacChannelObj[channel].callback)
+                if (NULL != xdmacChObj->callback)
                 {
-                    xdmacChannelObj[channel].callback(XDMAC_TRANSFER_COMPLETE, channelContext);
+                    xdmacChObj->callback(XDMAC_TRANSFER_COMPLETE, xdmacChObj->context);
                 }
             }
-            else
-            {
-                /* Nothing to do here */
-            }
-
         }
+
+        /* Point to next channel object */
+        xdmacChObj += 1U;
     }
 }
 
 void XDMAC_Initialize( void )
 {
+    XDMAC_CH_OBJECT *xdmacChObj = (XDMAC_CH_OBJECT *)&xdmacChannelObj[0];
     uint8_t channel = 0U;
 
     /* Initialize channel objects */
     for(channel = 0U; channel < XDMAC_ACTIVE_CHANNELS_MAX; channel++)
     {
-        xdmacChannelObj[channel].inUse = false;
-        xdmacChannelObj[channel].callback = NULL;
-        xdmacChannelObj[channel].context = 0U;
-        xdmacChannelObj[channel].busyStatus = false;
+        xdmacChObj->inUse = 0U;
+        xdmacChObj->callback = NULL;
+        xdmacChObj->context = 0U;
+        xdmacChObj->busyStatus = false;
+        /* Point to next channel object */
+        xdmacChObj += 1U;
     }
 
     /* Configure Channel 0 */
@@ -138,7 +133,7 @@ void XDMAC_Initialize( void )
                                             XDMAC_CC_MBSIZE_SINGLE);
     XDMAC_REGS->XDMAC_CHID[0].XDMAC_CIE= (XDMAC_CIE_BIE_Msk | XDMAC_CIE_RBIE_Msk | XDMAC_CIE_WBIE_Msk | XDMAC_CIE_ROIE_Msk);
     XDMAC_REGS->XDMAC_GIE= (XDMAC_GIE_IE0_Msk << 0);
-    xdmacChannelObj[0].inUse = true;
+    xdmacChannelObj[0].inUse = 1U;
     /* Configure Channel 1 */
     XDMAC_REGS->XDMAC_CHID[1].XDMAC_CC =  (XDMAC_CC_TYPE_PER_TRAN |
                                             XDMAC_CC_PERID(21U) |
@@ -153,7 +148,7 @@ void XDMAC_Initialize( void )
                                             XDMAC_CC_MBSIZE_SINGLE);
     XDMAC_REGS->XDMAC_CHID[1].XDMAC_CIE= (XDMAC_CIE_BIE_Msk | XDMAC_CIE_RBIE_Msk | XDMAC_CIE_WBIE_Msk | XDMAC_CIE_ROIE_Msk);
     XDMAC_REGS->XDMAC_GIE= (XDMAC_GIE_IE0_Msk << 1);
-    xdmacChannelObj[1].inUse = true;
+    xdmacChannelObj[1].inUse = 1U;
     return;
 }
 
@@ -169,11 +164,8 @@ bool XDMAC_ChannelTransfer( XDMAC_CHANNEL channel, const void *srcAddr, const vo
 {
     volatile uint32_t status = 0U;
     bool returnStatus = false;
-    const uint32_t *psrcAddr =   (const uint32_t *)srcAddr;
-    const uint32_t *pdestAddr =  (const uint32_t *)destAddr;
 
-
-    if ((xdmacChannelObj[channel].busyStatus == false) || ((XDMAC_REGS->XDMAC_GS & (XDMAC_GS_ST0_Msk << (uint32_t)channel)) == 0U))
+    if ((xdmacChannelObj[channel].busyStatus == false) || ((XDMAC_REGS->XDMAC_GS & (XDMAC_GS_ST0_Msk << channel)) == 0))
     {
         /* Clear channel level status before adding transfer parameters */
         status = XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CIS;
@@ -182,10 +174,10 @@ bool XDMAC_ChannelTransfer( XDMAC_CHANNEL channel, const void *srcAddr, const vo
         xdmacChannelObj[channel].busyStatus = true;
 
         /*Set source address */
-        XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CSA= (uint32_t)psrcAddr;
+        XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CSA= (uint32_t)srcAddr;
 
         /* Set destination address */
-        XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CDA= (uint32_t)pdestAddr;
+        XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CDA= (uint32_t)destAddr;
 
         /* Set block size */
         XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CUBC= XDMAC_CUBC_UBLEN(blockSize);
@@ -194,7 +186,7 @@ bool XDMAC_ChannelTransfer( XDMAC_CHANNEL channel, const void *srcAddr, const vo
         __DMB();
 
         /* Enable the channel */
-        XDMAC_REGS->XDMAC_GE= (XDMAC_GE_EN0_Msk << (uint32_t)channel);
+        XDMAC_REGS->XDMAC_GE= (XDMAC_GE_EN0_Msk << channel);
 
         returnStatus = true;
     }
@@ -204,7 +196,14 @@ bool XDMAC_ChannelTransfer( XDMAC_CHANNEL channel, const void *srcAddr, const vo
 
 bool XDMAC_ChannelIsBusy (XDMAC_CHANNEL channel)
 {
-    return((xdmacChannelObj[channel].busyStatus == true) && ((XDMAC_REGS->XDMAC_GS & (XDMAC_GS_ST0_Msk << (uint32_t)channel)) != 0U));
+    if (xdmacChannelObj[channel].busyStatus == true && (XDMAC_REGS->XDMAC_GS & (XDMAC_GS_ST0_Msk << channel)))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 XDMAC_TRANSFER_EVENT XDMAC_ChannelTransferStatusGet(XDMAC_CHANNEL channel)
@@ -216,25 +215,22 @@ XDMAC_TRANSFER_EVENT XDMAC_ChannelTransferStatusGet(XDMAC_CHANNEL channel)
     /* Read the interrupt status for the requested DMA channel */
     chanIntStatus = XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CIS;
 
-    if ((chanIntStatus & ( XDMAC_CIS_RBEIS_Msk | XDMAC_CIS_WBEIS_Msk | XDMAC_CIS_ROIS_Msk)) != 0U)
+    if (chanIntStatus & ( XDMAC_CIS_RBEIS_Msk | XDMAC_CIS_WBEIS_Msk | XDMAC_CIS_ROIS_Msk))
     {
         xdmacTransferStatus = XDMAC_TRANSFER_ERROR;
     }
-    else if ((chanIntStatus & XDMAC_CIS_BIS_Msk) != 0U)
+    else if (chanIntStatus & XDMAC_CIS_BIS_Msk)
     {
         xdmacTransferStatus = XDMAC_TRANSFER_COMPLETE;
     }
-    else
-    {
-        ; /* No action required - ; is optional */
-    }
+
     return xdmacTransferStatus;
 }
 
 void XDMAC_ChannelDisable (XDMAC_CHANNEL channel)
 {
     /* Disable the channel */
-    XDMAC_REGS->XDMAC_GD = (XDMAC_GD_DI0_Msk << (uint32_t)channel);
+    XDMAC_REGS->XDMAC_GD = (XDMAC_GD_DI0_Msk << channel);
     xdmacChannelObj[channel].busyStatus = false;
     return;
 }
@@ -247,7 +243,7 @@ XDMAC_CHANNEL_CONFIG XDMAC_ChannelSettingsGet (XDMAC_CHANNEL channel)
 bool XDMAC_ChannelSettingsSet (XDMAC_CHANNEL channel, XDMAC_CHANNEL_CONFIG setting)
 {
     /* Disable the channel */
-    XDMAC_REGS->XDMAC_GD= (XDMAC_GD_DI0_Msk << (uint32_t)channel);
+    XDMAC_REGS->XDMAC_GD= (XDMAC_GD_DI0_Msk << channel);
 
     /* Set the new settings */
     XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CC= setting;
@@ -258,7 +254,7 @@ bool XDMAC_ChannelSettingsSet (XDMAC_CHANNEL channel, XDMAC_CHANNEL_CONFIG setti
 void XDMAC_ChannelBlockLengthSet (XDMAC_CHANNEL channel, uint16_t length)
 {
     /* Disable the channel */
-    XDMAC_REGS->XDMAC_GD= (XDMAC_GD_DI0_Msk << (uint32_t)channel);
+    XDMAC_REGS->XDMAC_GD= (XDMAC_GD_DI0_Msk << channel);
 
     XDMAC_REGS->XDMAC_CHID[channel].XDMAC_CBC = length;
 }
@@ -266,11 +262,11 @@ void XDMAC_ChannelBlockLengthSet (XDMAC_CHANNEL channel, uint16_t length)
 void XDMAC_ChannelSuspend (XDMAC_CHANNEL channel)
 {
     /* Suspend the channel */
-    XDMAC_REGS->XDMAC_GRWS = (XDMAC_GRWS_RWS0_Msk << (uint32_t)channel);
+    XDMAC_REGS->XDMAC_GRWS = (XDMAC_GRWS_RWS0_Msk << channel);
 }
 
 void XDMAC_ChannelResume (XDMAC_CHANNEL channel)
 {
     /* Resume the channel */
-    XDMAC_REGS->XDMAC_GRWR = (XDMAC_GRWR_RWR0_Msk << (uint32_t)channel);
+    XDMAC_REGS->XDMAC_GRWR = (XDMAC_GRWR_RWR0_Msk << channel);
 }

@@ -42,7 +42,7 @@
 #include "plib_rtc.h"
 #include "interrupts.h"
 
-volatile static RTC_OBJECT rtc;
+static RTC_OBJECT rtc;
 
 __STATIC_INLINE uint32_t decimaltobcd( uint32_t aDecValue )
 {
@@ -58,7 +58,7 @@ __STATIC_INLINE uint32_t bcdtodecimal( uint32_t aBcdValue )
 
 void RTC_Initialize( void )
 {
-    RTC_REGS->RTC_MR = RTC_MR_OUT1_NO_WAVE | RTC_MR_OUT0_NO_WAVE | RTC_MR_TPERIOD_P_1S | RTC_MR_THIGH_H_31MS | RTC_MR_HRMOD(0U);
+    RTC_REGS->RTC_MR = RTC_MR_PERSIAN( 0U ) | RTC_MR_OUT1_NO_WAVE | RTC_MR_OUT0_NO_WAVE | RTC_MR_TPERIOD_P_1S | RTC_MR_THIGH_H_31MS | RTC_MR_HRMOD(0U);
 
     RTC_REGS->RTC_CR = RTC_CR_TIMEVSEL_MINUTE | RTC_CR_CALEVSEL_WEEK;
 
@@ -203,23 +203,20 @@ void RTC_CallbackRegister( RTC_CALLBACK callback, uintptr_t context )
     rtc.context = context;
 }
 
-void __attribute__((used)) RTC_InterruptHandler( void )
+void RTC_InterruptHandler( void )
 {
     // This handler may be chained with other sys control interrupts. So
     // the user call back should only occur if an RTC stimulus is present.
-    uint32_t rtc_status = RTC_REGS->RTC_SR;
+    volatile uint32_t rtc_status = RTC_REGS->RTC_SR;
     uint32_t enabledInterrupts = RTC_REGS->RTC_IMR;
 
-    /* Additional temporary variable used to prevent MISRA violations (Rule 13.x) */
-    uintptr_t context = rtc.context;
-
-    if((rtc_status & enabledInterrupts) != 0U)
+    if( (rtc_status & enabledInterrupts) != 0U )
     {
         RTC_REGS->RTC_SCCR |= enabledInterrupts;
 
-        if( rtc.callback != NULL)
+        if( rtc.callback != NULL )
         {
-            rtc.callback(rtc_status, context);
+            rtc.callback( rtc_status, rtc.context );
         }
     }
 }

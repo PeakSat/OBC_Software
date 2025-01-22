@@ -62,7 +62,6 @@ uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 
 
 extern "C" void main_cpp() {
-    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
@@ -74,7 +73,7 @@ extern "C" void main_cpp() {
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
-    nandTask.emplace();
+    // nandTask.emplace();
     memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
@@ -101,9 +100,10 @@ extern "C" void main_cpp() {
 
     vTaskStartScheduler();
 
+    /* Should be used for error handling n case the scheduler fails to start or stops unexpectedly. */
     while (true) {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
-        SYS_Tasks();
+        // SYS_Tasks();
     }
 
     return;
