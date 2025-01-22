@@ -49,7 +49,7 @@ namespace CAN::Application {
      * @param bus A default argument that uses the currentBus member variable if a value is not provided.
      * @return The ID of the bus to be switched to.
      */
-    CAN::Driver::ActiveBus switchBus(CAN::Driver::ActiveBus newBus);
+    void switchBus();
 
     /**
      * The available Event Report Types, for an Event Report CAN-TP Message.

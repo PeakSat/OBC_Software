@@ -5,9 +5,12 @@
 #include "CANGatekeeperTask.hpp"
 
 namespace CAN::Application {
-    Driver::ActiveBus switchBus(Driver::ActiveBus newBus) {
-        OBDHParameters::CANBUSActive.setValue(newBus);
-        return OBDHParameters::CANBUSActive.getValue();
+    void switchBus() {
+        if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
+            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+        } else {
+            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+        }
     }
 
     void sendPingMessage(NodeIDs destinationAddress, bool isMulticast) {
@@ -30,22 +33,22 @@ namespace CAN::Application {
         canGatekeeperTask->send({MessageIDs::Heartbeat + CAN::NodeID}, false);
     }
 
-    void sendBusSwitchoverMessage() {
-        Driver::ActiveBus newBus = Driver::Redundant;
-        if (OBDHParameters::CANBUSActive.getValue() == Driver::Redundant) {
-            newBus = Driver::Main;
-        }
+    // void sendBusSwitchoverMessage() {
+    //     Driver::ActiveBus newBus = Driver::Redundant;
+    //     if (OBDHParameters::CANBUSActive.getValue() == Driver::Redundant) {
+    //         newBus = Driver::Main;
+    //     }
+    //
+    //     etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
+    //
+    //     canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
+    // }
 
-        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
-
-        canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
-    }
-
-    void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
-        etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
-
-        canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
-    }
+    // void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
+    //     etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
+    //
+    //     canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
+    // }
 
     void sendUTCTimeMessageWithElapsedTicks() {
         auto now = TimeGetter::getCurrentTimeDefaultCUC();
@@ -187,7 +190,7 @@ namespace CAN::Application {
         if (id == Heartbeat) {
             //            registerHeartbeat();
         } else if (id == BusSwitchover) {
-            switchBus(static_cast<Driver::ActiveBus>(message.data[0]));
+            switchBus();
         } else if (id == UTCTime) {
             //            registerUTCTime();
         }

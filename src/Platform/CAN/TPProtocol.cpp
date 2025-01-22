@@ -114,11 +114,13 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
         return 0;
     } else {
         //Change CAN bus
-        if (OBDHParameters::CANBUSActive.getValue() == CAN::Driver::ActiveBus::Redundant) {
-            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
-        } else {
-            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
-        }
+        Application::switchBus();
+        // if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
+        //     OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+        // } else {
+        //     OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+        // }
+
         if (!createCANTPMessageWithRetry(message, isISR, 2)) {
             return 0;
         } else {
@@ -130,11 +132,11 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
             vTaskDelay(1);
             CAN::Driver::initialize();
             vTaskDelay(1);
-            OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
             if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                 return 0;
             } else {
-                OBDHParameters::CANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+                OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
                 if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                     return 0;
                 } else {

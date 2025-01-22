@@ -8,8 +8,13 @@ namespace OBDHParameters {
         PCBTemperature1ID = 5010,
         PCBTemperature2ID = 5020,
         MCUTemperatureID = 5030,
+        MCUInputVoltageID = 5031,
+        MCUSystickID = 5032,
+        LastFailedEventID = 5033,
         MCUBootCounterID = 5040,
+        OperationalModeID = 5041,
         SpacecraftTimeRefID = 5100,
+        ReconfigurationTimerID = 5101,
         OnBoardTimeID = 5120,
         CANBUSLoad1ID = 5180,
         CANBUSLoad2ID = 5190,
@@ -20,6 +25,11 @@ namespace OBDHParameters {
         MRAMLCLThresholdID = 5240,
         NANDFLASHONID = 5250,
         MRAMONID = 5260,
+        FlashIntID = 5261,
+        SRAMIntID = 5262,
+        AvailableMRAMID = 5263,
+        AvailableNANDID = 5264,
+        MemoryPartitionID = 5265,
         NANDFLASHScrubbingFrequencyID = 5270,
         ΜRAMScrubbingFrequencyID = 5280,
         ProgramFlashScrubbingFrequencyID = 5290,
@@ -34,16 +44,31 @@ namespace OBDHParameters {
     inline Parameter<float> PCBTemperature1(0);
     inline Parameter<float> PCBTemperature2(0);
     inline Parameter<float> MCUTemperature(0);
+    inline Parameter<float> MCUInputVoltage(0);
+    inline Parameter<uint32_t> MCUSystick(0);
+    inline Parameter<uint16_t> LastFailedEvent(0);
     inline Parameter<uint16_t> MCUBootCounter(0);
+    enum OperationalMode_enum : uint8_t {
+        CommissioningMode = 0,
+        NominalMode = 1,
+        ScienceMode = 2,
+        SafeMode = 3
+    };
+    inline Parameter<OperationalMode_enum> OperationalMode(NominalMode);
     enum SpacecraftTimeRef_enum : uint8_t {
         Spacecraft = 0,
         GroundStation = 1
     };
     inline Parameter<SpacecraftTimeRef_enum> SpacecraftTimeRef(Spacecraft);
+    inline Parameter<uint32_t> ReconfigurationTimer(0);
     inline Parameter<Time::DefaultCUC> OnBoardTime(Time::DefaultCUC(0));
     inline Parameter<float> CANBUSLoad1(0);
     inline Parameter<float> CANBUSLoad2(0);
-    inline Parameter<CAN::Driver::ActiveBus> CANBUSActive(CAN::Driver::Main);
+    enum CANBUSActive_enum : uint8_t {
+        Main = 0,
+        Redundant
+    };
+    inline Parameter<CANBUSActive_enum> CANBUSActive(Main);
     enum MCUFDIR_enum : uint8_t {
         OBC = 0,
         ADCS = 1
@@ -54,6 +79,15 @@ namespace OBDHParameters {
     inline Parameter<float> MRAMLCLThreshold(0);
     inline Parameter<bool> NANDFLASHON(true);
     inline Parameter<bool> MRAMON(true);
+    inline Parameter<uint32_t> FlashInt(0);
+    inline Parameter<uint32_t> SRAMInt(0);
+    inline Parameter<uint32_t> AvailableMRAM(0);
+    inline Parameter<uint32_t> AvailableNAND(0);
+    enum MemoryPartition_enum : uint8_t {
+        First = 0,
+        Second = 1
+    };
+    inline Parameter<MemoryPartition_enum> MemoryPartition(First);
     inline Parameter<float> NANDFLASHScrubbingFrequency(0);
     inline Parameter<float> ΜRAMScrubbingFrequency(0);
     inline Parameter<float> ProgramFlashScrubbingFrequency(0);
