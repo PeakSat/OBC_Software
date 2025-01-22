@@ -97,7 +97,8 @@ extern "C" void main_cpp() {
     watchdogTask->createTask();
 
     __enable_irq();
-
+    can_ack_handler.initialize_semaphore();
+    CAN_TRANSMIT_Handler.initialize_semaphore();
     vTaskStartScheduler();
 
     while (true) {

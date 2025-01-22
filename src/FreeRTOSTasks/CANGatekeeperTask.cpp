@@ -3,6 +3,7 @@
 #include "CANGatekeeperTask.hpp"
 #include <ApplicationLayer.hpp>
 #include <CANParserTask.hpp>
+#include <TestTask.hpp>
 
 struct incomingFIFO incomingFIFO;
 uint8_t incomingBuffer[CAN::MaxPayloadLength * sizeOfIncommingFrameBuffer];
@@ -72,7 +73,7 @@ void CANGatekeeperTask::execute() {
                 uint8_t payloadLength = metadata & 0x3F;
                 if (frameType == CAN::TPProtocol::Frame::Single) {
                     if (in_frame_handler.pointerToData[1] == CAN::Application::MessageIDs::ACK) {
-                        CAN_TRANSMIT_Handler.ACKReceived = true;
+                        xSemaphoreGive(can_ack_handler.CAN_ACK_SEMAPHORE);
                     }
                 } else if (frameType == CAN::TPProtocol::Frame::First) {
                     // // debugCounter=0;

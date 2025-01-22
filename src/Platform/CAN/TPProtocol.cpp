@@ -4,6 +4,7 @@
 using namespace CAN;
 
 CANTransactionHandler CAN_TRANSMIT_Handler;
+CAN_ACK_HANDLER can_ack_handler;
 
 // void TPProtocol::processSingleFrame(const CAN::Packet& message) {
 //     TPMessage tpMessage;
@@ -178,7 +179,6 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool i
 
     // First Frame
     xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
-    CAN_TRANSMIT_Handler.ACKReceived = false;
     {
         // 4 MSB bits is the Frame Type identifier and the 4 LSB are the leftmost 4 bits of the data length.
         uint8_t firstByte = (First << 6) | ((messageSize >> 8) & 0b111111);
@@ -215,26 +215,12 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool i
         xTaskNotifyGive(canGatekeeperTask->taskHandle);
     }
 
-    uint32_t startTime = xTaskGetTickCount();
-    while (true) {
-        vTaskDelay(1);
-        // ACK received
-        if (CAN_TRANSMIT_Handler.ACKReceived == true) {
-            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-            LOG_DEBUG << "CAN ACK received";
-            return false;
-        }
-        // Transaction timed out
-        if (xTaskGetTickCount() > (CAN_TRANSMIT_Handler.CAN_ACK_TIMEOUT + startTime)) {
-            xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-            LOG_ERROR << "CAN ACK timeout";
-            return true;
-        }
-        if (uxQueueMessagesWaiting(canGatekeeperTask->outgoingQueue)) {
-            // vTaskDelay(1);
-            CAN::Packet out_message = {};
-            xQueueReceive(canGatekeeperTask->outgoingQueue, &out_message, portMAX_DELAY);
-            CAN::Driver::send(out_message);
-        }
+    if (xSemaphoreTake(can_ack_handler.CAN_ACK_SEMAPHORE, pdMS_TO_TICKS(can_ack_handler.TIMEOUT)) == pdTRUE) {
+        LOG_DEBUG << "CAN ACK received!";
+        xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+        return false;
     }
+    LOG_ERROR << "Timeout waiting for CAN ACK";
+    xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+    return true;
 }
