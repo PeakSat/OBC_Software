@@ -60,6 +60,7 @@
 #include "peripheral/rtc/plib_rtc.h"
 #include "peripheral/rstc/plib_rstc.h"
 #include "system/time/sys_time.h"
+#include "driver/i2c/drv_i2c.h"
 #include "peripheral/afec/plib_afec0.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/smc/plib_smc.h"
@@ -201,6 +202,9 @@ Remarks:
 
 typedef struct
 {
+    /* I2C0 Driver Object */
+    SYS_MODULE_OBJ drvI2C0;
+
     SYS_MODULE_OBJ  sysTime;
 
 } SYSTEM_OBJECTS;

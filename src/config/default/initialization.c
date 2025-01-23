@@ -66,6 +66,56 @@
 // Section: Driver Initialization Data
 // *****************************************************************************
 // *****************************************************************************
+// <editor-fold defaultstate="collapsed" desc="DRV_I2C Instance 0 Initialization Data">
+
+/* I2C Client Objects Pool */
+static DRV_I2C_CLIENT_OBJ drvI2C0ClientObjPool[DRV_I2C_CLIENTS_NUMBER_IDX0];
+
+/* I2C PLib Interface Initialization */
+const DRV_I2C_PLIB_INTERFACE drvI2C0PLibAPI = {
+
+    /* I2C PLib Transfer Read Add function */
+    .read = (DRV_I2C_PLIB_READ)TWIHS2_Read,
+
+    /* I2C PLib Transfer Write Add function */
+    .write = (DRV_I2C_PLIB_WRITE)TWIHS2_Write,
+
+
+    /* I2C PLib Transfer Write Read Add function */
+    .writeRead = (DRV_I2C_PLIB_WRITE_READ)TWIHS2_WriteRead,
+
+    /*I2C PLib Transfer Abort function */
+    .transferAbort = (DRV_I2C_PLIB_TRANSFER_ABORT)TWIHS2_TransferAbort,
+
+    /* I2C PLib Transfer Status function */
+    .errorGet = (DRV_I2C_PLIB_ERROR_GET)TWIHS2_ErrorGet,
+
+    /* I2C PLib Transfer Setup function */
+    .transferSetup = (DRV_I2C_PLIB_TRANSFER_SETUP)TWIHS2_TransferSetup,
+
+    /* I2C PLib Callback Register */
+    .callbackRegister = (DRV_I2C_PLIB_CALLBACK_REGISTER)TWIHS2_CallbackRegister,
+};
+
+
+/* I2C Driver Initialization Data */
+const DRV_I2C_INIT drvI2C0InitData =
+{
+    /* I2C PLib API */
+    .i2cPlib = &drvI2C0PLibAPI,
+
+    /* I2C Number of clients */
+    .numClients = DRV_I2C_CLIENTS_NUMBER_IDX0,
+
+    /* I2C Client Objects Pool */
+    .clientObjPool = (uintptr_t)&drvI2C0ClientObjPool[0],
+
+    /* I2C Clock Speed */
+    .clockSpeed = DRV_I2C_CLOCK_SPEED_IDX0,
+};
+
+// </editor-fold>
+
 
 
 // *****************************************************************************
@@ -179,6 +229,8 @@ void SYS_Initialize ( void* data )
     USART1_Initialize();
 
 
+    /* Initialize I2C0 Driver Instance */
+    sysObj.drvI2C0 = DRV_I2C_Initialize(DRV_I2C_INDEX_0, (SYS_MODULE_INIT *)&drvI2C0InitData);
 
     sysObj.sysTime = SYS_TIME_Initialize(SYS_TIME_INDEX_0, (SYS_MODULE_INIT *)&sysTimeInitData);
 

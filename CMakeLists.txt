@@ -28,6 +28,9 @@ include_directories(
         src/config
         src/config/default
         src/config/default/osal
+        src/config/default/driver
+        src/config/default/driver/i2c
+        src/config/default/driver/i2c/src
         src/config/default/peripheral/clk
         src/config/default/peripheral/efc
         src/config/default/peripheral/nvic
@@ -93,6 +96,7 @@ CheckGitSetup()
 
 # Source files
 file(GLOB_RECURSE DRIVER_SOURCES
+        "src/config/default/driver/i2c/src/*.c"
         "lib/Peripherals/MCP9808/*.cpp"
         "lib/Peripherals/LCL/*.cpp"
         "lib/Peripherals/NANDFlash/*.cpp"
