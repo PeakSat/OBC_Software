@@ -29,7 +29,7 @@
 #include "NANDTask.hpp"
 //#include "MRAMTask.hpp"
 #include "MemoryManagementTask.hpp"
-#include "PayloadTestTask.hpp"
+#include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
 // Task Header files end
@@ -66,7 +66,7 @@ extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    payloadTestTask.emplace();
+    PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
     canTestTask.emplace();
     housekeepingTask.emplace();
@@ -83,7 +83,7 @@ extern "C" void main_cpp() {
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-//    payloadTestTask->createTask();
+    PayloadGatekeeperTask->createTask();
 //    canGatekeeperTask->createTask();
 //    canTestTask->createTask();
 //    housekeepingTask->createTask();
@@ -94,7 +94,7 @@ extern "C" void main_cpp() {
   memManTask->createTask();
 //    nandTask->createTask();
     timeKeepingTask->createTask();
-//    TestTask->createTask();
+    TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();

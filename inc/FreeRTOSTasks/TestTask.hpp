@@ -2,6 +2,7 @@
 
 #include "FreeRTOS.h"
 #include <queue.h>
+#include "PayloadGatekeeperTask.hpp"
 #include <etl/vector.h>
 #include "TaskConfigs.hpp"
 

@@ -27,11 +27,15 @@ TestTask::TestTask() : Task("TestTask") {
     // LOG_INFO << "Initialised instance of TestTask";
 }
 
+uint8_t ping_msg[] = {0xFE, 0x05, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04};
+
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
 
     while (true) {
         //monitorAllTasks();
+        LOG_DEBUG<<"Sending ping message to payload";
+        PayloadGatekeeperTask->addPayloadSendQueue(ping_msg, 8, false);
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
 }
