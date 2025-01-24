@@ -32,6 +32,7 @@ include_directories(
         src/config/default/peripheral/nvic
         src/config/default/peripheral/pio
         src/config/default/peripheral/rtc
+        src/config/default/peripheral/tc
         src/config/default/peripheral/uart
         src/config/default/peripheral/usart
         src/config/default/peripheral/systick

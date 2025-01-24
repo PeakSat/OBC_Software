@@ -652,6 +652,69 @@ children:
       - type: Dynamic
         attributes: {id: core, value: 'true'}
   - type: Boolean
+    attributes: {id: NVIC_23_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: NVIC_23_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: TC0_CH0_InterruptHandler}
+  - type: Boolean
+    attributes: {id: NVIC_23_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: NVIC_24_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: NVIC_24_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: TC0_CH1_Handler}
+  - type: Boolean
+    attributes: {id: NVIC_24_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: Boolean
+    attributes: {id: NVIC_25_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: NVIC_25_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: TC0_CH2_Handler}
+  - type: Boolean
+    attributes: {id: NVIC_25_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: Boolean
     attributes: {id: NVIC_29_0_ENABLE}
     children:
     - type: Values
@@ -4004,7 +4067,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '2686148224'}
+        attributes: {id: core, value: '2694536832'}
   - type: Hex
     attributes: {id: PMC_PCER1}
     children:
@@ -4012,6 +4075,13 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '67113512'}
+  - type: Integer
+    attributes: {id: PMC_PCK0_PRES}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '1'}
   - type: Combo
     attributes: {id: PMC_PCK4_CSS}
     children:
@@ -4417,6 +4487,125 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: 'true'}
+  - type: Integer
+    attributes: {id: TC0_CH0_CLOCK_FREQUENCY}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '32768'}
+  - type: Boolean
+    attributes: {id: TC0_CH0_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'true'}
+  - type: Boolean
+    attributes: {id: TC0_CH0_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: TC0_CH0_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: TC0_CH0_InterruptHandler}
+  - type: Boolean
+    attributes: {id: TC0_CH0_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'true'}
+  - type: Boolean
+    attributes: {id: TC0_CH1_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
+  - type: Boolean
+    attributes: {id: TC0_CH1_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: TC0_CH1_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: TC0_CH1_Handler}
+  - type: Boolean
+    attributes: {id: TC0_CH1_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
+  - type: Boolean
+    attributes: {id: TC0_CH2_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
+  - type: Boolean
+    attributes: {id: TC0_CH2_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: TC0_CH2_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: TC0_CH2_Handler}
+  - type: Boolean
+    attributes: {id: TC0_CH2_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
+  - type: Integer
+    attributes: {id: TC0_CH3_CLOCK_FREQUENCY}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '32768'}
+  - type: Boolean
+    attributes: {id: TC0_CHANNEL0_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'true'}
+  - type: Boolean
+    attributes: {id: TC0_CHANNEL1_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
+  - type: Boolean
+    attributes: {id: TC0_CHANNEL2_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: 'false'}
   - type: Boolean
     attributes: {id: TCM_ENABLE}
     children:

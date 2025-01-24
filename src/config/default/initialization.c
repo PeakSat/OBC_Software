@@ -158,6 +158,12 @@ void SYS_Initialize ( void* data )
 
 	RTC_Initialize();
 
+  
+
+ 
+    TC0_CH0_TimerInitialize(); 
+     
+    
 	RSTC_Initialize();
 
     AFEC0_Initialize();
