@@ -210,6 +210,20 @@ children:
       children:
       - type: Dynamic
         attributes: {id: tc0, value: '1.0'}
+  - type: Integer
+    attributes: {id: TC1_CLOCK_FREQ}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tc0, value: '150000000'}
+  - type: Boolean
+    attributes: {id: TC1_CMR_CPCSTOP}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'false'}
   - type: Boolean
     attributes: {id: TC1_ENABLE}
     children:
@@ -217,6 +231,8 @@ children:
       children:
       - type: Dynamic
         attributes: {id: tc0, value: 'false'}
+      - type: User
+        attributes: {value: 'true'}
   - type: Boolean
     attributes: {id: TC1_IER_CPAS}
     children:
@@ -231,6 +247,26 @@ children:
       children:
       - type: Dynamic
         attributes: {id: tc0, value: 'false'}
+      - type: User
+        attributes: {value: 'true'}
+  - type: Comment
+    attributes: {id: TC1_NVIC_ENABLE_COMMENT}
+    children:
+    - type: Attributes
+      children:
+      - type: Boolean
+        attributes: {id: visible}
+        children:
+        - {type: Value, value: 'false'}
+  - type: Comment
+    attributes: {id: TC1_Resolution}
+    children:
+    - type: Attributes
+      children:
+      - type: String
+        attributes: {id: text}
+        children:
+        - {type: Value, value: '****Clock resolution is 6.66666666667 nS****'}
   - type: Boolean
     attributes: {id: TC1_SYS_TIME_CONNECTED}
     children:
@@ -246,14 +282,14 @@ children:
       - type: String
         attributes: {id: text}
         children:
-        - {type: Value, value: '****Period Count is 0****'}
+        - {type: Value, value: '****Period Count is 30000****'}
   - type: Long
     attributes: {id: TC1_TIMER_PERIOD_COUNT}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tc0, value: '0'}
+        attributes: {id: tc0, value: '30000'}
   - type: Float
     attributes: {id: TC1_TIMER_PERIOD_MS}
     children:
@@ -261,6 +297,8 @@ children:
       children:
       - type: Dynamic
         attributes: {id: tc0, value: '0.0'}
+      - type: User
+        attributes: {value: '0.2'}
   - type: Boolean
     attributes: {id: TC2_ENABLE}
     children:

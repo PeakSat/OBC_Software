@@ -14,7 +14,7 @@ public:
       */
     void execute();
 
-    OnBoardMonitoringTask() : Task("OnBoardMonitoring") {}
+    OnBoardMonitoringTask() : Task("OnBoardMonitoring") { }
 
     /**
      * Create freeRTOS Task
@@ -27,4 +27,3 @@ public:
 };
 
 inline std::optional<OnBoardMonitoringTask> onBoardMonitoringTask;
-

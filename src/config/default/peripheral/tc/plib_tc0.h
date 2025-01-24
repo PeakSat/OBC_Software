@@ -116,6 +116,27 @@ void TC0_CH0_TimerCallbackRegister(TC_TIMER_CALLBACK callback, uintptr_t context
 
  
 
+
+
+void TC0_CH1_TimerInitialize (void);
+
+void TC0_CH1_TimerStart (void);
+
+void TC0_CH1_TimerStop (void);
+
+void TC0_CH1_TimerPeriodSet (uint16_t period);
+
+
+uint32_t TC0_CH1_TimerFrequencyGet (void);
+
+uint16_t TC0_CH1_TimerPeriodGet (void);
+
+uint16_t TC0_CH1_TimerCounterGet (void);
+
+void TC0_CH1_TimerCallbackRegister(TC_TIMER_CALLBACK callback, uintptr_t context);
+
+
+
  
 
 

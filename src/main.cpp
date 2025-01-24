@@ -86,7 +86,7 @@ extern "C" void main_cpp() {
 //    canGatekeeperTask->createTask();
 //    canTestTask->createTask();
 //    housekeepingTask->createTask();
-//    onBoardMonitoringTask->createTask();
+    onBoardMonitoringTask->createTask();
 //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
 //  ambientTemperatureTask->createTask();
