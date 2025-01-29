@@ -35,7 +35,7 @@ void TestTask::execute() {
 
     while (true) {
         //monitorAllTasks();
-        CAN::Application::createRequestParametersMessage(CAN::OBC, false, COMMSUHFBandPATemperature, false);
+        // CAN::Application::createRequestParametersMessage(CAN::OBC, false, COMMSUHFBandPATemperature, false);
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
 }
