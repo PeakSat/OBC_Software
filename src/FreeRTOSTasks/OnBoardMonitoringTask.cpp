@@ -9,15 +9,14 @@ using namespace EPSParameters::ParameterDescriptors;
 void OnBoardMonitoringTask::execute() {
 
     EPS eps;
-    uint8_t size = getTypeSize(EPS_CH_STARTUP_ENA_BF_DESC.type);
-    auto get = eps.getConfigurationParameter<2>(EPSParameters::ParameterDescriptors::EPS_CH_STARTUP_ENA_BF_DESC);
+    auto get = eps.getConfigurationParameter<getTypeSize(EPS_CH_STARTUP_ENA_BF_DESC.type)>(EPSParameters::ParameterDescriptors::EPS_CH_STARTUP_ENA_BF_DESC);
     StaticSemaphore_t DelayBuffer;
 
     SemaphoreHandle_t DelaySemaphore = xSemaphoreCreateBinaryStatic(&DelayBuffer);
     // LOG_DEBUG << "Runtime init: " << this->TaskName;
     auto& onBoardMonitoring = Services.onBoardMonitoringService;
 
-
+auto s = eps.getSystemStatus();
     while (true) {
         xTaskNotifyWait(0, 0, nullptr, portMAX_DELAY);
 
