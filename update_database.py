@@ -29,22 +29,19 @@ except Exception as e:
 
 # Subsystem acronyms and their corresponding number offsets
 subsystem_config = {
-    "OBDH": 5000,
-    "COMMS": 10000,
-    "PAY": 15000,
-    "ADCS": 20000,
-    "EPS": 25000,
+    "OBDH": 0,
+    "COMMS": 819,
+    "PAY": 1638,
+    "ADCS": 2457,
+    "EPS": 3276,
 }
 
 # Paths to the Excel file and output directories
 excel_file = "prameter_database.xlsx"
-src_folder = "src/Platform/Services"
 inc_folder = "inc/Platform/Parameters"
-output_cpp_file = os.path.join(src_folder, "ParameterService.cpp")
 output_hhp_file = os.path.join(inc_folder, "PeakSatParameters.hpp")
 
 # Ensure the output directories exist
-os.makedirs(src_folder, exist_ok=True)
 os.makedirs(inc_folder, exist_ok=True)
 
 # Set to track unique IDs
@@ -54,16 +51,7 @@ processed_ids = set()
 workbook = openpyxl.load_workbook(excel_file)
 
 # Lists to collect output lines
-cpp_lines = []
 hhp_lines = []
-
-# Add the header lines for the .cpp file
-cpp_lines.append('#include "ECSS_Configuration.hpp"')
-cpp_lines.append("\n#ifdef SERVICE_PARAMETER\n")
-cpp_lines.append('#include "Services/ParameterService.hpp"')
-cpp_lines.append('#include "PeakSatParameters.hpp"')
-cpp_lines.append("\nvoid ParameterService::initializeParameterMap() {")
-cpp_lines.append("    parameters = {")
 
 # Add the header lines for the .hpp file
 hhp_lines.append("#pragma once")
@@ -135,42 +123,20 @@ for idx, row in enumerate(valid_rows):
             block_lines.append(f"        {variable_name}ID = {numeric_id}")
 
             # Enum definitions (if type is "enum")
-            if variable_type == "enum":
+            if (variable_type in {"uint8_t", "uint16_t", "uint32_t", "uint64_t",
+                                 "int8_t", "int16_t", "int32_t", "int64_t"} and row[6].value and str(row[6].value).strip()):  # 7th column (index 6)
                 enum_lines = (
-                    f"    enum {variable_name}_enum : uint8_t {{\n        {enum_items}\n    }};"
+                    f"    enum {variable_name}_enum : {type_cell.value.strip()} {{\n        {enum_items}\n    }};"
                 )
                 block_lines.append(enum_lines)
 
-            # Parameter initializations
-            if variable_type == "enum":
-                param_line = f"    inline Parameter<{variable_name}_enum> {variable_name}({param_value});"
-            else:
-                param_line = f"    inline Parameter<{variable_type}> {variable_name}({param_value});"
-            block_lines.append(param_line)
-
-            # Add to .cpp file
-            is_last_row = idx == len(valid_rows) - 1
-            if is_last_row:
-                cpp_lines.append(
-                    f'        {{{acronym}Parameters::{variable_name}ID, {acronym}Parameters::{variable_name}}}'
-                )
-            else:
-                cpp_lines.append(
-                    f'        {{{acronym}Parameters::{variable_name}ID, {acronym}Parameters::{variable_name}}},'
-                )
-
             break
-
-# Finalize the .cpp file
-cpp_lines.append("    };")
-cpp_lines.append("}")
-cpp_lines.append("#endif")
 
 # Build the .hhp file
 for acronym, block_lines in namespace_blocks.items():
     if block_lines:
         hhp_lines.append(f"namespace {acronym}Parameters {{")
-        hhp_lines.append("    enum ParameterID : uint16_t {")
+        hhp_lines.append("    enum ParamID : ParameterId {")
         hhp_lines.append(",\n".join(line for line in block_lines if "ID =" in line))
         hhp_lines.append("    };")
         hhp_lines.extend(
@@ -181,14 +147,9 @@ for acronym, block_lines in namespace_blocks.items():
 # Add footer to the .hhp file
 hhp_lines.append("#pragma GCC diagnostic pop")
 
-# Write the .cpp file
-with open(output_cpp_file, "w") as cpp_file:
-    cpp_file.write("\n".join(cpp_lines))
-
 # Write the .hhp file
 with open(output_hhp_file, "w") as hhp_file:
     hhp_file.write("\n".join(hhp_lines))
 
 print(f"Processing complete.")
-print(f"CPP file saved as '{output_cpp_file}'.")
 print(f"HHP file saved as '{output_hhp_file}'.")
