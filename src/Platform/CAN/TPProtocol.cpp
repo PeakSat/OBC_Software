@@ -94,6 +94,12 @@ void TPProtocol::parseMessage(TPMessage& message) {
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             LOG_DEBUG << "Received pong from " << senderName.c_str();
         } break;
+        case CAN::Application::Heartbeat: {
+            auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
+            auto senderName = CAN::Application::nodeIdToString.at(senderID);
+            LOG_DEBUG << "Received heartbeat from " << senderName.c_str();
+            // todo: reset heartbeat timer
+        } break;
         case CAN::Application::LogMessage: {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
@@ -116,11 +122,6 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     } else {
         //Change CAN bus
         Application::switchBus();
-        // if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
-        //     OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
-        // } else {
-        //     OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
-        // }
 
         if (!createCANTPMessageWithRetry(message, isISR, 2)) {
             return 0;
@@ -163,7 +164,8 @@ bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isIS
     return 1;
 }
 
-bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR) {
+bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent, bool isISR) {
+    TPMessage message = messageToBeSent;
     size_t messageSize = message.dataSize;
     uint32_t id = OBC_CAN_ID; //
 
@@ -175,6 +177,12 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& message, bool i
         }
         canGatekeeperTask->send({id, data}, isISR);
         return false;
+    }
+
+    //Add a dummy byte for single byte messages so that the gatekeeper can distinguish it from trash
+    if (messageSize == 1) {
+        messageSize = 2;
+        message.appendUint8(0xAA);
     }
 
     // First Frame

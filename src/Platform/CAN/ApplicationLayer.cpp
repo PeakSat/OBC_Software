@@ -22,7 +22,7 @@ namespace CAN::Application {
     }
 
     void sendPongMessage() {
-        TPMessage message = {{NodeID, OBC, false}};
+        TPMessage message = {{NodeID, COMMS, false}};
 
         message.appendUint8(Pong);
 
@@ -30,25 +30,12 @@ namespace CAN::Application {
     }
 
     void sendHeartbeatMessage() {
-        canGatekeeperTask->send({MessageIDs::Heartbeat + CAN::NodeID}, false);
+        TPMessage message = {{NodeID, COMMS, false}};
+
+        message.appendUint8(Heartbeat);
+
+        CAN::TPProtocol::createCANTPMessage(message, true);
     }
-
-    // void sendBusSwitchoverMessage() {
-    //     Driver::ActiveBus newBus = Driver::Redundant;
-    //     if (OBDHParameters::CANBUSActive.getValue() == Driver::Redundant) {
-    //         newBus = Driver::Main;
-    //     }
-    //
-    //     etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
-    //
-    //     canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
-    // }
-
-    // void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
-    //     etl::array<uint8_t, CAN::MaxPayloadLength> data = {switchBus(newBus)};
-    //
-    //     canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
-    // }
 
     void sendUTCTimeMessageWithElapsedTicks() {
         auto now = TimeGetter::getCurrentTimeDefaultCUC();

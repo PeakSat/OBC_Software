@@ -91,5 +91,5 @@ namespace CAN::TPProtocol {
      */
     bool createCANTPMessage(const TPMessage& message, bool isISR);
     bool createCANTPMessageWithRetry(const TPMessage& message, bool isISR, uint32_t NoOfRetries);
-    bool createCANTPMessageNoRetransmit(const TPMessage& message, bool isISR);
+    bool createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent, bool isISR);
 } // namespace CAN::TPProtocol
