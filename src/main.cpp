@@ -71,7 +71,7 @@ extern "C" void main_cpp() {
     canTestTask.emplace();
     housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
-    // tcHandlingTask.emplace();
+    tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
     nandTask.emplace();
@@ -88,7 +88,7 @@ extern "C" void main_cpp() {
 //    canTestTask->createTask();
 //    housekeepingTask->createTask();
 //    onBoardMonitoringTask->createTask();
-//     tcHandlingTask->createTask();
+     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
 //  ambientTemperatureTask->createTask();
   memManTask->createTask();
