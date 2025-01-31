@@ -40,6 +40,7 @@ const uint16_t TimeBasedSchedulingTaskStack = 2500;
 const uint16_t TimeKeepingTaskStack = 2000;
 const uint16_t UARTGatekeeperTaskStack = 1000;
 const uint16_t WatchdogTaskStack = 1000;
+const uint16_t HeartbeatTaskStack = 2000;
 constexpr uint16_t OnBoardMonitoringTaskStack = 2000;
 
 

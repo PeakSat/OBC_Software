@@ -28,6 +28,7 @@
 #include "TCHandlingTask.hpp"
 #include "NANDTask.hpp"
 //#include "MRAMTask.hpp"
+#include "HeartbeatTask.hpp"
 #include "MemoryManagementTask.hpp"
 #include "PayloadTestTask.hpp"
 #include "TestTask.hpp"
@@ -78,6 +79,7 @@ extern "C" void main_cpp() {
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
+    heartbeatTask.emplace();
 
 
     __disable_irq();
@@ -95,6 +97,7 @@ extern "C" void main_cpp() {
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
+    heartbeatTask->createTask();
 
     __enable_irq();
     can_ack_handler.initialize_semaphore();

@@ -1,4 +1,7 @@
 #include "CAN/TPProtocol.hpp"
+
+#include <HeartbeatTask.hpp>
+
 #include "CANGatekeeperTask.hpp"
 
 using namespace CAN;
@@ -98,7 +101,7 @@ void TPProtocol::parseMessage(TPMessage& message) {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             LOG_DEBUG << "Received heartbeat from " << senderName.c_str();
-            // todo: reset heartbeat timer
+            heartbeatReceived = true;
         } break;
         case CAN::Application::LogMessage: {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);

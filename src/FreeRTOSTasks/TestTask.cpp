@@ -34,11 +34,11 @@ void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
 
     while (true) {
-        CAN::Application::sendPingMessage(CAN::OBC, false);
+        // CAN::Application::sendPingMessage(CAN::OBC, false);
 
         vTaskDelay(5000);
 
-        CAN::Application::sendHeartbeatMessage();
+        // CAN::Application::sendHeartbeatMessage();
         //monitorAllTasks();
         // CAN::Application::createRequestParametersMessage(CAN::OBC, false, COMMSUHFBandPATemperature, false);
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
