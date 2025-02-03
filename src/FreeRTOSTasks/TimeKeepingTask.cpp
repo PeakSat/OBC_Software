@@ -17,26 +17,27 @@ void TimeKeepingTask::execute() {
 }
 
 void TimeKeepingTask::printOnBoardTime() {
-    UTCTimestamp timestamp = CommonParameters::time.getValue().toUTCtimestamp();
-    etl::string<29> printTime = "Time:";
-    etl::to_string(timestamp.hour, printTime, true);
-    printTime += "-";
-    etl::to_string(timestamp.minute, printTime, true);
-    printTime += "-";
-    etl::to_string(timestamp.second, printTime, true);
-    printTime += " -- ";
-    etl::to_string(timestamp.day, printTime, true);
-    printTime += "/";
-    etl::to_string(timestamp.month, printTime, true);
-    printTime += "/";
-    etl::to_string(timestamp.year, printTime, true);
-    LOG_DEBUG << printTime.data();
+//    UTCTimestamp timestamp = CommonParameters::time.getValue().toUTCtimestamp();
+//    etl::string<29> printTime = "Time:";
+//    etl::to_string(timestamp.hour, printTime, true);
+//    printTime += "-";
+//    etl::to_string(timestamp.minute, printTime, true);
+//    printTime += "-";
+//    etl::to_string(timestamp.second, printTime, true);
+//    printTime += " -- ";
+//    etl::to_string(timestamp.day, printTime, true);
+//    printTime += "/";
+//    etl::to_string(timestamp.month, printTime, true);
+//    printTime += "/";
+//    etl::to_string(timestamp.year, printTime, true);
+//    LOG_DEBUG << printTime.data();
+    LOG_DEBUG << "Time kai Date";
 }
 
 void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
     UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
     Time::DefaultCUC timeCUC(timeUTC);
-    CommonParameters::time.setValue(timeCUC);
+    // ToDo  Set value to parameter time
 }
 
 void TimeKeepingTask::setEpoch(tm& dateTime) {

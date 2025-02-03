@@ -164,11 +164,13 @@ void CAN::Driver::send(const CAN::Frame& message) {
     std::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
 
 
-    if (PeakSatParameters::obcCANBUSActive.getValue() == Main) {
-        MCAN0_MessageTransmitFifo(1, &Driver::txFifo);
-    } else {
-        MCAN1_MessageTransmitFifo(1, &Driver::txFifo);
-    }
+    MCAN0_MessageTransmitFifo(1, &Driver::txFifo);
+    // ToDo Revisit this
+//    if (PeakSatParameters::obcCANBUSActive.getValue() == Main) {
+//        MCAN0_MessageTransmitFifo(1, &Driver::txFifo);
+//    } else {
+//        MCAN1_MessageTransmitFifo(1, &Driver::txFifo);
+//    }
 }
 
 void CAN::Driver::logMessage(const MCAN_RX_BUFFER& rxBuf, ActiveBus incomingBus) {

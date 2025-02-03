@@ -12,7 +12,8 @@ void MCUTemperatureTask::execute() {
         const float MCUtemperature =
             (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
-        CommonParameters::mcuTemperature.setValue(MCUtemperature);
+
+        // ToDo Update set value function for parameter
 
         //        LOG_DEBUG << "Runtime exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(delayMs));

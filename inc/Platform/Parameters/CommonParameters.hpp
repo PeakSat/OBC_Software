@@ -4,11 +4,11 @@
 #include "PeakSatParameters.hpp"
 
 namespace CommonParameters {
-    inline auto& boardTemperature1 = PeakSatParameters::obcPCBTemperature1;
-    inline auto& boardTemperature2 = PeakSatParameters::obcPCBTemperature2;
-    inline auto& mcuTemperature = PeakSatParameters::obcMCUTemperature;
-    inline auto& time = PeakSatParameters::obcOnBoardTime;
-    inline auto& useRTT = PeakSatParameters::obcUseRTT;
-    inline auto& useUART = PeakSatParameters::obcUseUART;
-    inline auto& useCAN = PeakSatParameters::obcUseCAN;
+    inline auto& boardTemperature1 = PCBTemperature1;
+    inline auto& boardTemperature2 = PCBTemperature2;
+    inline auto& mcuTemperature = MCUTemperature;
+    inline auto& time = OnBoardTime;
+    inline auto& useRTT = pUseRTT;
+    inline auto& useUART = pUseUART;
+    inline auto& useCAN = pUseCAN;
 } // namespace CommonParameters

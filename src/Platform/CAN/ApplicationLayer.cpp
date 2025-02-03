@@ -6,8 +6,9 @@
 
 namespace CAN::Application {
     Driver::ActiveBus switchBus(Driver::ActiveBus newBus) {
-        PeakSatParameters::obcCANBUSActive.setValue(newBus);
-        return PeakSatParameters::obcCANBUSActive.getValue();
+        // ToDo Set parameter for can bus, fix return value (get parameter || return value of write)
+        //        PeakSatParameters::obcCANBUSActive.setValue(newBus);
+        return newBus;
     }
 
     void sendPingMessage(NodeIDs destinationAddress, bool isMulticast) {
@@ -32,9 +33,10 @@ namespace CAN::Application {
 
     void sendBusSwitchoverMessage() {
         Driver::ActiveBus newBus = Driver::Redundant;
-        if (PeakSatParameters::obcCANBUSActive.getValue() == Driver::Redundant) {
-            newBus = Driver::Main;
-        }
+        // ToDo read CanBus parameter
+//        if (PeakSatParameters::obcCANBUSActive.getValue() == Driver::Redundant) {
+//            newBus = Driver::Main;
+//        }
 
         etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
 
