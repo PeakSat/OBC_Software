@@ -5,11 +5,7 @@
 #include <CANParserTask.hpp>
 #include <TestTask.hpp>
 
-struct incomingFIFO incomingFIFO;
-uint8_t incomingBuffer[CAN::MaxPayloadLength * sizeOfIncommingFrameBuffer];
 
-struct localPacketHandler CAN1PacketHandler;
-struct localPacketHandler CAN2PacketHandler;
 CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
     CAN::Driver::initialize();
 
@@ -21,7 +17,7 @@ CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
     vQueueAddToRegistry(outgoingQueue, "CAN Outgoing");
     configASSERT(outgoingQueue);
 
-    incomingPacketQueue = xQueueCreateStatic(1, sizeof(localPacketHandler*), incomingPacketStorageArea,
+    incomingPacketQueue = xQueueCreateStatic(incomingPacketQueueSize, sizeof(localPacketHandler*), incomingPacketStorageArea,
                                              &incomingPacketBuffer);
     vQueueAddToRegistry(incomingPacketQueue, "CAN Outgoing");
     configASSERT(incomingPacketQueue);
@@ -43,9 +39,8 @@ void CANGatekeeperTask::execute() {
     PIO_PinWrite(CAN::CAN_SILENT_2, false);
 
     CAN::Packet out_message = {};
-    CAN::Packet in_message = {};
 
-    CAN::Frame in_frame_handler = {};
+    CAN::Frame in_frame_handler;
 
     uint32_t ulNotifiedValue;
 
@@ -92,6 +87,7 @@ void CANGatekeeperTask::execute() {
                             // first consecutive frame has the message ID in its first byte
                             CANPacketHandler->PacketID = in_frame_handler.pointerToData[2];
                         } else {
+                            // Make sure the local buffer does not overflow
                             if (sizeof(CANPacketHandler->Buffer) / sizeof(CANPacketHandler->Buffer[0]) > (FrameNumber * (CAN::MaxPayloadLength - 2)) + i - 1) {
                                 //add the rest of the bytes to the local buffer
                                 CANPacketHandler->Buffer[(FrameNumber * (CAN::MaxPayloadLength - 2)) + i - 1] = in_frame_handler.pointerToData[i + 2];

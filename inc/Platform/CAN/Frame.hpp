@@ -40,8 +40,8 @@ namespace CAN {
       */
         uint8_t* pointerToData;
 
-        Frame()
-            : pointerToData(0) {
+        explicit Frame()
+            : pointerToData(nullptr) {
         }
     };
 

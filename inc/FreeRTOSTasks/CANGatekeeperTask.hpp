@@ -26,7 +26,13 @@ struct incomingFIFO {
     incomingFIFO() : buffer(nullptr), NOfItems(0), lastItemPointer(0) {}
     incomingFIFO(uint8_t* externalBuffer, uint32_t NOfItems) : buffer(externalBuffer), NOfItems(NOfItems), lastItemPointer(0) {}
 };
-extern incomingFIFO incomingFIFO;
+// extern incomingFIFO incomingFIFO;
+inline struct incomingFIFO incomingFIFO;
+inline uint8_t incomingBuffer[CAN::MaxPayloadLength * sizeOfIncommingFrameBuffer];
+
+inline struct localPacketHandler CAN1PacketHandler;
+inline struct localPacketHandler CAN2PacketHandler;
+constexpr uint32_t incomingPacketQueueSize = 1;
 /**
  * Contains functionality of a Gatekeeper Task for the CAN Bus. It has the sole access to CAN, to avoid any
  * deadlocks that might be caused by simultaneous requests of access to the same resource. It works by having anyone
@@ -58,7 +64,7 @@ public:
 
     QueueHandle_t incomingPacketQueue;
     static inline StaticQueue_t incomingPacketBuffer;
-    static inline uint8_t incomingPacketStorageArea[1 * sizeof(localPacketHandler*)];
+    static inline uint8_t incomingPacketStorageArea[incomingPacketQueueSize * sizeof(localPacketHandler*)];
 
     /**
 * A freeRTOS queue to handle incoming CAN frames.
@@ -117,105 +123,9 @@ public:
         }
 
         if (status == errQUEUE_FULL) {
-            // LOG_ERROR << "Tried sending CAN Message while outgoing queue is full!";
+            LOG_ERROR << "Tried sending CAN Message while outgoing queue is full!";
         }
     }
-
-    /**
-     * Adds a CAN::Frame to the incomingQueue.
-     * If the queue is full the message is lost.
-     *
-     * @note This function is designed to be used from within the ISR of a CAN Message Receipt. Thus, it uses
-     * freeRTOS's ISR-Specific functions.
-     *
-     * @param message The incoming CAN::Frame.
-     */
-    // inline void addSFToIncoming(const CAN::Packet& message) {
-    //     BaseType_t taskShouldYield = pdFALSE;
-    //
-    //     // xQueueSendToBackFromISR(incomingSFQueue, &message, &taskShouldYield);
-    //
-    //     if (taskShouldYield) {
-    //         taskYIELD();
-    //     }
-    // }
-
-    /**
-     * Adds a CAN::Frame to the incomingQueue.
-     * If the queue is full the message is lost.
-     *
-     * @note This function is designed to be used from within the ISR of a CAN Message Receipt. Thus, it uses
-     * freeRTOS's ISR-Specific functions.
-     *
-     * @param message The incoming CAN::Frame.
-     */
-    // inline void addMFToIncoming(const CAN::Packet& message) {
-    //     BaseType_t taskShouldYield = pdFALSE;
-    //
-    //     // xQueueSendToBackFromISR(incomingMFQueue, &message, &taskShouldYield);
-    //
-    //     if (taskShouldYield) {
-    //         taskYIELD();
-    //     }
-    // }
-
-    /**
-     * An abstraction layer over the freeRTOS queue API to get the number of messages in the incoming queue.
-     * @return The number of messages in the queue.
-     */
-    // inline uint8_t getIncomingSFMessagesCount() {
-    //     // return uxQueueMessagesWaiting(incomingSFQueue);
-    //     return 0;
-    // }
-
-    /**
-     * An abstraction layer over the freeRTOS queue API to get the number of messages in the incoming queue.
-     * @return The number of messages in the queue.
-     */
-    // inline uint8_t getIncomingMFMessagesCount() {
-    //     // return uxQueueMessagesWaiting(incomingMFQueue);
-    //     return 0;
-    // }
-
-    /**
-     * Receives a CAN::Frame from the CAN Gatekeeper's incoming queue.
-     *
-     * This function was added as an extra abstraction layer to house the `xQueueReceive` function.
-     * It can be used from anywhere in the code to get access to the CAN queue/CAN Gatekeeper task, without having to
-     * know the low level details of the queue.
-     *
-     * If the queue is empty, the returned message is empty.
-     */
-    // inline CAN::Frame getFromSFQueue() {
-    //     CAN::Frame message;
-    //     // xQueueReceive(incomingSFQueue, &message, 0);
-    //     return message;
-    // }
-
-    inline void switchActiveBus(CAN::Driver::ActiveBus activeBus) {
-        this->ActiveBus = activeBus;
-    }
-
-
-    /**
-     * Deletes all items present in the incoming queue.
-     */
-    // void emptyIncomingSFQueue() {
-    //     // xQueueReset(incomingSFQueue);
-    // }
-
-    // inline CAN::Packet getFromMFQueue() {
-    //     CAN::Packet message;
-    //     // xQueueReceive(incomingMFQueue, &message, 0);
-    //     return message;
-    // }
-
-    /**
-     * Deletes all items present in the incoming queue.
-     */
-    // void emptyIncomingMFQueue() {
-    //     // xQueueReset(incomingMFQueue);
-    // }
 
     void createTask() {
         taskHandle = xTaskCreateStatic(vClassTask<CANGatekeeperTask>, this->TaskName, CANGatekeeperTaskStack, this,

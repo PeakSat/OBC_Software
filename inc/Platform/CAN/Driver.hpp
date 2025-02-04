@@ -6,9 +6,10 @@
 #include "Frame.hpp"
 #include "peripheral/mcan/plib_mcan1.h"
 #include "peripheral/mcan/plib_mcan0.h"
-const uint8_t CANMessageSize = CAN::MaxPayloadLength;
+constexpr uint8_t CANMessageSize = CAN::MaxPayloadLength;
 // const uint8_t CANFrameSize = 64;
-const uint32_t sizeOfIncommingFrameBuffer = 128; // in frames of (CANFrameSize)
+constexpr uint32_t sizeOfIncommingFrameBuffer = 128; // in frames of (CANFrameSize)
+constexpr uint8_t dataLengthCode = 8;
 namespace CAN {
     /**
      * A basic driver for the CAN Peripherals of the SAMV71 family of processors. This driver includes encoding/decoding

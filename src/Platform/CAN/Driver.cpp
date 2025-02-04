@@ -7,7 +7,7 @@
 #include <TPProtocol.hpp>
 
 uint8_t CAN::Driver::convertDlcToLength(uint8_t dlc) {
-    return 8;
+    return dataLengthCode;
 }
 
 uint8_t CAN::Driver::convertLengthToDLC(uint8_t length) {
@@ -47,7 +47,7 @@ void CAN::Driver::mcan0TxFifoCallback(uintptr_t context) {
 }
 
 void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t context) {
-    BaseType_t xHigherPriorityTaskWoken;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
 
     uint32_t status = MCAN1_ErrorGet() & MCAN_PSR_LEC_Msk;
@@ -82,11 +82,10 @@ void CAN::Driver::mcan0RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
             newFrame.bus = CAN::CAN2;
 
             // Notify the gatekeeper
-            if (xQueueIsQueueFullFromISR(canGatekeeperTask->incomingFrameQueue)) {
+            if (xQueueIsQueueFullFromISR(canGatekeeperTask->incomingFrameQueue) == pdTRUE) {
                 // Queue is full. Handle the error
                 // todo
             } else {
-                MCAN_ERROR error = MCAN0_ErrorGet();
                 xQueueSendToBackFromISR(canGatekeeperTask->incomingFrameQueue, &newFrame, NULL);
                 xTaskNotifyFromISR(canGatekeeperTask->taskHandle, 0, eNoAction, &xHigherPriorityTaskWoken);
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -115,7 +114,7 @@ void CAN::Driver::mcan1TxFifoCallback(uintptr_t context) {
 }
 
 void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t context) {
-    BaseType_t xHigherPriorityTaskWoken;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
 
     uint32_t status = MCAN1_ErrorGet() & MCAN_PSR_LEC_Msk;
@@ -150,11 +149,10 @@ void CAN::Driver::mcan1RxFifo0Callback(uint8_t numberOfMessages, uintptr_t conte
             newFrame.bus = CAN::CAN2;
 
             // Notify the gatekeeper
-            if (xQueueIsQueueFullFromISR(canGatekeeperTask->incomingFrameQueue)) {
+            if (xQueueIsQueueFullFromISR(canGatekeeperTask->incomingFrameQueue) == pdTRUE) {
                 // Queue is full. Handle the error
                 // todo
             } else {
-                MCAN_ERROR error = MCAN0_ErrorGet();
                 xQueueSendToBackFromISR(canGatekeeperTask->incomingFrameQueue, &newFrame, NULL);
                 xTaskNotifyFromISR(canGatekeeperTask->taskHandle, 0, eNoAction, &xHigherPriorityTaskWoken);
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -181,7 +179,7 @@ void CAN::Driver::send(const CAN::Packet& message) {
     Driver::txFifo.id = Driver::writeId(message.id);
     Driver::txFifo.dlc = Driver::convertLengthToDLC(message.data.size());
 
-    std::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
+    etl::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
 
 
     if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
