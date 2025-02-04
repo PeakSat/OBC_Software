@@ -62,9 +62,6 @@ void Logger::log(Logger::LogLevel level, etl::istring& message) {
             uartGatekeeperTask->addToQueue(output);
         }
     }
-    if (CommonParameters::useCAN.getValue()) {
-        Services.dummyService.logAsECSSMessage(output);
-    }
 }
 
 template <>
