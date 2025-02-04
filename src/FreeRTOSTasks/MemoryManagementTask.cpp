@@ -744,6 +744,20 @@ bool MemManTask::updateBiosFile(){
     return true;
 }
 
+bool MemManTask::setParameter(ParameterId parameter, void* value) {
+    if(mram.mramWriteParameter(parameter, value) == MRAM_Errno::MRAM_NONE){
+        return true;
+    }
+    return false;
+}
+
+bool MemManTask::getParameter(ParameterId parameter, void* value) {
+    if(mram.mramReadParameter(parameter, value) == MRAM_Errno::MRAM_NONE){
+        return true;
+    }
+    return false;
+}
+
 
 void MemManTask::execute() {
     // Enable LCLs

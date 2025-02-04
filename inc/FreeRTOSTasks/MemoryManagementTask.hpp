@@ -184,6 +184,10 @@ public:
 
     static bool formatNANDmodules();
 
+    static bool setParameter(ParameterId parameter, void* value);
+
+    static bool getParameter(ParameterId parameter, void* value);
+
 };
 
 inline std::optional<MemManTask> memManTask;
