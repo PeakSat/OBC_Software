@@ -3,6 +3,39 @@
 #include "CAN/ApplicationLayer.hpp"
 #include "CAN/Frame.hpp"
 #include "CAN/TPMessage.hpp"
+#include "FreeRTOS.h"
+#include <semphr.h>
+/**
+ *
+ */
+struct CANTransactionHandler {
+    SemaphoreHandle_t CAN_TRANSMIT_SEMAPHORE;
+    StaticSemaphore_t CAN_TRANSMIT_SEMAPHOREBUFFER;
+    void initialize_semaphore() {
+        CAN_TRANSMIT_SEMAPHORE = xSemaphoreCreateMutexStatic(&CAN_TRANSMIT_SEMAPHOREBUFFER);
+    }
+};
+
+inline StaticSemaphore_t xSemaphoreBuffer;
+struct CAN_ACK_HANDLER {
+    SemaphoreHandle_t CAN_ACK_SEMAPHORE;
+    uint32_t TIMEOUT = 1000;
+    void initialize_semaphore() {
+        CAN_ACK_SEMAPHORE = xSemaphoreCreateBinaryStatic(&xSemaphoreBuffer);
+        if (CAN_ACK_SEMAPHORE == nullptr) {
+            LOG_ERROR << "Failed to create semaphore!";
+        }
+    }
+};
+
+extern CANTransactionHandler CAN_TRANSMIT_Handler;
+extern CAN_ACK_HANDLER can_ack_handler;
+
+inline uint32_t OBC_CAN_ID = 0x380;
+inline uint32_t COMMS_CAN_ID = 0x390;
+
+inline CANTransactionHandler CAN_TRANSMIT_Handler;
+inline CAN_ACK_HANDLER can_ack_handler;
 
 namespace CAN::TPProtocol {
     /**
@@ -28,18 +61,18 @@ namespace CAN::TPProtocol {
     /**
      * The usable data length for a consecutive message.
      */
-    static constexpr uint8_t UsableDataLength = CAN::Frame::MaxDataLength - 1;
+    static constexpr uint8_t UsableDataLength = CAN::MaxPayloadLength - 2;
 
     /**
      * Creates a TPMessage object from a single frame, and passes it over to the parse function.
      * @param message A received CAN::Frame.
      */
-    void processSingleFrame(const CAN::Frame& message);
+    // void processSingleFrame(const CAN::Packet& message);
 
     /**
      * Receives a collection of messages from the Gatekeeper Task's incomingQueue, and processes them.
      */
-    void processMultipleFrames();
+    // void processMultipleFrames();
 
     /**
      * Processes the stored messages received and acts on their content accordingly.
@@ -60,5 +93,7 @@ namespace CAN::TPProtocol {
      * however idx only reaches a maximum value of 62 which makes the position in the consecutiveFrame array valid.
      * The message.data[] part reaches the maximum index of 62 for the first frame, continues from 63 up to 125 etc.
      */
-    void createCANTPMessage(const TPMessage& message, bool isISR);
+    bool createCANTPMessage(const TPMessage& message, bool isISR);
+    bool createCANTPMessageWithRetry(const TPMessage& message, bool isISR, uint32_t NoOfRetries);
+    bool createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent, bool isISR);
 } // namespace CAN::TPProtocol
