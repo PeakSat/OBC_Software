@@ -45,7 +45,7 @@ void CANGatekeeperTask::execute() {
     uint32_t ulNotifiedValue;
 
     while (true) {
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        // todo: change wait time to 2/3 of CAN ACK timeout
         xTaskNotifyWait(0, 0, &ulNotifiedValue, 1000);
 
         while (uxQueueMessagesWaiting(incomingFrameQueue)) {
