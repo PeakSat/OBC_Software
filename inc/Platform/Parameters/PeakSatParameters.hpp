@@ -12,42 +12,39 @@ namespace PeakSatParameters {
      */
     enum ParameterID : uint16_t {
         init = 0,
-        OBCUseRTT = 8,
-        OBCUseUART = 9,
-        OBCUseCAN = 10,
+        OBCUseRTT = 768,
+        OBCUseUART = 784,
+        OBCUseCAN = 800,
 
         /* OBDH Parameters */
         OBCPCBTemperature1 = 40,
         OBCPCBTemperature2 = 56,
         OBCMCUTemperature = 72,
         OBCMCUInputVoltage = 88,
-        OBCMCUBootCounter = 5004,
-        OBCFlashInt = 5005,
-        OBCSRAMInt = 5006,
-        OBCAvailableMRAM = 5007,
-        OBCAvailableNAND = 5008,
-        OBCSpacecraftTimeRef = 5009, ///< which subsystem holds the correct time
-        OBCOnBoardTime = 5010,
-        OBCOperationalMode = 5011,
-        OBCMemoryPartition = 5012,
-        OBCReconfigurationTimer = 5013,
-        ///< timer responsible to reset the spacecraft to a known working state unless it has been
-                                               ///< reset by a ground station pass.
-        OBCLastFailedEvent = 5014,
+        OBCMCUBootCounter = 130,
+        OBCFlashInt = 532,
+        OBCSRAMInt = 548,
+        OBCAvailableMRAM = 564,
+        OBCAvailableNAND = 580,
+        OBCSpacecraftTimeRef = 246, ///< which subsystem holds the correct time
+        OBCOnBoardTime = 294,
+        OBCOperationalMode = 144,
+        OBCMemoryPartition = 592,
+        OBCReconfigurationTimer = 260,   ///< timer responsible to reset the spacecraft to a known working state unless it has been
+        OBCLastFailedEvent = 114,  ///< reset by a ground station pass.
         OBCMCUSystick = 100,
-        OBCCANBUSLoad1 = 392,
-        ///< the CAN bus load is based on the used capacity (bandwidth) divided by maximum capacity
+        OBCCANBUSLoad1 = 392, ///< the CAN bus load is based on the used capacity (bandwidth) divided by maximum capacity
         OBCCANBUSLoad2 = 408,
         OBCCANBUSActive = 416,
-        OBCMCUFDIR = 5019,
-        OBCMCURestartSafeModeThreshold = 5020,
-        OBCNANDFLASHLCLThreshold = 5021,
-        OBCMRAMLCLThreshold = 5022,
-        OBCNANDFLASHON = 5023,
-        OBCMRAMON = 5024,
-        OBCNANDFLASHScrubbingFrequency = 5025,
-        OBCRAMScrubbingFrequency = 5026,
-        OBCProgramFlashScrubbingFrequency = 5027,
+        OBCMCUFDIR = 432,
+        OBCMCURestartSafeModeThreshold = 448,
+        OBCNANDFLASHLCLThreshold = 472,
+        OBCMRAMLCLThreshold = 488,
+        OBCNANDFLASHON = 496,
+        OBCMRAMON = 512,
+        OBCNANDFLASHScrubbingFrequency = 616,
+        OBCRAMScrubbingFrequency = 632,
+        OBCProgramFlashScrubbingFrequency = 648,
 
         /* EPS Parameters */
         // clang-format off
