@@ -3,7 +3,6 @@
 #include <ApplicationLayer.hpp>
 
 #include "task.h"
-etl::array<uint16_t, CAN::TPMessageMaximumArguments> COMMSUHFBandPATemperature = {COMMSParameters::commsUHFBandPATemperatureID};
 void monitorAllTasks() {
     //    unsigned long ulTotalRunTime, ulStatsAsPercentage;
     //    UBaseType_t tasks_num = uxTaskGetNumberOfTasks();
