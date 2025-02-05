@@ -70,13 +70,13 @@ extern "C" void main_cpp() {
     // payloadTestTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
-    housekeepingTask.emplace();
+    // housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
-    // ambientTemperatureTask.emplace();
+    ambientTemperatureTask.emplace();
     // nandTask.emplace();
-    // memManTask.emplace();
+    memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -88,15 +88,15 @@ extern "C" void main_cpp() {
     //    payloadTestTask->createTask();
     canGatekeeperTask->createTask();
     canParserTask->createTask();
-    //    housekeepingTask->createTask();
-    //    onBoardMonitoringTask->createTask();
+    // housekeepingTask->createTask();
+    onBoardMonitoringTask->createTask();
     //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-    // ambientTemperatureTask->createTask();
-    // memManTask->createTask();
+    ambientTemperatureTask->createTask();
+    memManTask->createTask();
     //    nandTask->createTask();
     timeKeepingTask->createTask();
-    TestTask->createTask();
+    // TestTask->createTask();
     watchdogTask->createTask();
     heartbeatTask->createTask();
 

@@ -63,7 +63,7 @@ void TCHandlingTask::execute() {
 //        uint8_t messageLength = cobsDecodedMessage.size();
 //        uint8_t* ecssTCBytes = reinterpret_cast<uint8_t*>(cobsDecodedMessage.data());
 //
-//        auto ecssTC = MessageParser::parse(ecssTCBytes, messageLength);
+        // auto ecssTC = MessageParser::parse(ecssTCBytes, messageLength);
 
         LOG_DEBUG << "Received new TC[" << messageOut.c_str() << "]";
         if(!strcmp(messageOut.c_str(), "RSTMEM")){
