@@ -7,6 +7,7 @@
 #include "general_definitions.hpp"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
+#include "HelperFunctions.hpp"
 
 
 // ECSS Header Files
@@ -102,6 +103,7 @@ extern "C" void main_cpp() {
     __enable_irq();
     can_ack_handler.initialize_semaphore();
     CAN_TRANSMIT_Handler.initialize_semaphore();
+    HelperFunctions::resetChecks();    // get the last reason of reset
     vTaskStartScheduler();
 
     while (true) {
