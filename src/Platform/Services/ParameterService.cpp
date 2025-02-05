@@ -635,10 +635,23 @@ void ParameterService::initializeParameterMap() {
                   {PeakSatParameters::EPS_ADC_MCU_TEMP_V25T85 , PeakSatParameters::epsADC_MCU_TEMP_V25T85},
 
                   //---------------------------------------------------------------------------------------------
-                  {PeakSatParameters::COMMS_UHFBandPATemperatureID, PeakSatParameters::commsUHFBandPATemperature},
-                  {PeakSatParameters::COMMS_PCBTemperatureID, PeakSatParameters::commsPCBTemperature},
-                  {PeakSatParameters::COMMS_GNSSTemperatureID, PeakSatParameters::commsGNSSTemperature},
-                  {PeakSatParameters::Antenna_Deployment_StatusID, PeakSatParameters::Antenna_Deployment_Status},
+                  {PeakSatParameters::COMMS_uhf_power_amp_tempID, PeakSatParameters::comms_uhf_power_amp_temp},
+                  {PeakSatParameters::COMMS_pcb_tempID, PeakSatParameters::comms_pcb_temp},
+                  {PeakSatParameters::COMMS_gnss_tempID, PeakSatParameters::comms_gnss_temp},
+                  {PeakSatParameters::COMMS_antenna_deployment_statusID, PeakSatParameters::comms_antenna_deployment_status},
+                  {PeakSatParameters::COMMS_gnss_latID, PeakSatParameters::comms_gnss_lat},
+                  {PeakSatParameters::COMMS_gnss_longID, PeakSatParameters::comms_gnss_long},
+                  {PeakSatParameters::COMMS_gnss_altID, PeakSatParameters::comms_gnss_alt},
+                  {PeakSatParameters::COMMS_gnss_timeID, PeakSatParameters::comms_gnss_time},
+                  {PeakSatParameters::COMMS_gnss_ack_timeoutID, PeakSatParameters::comms_gnss_ack_timeout},
+                  {PeakSatParameters::COMMS_gnss_cmd_retriesID, PeakSatParameters::comms_gnss_cmd_retries},
+                  {PeakSatParameters::COMMS_gnss_error_timeoutID, PeakSatParameters::comms_gnss_error_timeout},
+                  {PeakSatParameters::COMMS_error_timeout_cnt_thrhdID, PeakSatParameters::comms_error_timeout_cnt_thrhd},
+                  {PeakSatParameters::COMMS_gnss_delay_cmdsID, PeakSatParameters::comms_gnss_delay_cmds},
+                  {PeakSatParameters::COMMS_satellites_trackedID, PeakSatParameters::comms_satellites_tracked},
+                  {PeakSatParameters::COMMS_gnss_fix_qualityID, PeakSatParameters::comms_gnss_fix_quality},
+                  {PeakSatParameters::COMMS_commit_hashID, PeakSatParameters::comms_commit_hash},
+
 
                  //---------------------------------------------------------------------------------------------
                   {PeakSatParameters::PAY_xID, PeakSatParameters::pay_x},

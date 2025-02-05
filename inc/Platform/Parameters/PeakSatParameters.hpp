@@ -646,12 +646,25 @@ namespace PeakSatParameters {
         EPS_VIP_OUTPUT_POWE_RA        = 61907,
         EPS_ADC_MCU_TEMP_V25T30       = 61923,
         EPS_ADC_MCU_TEMP_V25T85       = 61939,
-        // clang-format n
+        // clang-format on
+
         /* COMMS Parameters */
-        COMMS_UHFBandPATemperatureID = 10010,
-        COMMS_PCBTemperatureID = 10020,
-        COMMS_GNSSTemperatureID = 10030,
-        Antenna_Deployment_StatusID = 10050,
+        COMMS_uhf_power_amp_tempID = 10010,
+        COMMS_pcb_tempID = 10020,
+        COMMS_gnss_tempID = 10030,
+        COMMS_antenna_deployment_statusID = 10050,
+        COMMS_gnss_latID = 10310,
+        COMMS_gnss_longID = 10320,
+        COMMS_gnss_altID = 10330,
+        COMMS_gnss_timeID = 10340,
+        COMMS_gnss_ack_timeoutID = 10350,
+        COMMS_gnss_cmd_retriesID = 10360,
+        COMMS_gnss_error_timeoutID = 10370,
+        COMMS_error_timeout_cnt_thrhdID = 10380,
+        COMMS_gnss_delay_cmdsID = 10390,
+        COMMS_satellites_trackedID = 10400,
+        COMMS_gnss_fix_qualityID = 10410,
+        COMMS_commit_hashID = 10430,
 
         /* PAYLOAD Parameters */
         PAY_xID = 26229,
@@ -1500,10 +1513,22 @@ namespace PeakSatParameters {
     inline Parameter<int8_t> epsCONF_PARAM_CHANGED(0);
 
     /****************** COMMS PARAMETERS *******************/
-    inline Parameter<float> commsUHFBandPATemperature(0);
-    inline Parameter<float> commsPCBTemperature(0);
-    inline Parameter<float> commsGNSSTemperature(0);
-    inline Parameter<Antenna_Deployment_Status_enum> Antenna_Deployment_Status(Closed);
+    inline Parameter<float> comms_uhf_power_amp_temp(0);
+    inline Parameter<float> comms_pcb_temp(0);
+    inline Parameter<float> comms_gnss_temp(0);
+    inline Parameter<Antenna_Deployment_Status_enum> comms_antenna_deployment_status(Closed);
+    inline Parameter<int32_t> comms_gnss_lat(0);
+    inline Parameter<int32_t> comms_gnss_long(0);
+    inline Parameter<int32_t> comms_gnss_alt(0);
+    inline Parameter<float> comms_gnss_time(0);
+    inline Parameter<uint16_t> comms_gnss_ack_timeout(0);
+    inline Parameter<uint8_t> comms_gnss_cmd_retries(0);
+    inline Parameter<uint16_t> comms_gnss_error_timeout(0);
+    inline Parameter<uint16_t> comms_error_timeout_cnt_thrhd(0);
+    inline Parameter<uint16_t> comms_gnss_delay_cmds(0);
+    inline Parameter<int8_t> comms_satellites_tracked(0);
+    inline Parameter<int8_t> comms_gnss_fix_quality(0);
+    inline Parameter<uint16_t> comms_commit_hash(0);
 
     /****************** PAYLOAD PARAMETERS *******************/
     inline Parameter<int32_t> pay_x(0);
