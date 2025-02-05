@@ -1,63 +1,10 @@
 #include "CAN/TPProtocol.hpp"
+
+#include <HeartbeatTask.hpp>
+
 #include "CANGatekeeperTask.hpp"
 
 using namespace CAN;
-
-void TPProtocol::processSingleFrame(const CAN::Frame& message) {
-    TPMessage tpMessage;
-    tpMessage.decodeId(message.id);
-
-    if (not(tpMessage.idInfo.isMulticast or tpMessage.idInfo.destinationAddress == NodeID)) {
-        return;
-    }
-
-    size_t messageSize = message.data[0] & 0b111111;
-    for (size_t idx = 1; idx <= messageSize; idx++) {
-        tpMessage.appendUint8(message.data[idx]);
-    }
-
-    parseMessage(tpMessage);
-}
-
-void TPProtocol::processMultipleFrames() {
-    TPMessage message;
-    uint8_t incomingMessagesCount = canGatekeeperTask->getIncomingMFMessagesCount();
-    uint16_t dataLength = 0;
-    bool receivedFirstFrame = false;
-
-    for (uint8_t messageCounter = 0; messageCounter < incomingMessagesCount; messageCounter++) {
-        CAN::Frame frame = canGatekeeperTask->getFromMFQueue();
-        auto frameType = static_cast<Frame>(frame.data[0] >> 6);
-
-        if (not receivedFirstFrame) {
-            if (frameType == First) {
-                message.decodeId(frame.id);
-                dataLength = ((frame.data[0] & 0b111111) << 8) | frame.data[1];
-                receivedFirstFrame = true;
-            }
-        } else {
-            uint8_t consecutiveFrameCount = frame.data[0] & 0b111111;
-            if (not ErrorHandler::assertInternal(messageCounter == consecutiveFrameCount,
-                                                 ErrorHandler::InternalErrorType::UnacceptablePacket)) { //TODO: Add a more appropriate enum value
-                canGatekeeperTask->emptyIncomingMFQueue();
-                return;
-            }
-
-            for (size_t idx = 1; idx < CAN::Frame::MaxDataLength; idx++) {
-                message.appendUint8(frame.data[idx]);
-                if (message.dataSize >= dataLength) {
-                    break;
-                }
-            }
-        }
-    }
-
-    if (not(message.idInfo.isMulticast or message.idInfo.destinationAddress == NodeID)) {
-        return;
-    }
-
-    parseMessage(message);
-}
 
 void TPProtocol::parseMessage(TPMessage& message) {
     uint8_t messageType = static_cast<Application::MessageIDs>(message.data[0]);
@@ -91,13 +38,19 @@ void TPProtocol::parseMessage(TPMessage& message) {
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             LOG_DEBUG << "Received pong from " << senderName.c_str();
         } break;
+        case CAN::Application::Heartbeat: {
+            auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
+            auto senderName = CAN::Application::nodeIdToString.at(senderID);
+            LOG_DEBUG << "Received heartbeat from " << senderName.c_str();
+            heartbeatReceived = true;
+        } break;
         case CAN::Application::LogMessage: {
             auto senderID = static_cast<CAN::NodeIDs>(message.idInfo.sourceAddress);
             auto senderName = CAN::Application::nodeIdToString.at(senderID);
             String<ECSSMaxMessageSize> logSource = "Incoming Log from ";
             logSource.append(senderName);
             logSource.append(": ");
-            auto logData = String<ECSSMaxMessageSize>(message.data.data() + 1, message.dataSize - 1);
+            auto logData = String<ECSSMaxMessageSize>(message.data.begin() + 1, message.dataSize - 1);
             LOG_DEBUG << logSource.c_str() << logData.c_str();
         } break;
         default:
@@ -107,31 +60,87 @@ void TPProtocol::parseMessage(TPMessage& message) {
     }
 }
 
-void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
+    if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+        return 0;
+    } else {
+        //Change CAN bus
+        Application::switchBus();
+
+        if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+            return 0;
+        } else {
+            uint32_t error = MCAN1_ErrorGet();
+            LOG_ERROR << "Resetting CAN. Error code: " << error;
+            //reset CAN
+            MCAN0_Initialize();
+            MCAN1_Initialize();
+            vTaskDelay(1);
+            CAN::Driver::initialize();
+            vTaskDelay(1);
+            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+            if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+                return 0;
+            } else {
+                OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+                if (!createCANTPMessageWithRetry(message, isISR, 2)) {
+                    return 0;
+                } else {
+                    //Packet transmit fialure
+                    LOG_ERROR << "Packet transmit fialure";
+                    return 1;
+                }
+            }
+        }
+    }
+}
+
+bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isISR, uint32_t NoOfRetries) {
+    for (uint32_t i = 0; i < NoOfRetries; i++) {
+        if (!createCANTPMessageNoRetransmit(message, isISR)) {
+            return 0;
+        }
+        if (i > 0) {
+            //number of retransmits ++
+            LOG_ERROR << "Retranmitted CAN packet";
+        }
+    }
+    return 1;
+}
+
+bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent, bool isISR) {
+    TPMessage message = messageToBeSent;
     size_t messageSize = message.dataSize;
-    uint32_t id = message.encodeId();
-    // Data fits in a Single Frame
-    if (messageSize <= UsableDataLength) {
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {
+    uint32_t id = OBC_CAN_ID; //
+
+    if (message.data[0] == Application::ACK) {
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {
             static_cast<uint8_t>(((Single << 6) & 0xFF) | (messageSize & 0b111111))};
         for (size_t idx = 0; idx < messageSize; idx++) {
             data.at(idx + 1) = message.data[idx];
         }
         canGatekeeperTask->send({id, data}, isISR);
+        return false;
+    }
 
-        return;
+    //Add a dummy byte for single byte messages so that the gatekeeper can distinguish it from trash
+    if (messageSize == 1) {
+        messageSize = 2;
+        message.appendUint8(0xAA);
     }
 
     // First Frame
+    xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
     {
         // 4 MSB bits is the Frame Type identifier and the 4 LSB are the leftmost 4 bits of the data length.
         uint8_t firstByte = (First << 6) | ((messageSize >> 8) & 0b111111);
         // Rest of the data length.
         uint8_t secondByte = messageSize & 0xFF;
 
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> firstFrame = {firstByte, secondByte};
+        etl::array<uint8_t, CAN::MaxPayloadLength> firstFrame = {firstByte, secondByte};
 
         canGatekeeperTask->send({id, firstFrame}, isISR);
+        xTaskNotifyGive(canGatekeeperTask->taskHandle);
     }
 
     // Consecutive Frames
@@ -139,16 +148,31 @@ void TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
     for (uint8_t currentConsecutiveFrameCount = 1;
          currentConsecutiveFrameCount <= totalConsecutiveFramesNeeded; currentConsecutiveFrameCount++) {
 
-        uint8_t firstByte = (Consecutive << 6) | (currentConsecutiveFrameCount & 0b111111);
+        uint8_t firstByte = (Consecutive << 6);
         if (currentConsecutiveFrameCount == totalConsecutiveFramesNeeded) {
-            firstByte = ((Final << 6) & 0xFF) | (currentConsecutiveFrameCount & 0b111111);
+            firstByte = (Final << 6);
         }
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> consecutiveFrame = {firstByte};
+        etl::array<uint8_t, CAN::MaxPayloadLength> consecutiveFrame = {firstByte};
+        consecutiveFrame.at(1) = currentConsecutiveFrameCount;
 
         for (uint8_t idx = 0; idx < UsableDataLength; idx++) {
-            consecutiveFrame.at(idx + 1) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
+            consecutiveFrame.at(idx + 2) = message.data[idx + UsableDataLength * (currentConsecutiveFrameCount - 1)];
+        }
+
+        if (currentConsecutiveFrameCount % 4 == 3) { // Make sure the output buffers do not overflow
+            vTaskDelay(1);
         }
 
         canGatekeeperTask->send({id, consecutiveFrame}, isISR);
+        xTaskNotifyGive(canGatekeeperTask->taskHandle);
     }
+
+    if (xSemaphoreTake(can_ack_handler.CAN_ACK_SEMAPHORE, pdMS_TO_TICKS(can_ack_handler.TIMEOUT)) == pdTRUE) {
+        LOG_DEBUG << "CAN ACK received!";
+        xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+        return false;
+    }
+    LOG_ERROR << "Timeout waiting for CAN ACK";
+    xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+    return true;
 }

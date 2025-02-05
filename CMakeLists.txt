@@ -126,4 +126,5 @@ set(CMAKE_EXE_LINKER_FLAGS
 )
 
 # Compiler definitions
+target_compile_options(${PROJECT_NAME}.elf PRIVATE -Wno-psabi)
 add_compile_definitions(LOGLEVEL_TRACE)
