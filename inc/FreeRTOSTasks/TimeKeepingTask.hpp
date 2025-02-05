@@ -1,6 +1,8 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "UTCTimestamp.hpp"
+#include "Time.hpp"
 
 class TimeKeepingTask : public Task {
 private:

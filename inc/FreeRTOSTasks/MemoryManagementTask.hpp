@@ -188,6 +188,8 @@ public:
 
     static bool getParameter(ParameterId parameter, void* value);
 
+    static uint64_t getParameterAsUINT64(ParameterId parameter);
+
 };
 
 inline std::optional<MemManTask> memManTask;

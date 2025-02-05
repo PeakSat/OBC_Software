@@ -26,7 +26,7 @@
 #include "CANGatekeeperTask.hpp"
 #include "CANTestTask.hpp"
 #include "TCHandlingTask.hpp"
-#include "NANDTask.hpp"
+//#include "NANDTask.hpp"
 //#include "MRAMTask.hpp"
 #include "MemoryManagementTask.hpp"
 #include "PayloadTestTask.hpp"
@@ -74,7 +74,6 @@ extern "C" void main_cpp() {
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     // ambientTemperatureTask.emplace();
-    nandTask.emplace();
     memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
@@ -92,7 +91,6 @@ extern "C" void main_cpp() {
     mcuTemperatureTask->createTask();
 //  ambientTemperatureTask->createTask();
   memManTask->createTask();
-//    nandTask->createTask();
     timeKeepingTask->createTask();
 //    TestTask->createTask();
     watchdogTask->createTask();

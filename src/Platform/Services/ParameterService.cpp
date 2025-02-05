@@ -6,9 +6,5 @@
 
 #include "PeakSatParameters.hpp"
 
-void ParameterService::initializeParameterMap() {
-
-}
-
 
 #endif

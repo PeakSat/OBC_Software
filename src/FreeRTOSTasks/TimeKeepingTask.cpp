@@ -36,7 +36,7 @@ void TimeKeepingTask::printOnBoardTime() {
 
 void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
     UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
-    Time::DefaultCUC timeCUC(timeUTC);
+//    Time::DefaultCUC timeCUC(timeUTC);
     // ToDo  Set value to parameter time
 }
 

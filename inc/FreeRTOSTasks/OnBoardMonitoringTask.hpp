@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "ServicePool.hpp"
 
 /**
  * FreeRTOS task implementing the ST[03] Housekeeping Service.

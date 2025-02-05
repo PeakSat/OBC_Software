@@ -74,9 +74,10 @@ namespace CAN::Application {
         message.appendUint8(MessageIDs::SendParameters);
         message.appendUint16(parameterIDs.size());
         for (auto parameterID: parameterIDs) {
-            if (Services.parameterManagement.getParameter(parameterID)) {
+
+            if (Services.parameterManagement.parameterExists(parameterID)) {
                 message.append(parameterID);
-                Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
+                Services.parameterManagement.appendParameterToMessage(message, parameterID);
             } else if (parameterID == 0) {
                 continue;
             } else {
@@ -208,16 +209,14 @@ namespace CAN::Application {
                     etl::to_string(parameterID, logString, true);
                     logString.append(" was ");
 
-                    auto parameter = Services.parameterManagement.getParameter(parameterID);
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
-
-                    parameter->get().setValueFromMessage(message);
+                    etl::to_string(memManTask->getParameterAsUINT64(parameterID), logString, true);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                     logString.append(" and is now ");
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
+                    etl::to_string(memManTask->getParameterAsUINT64(parameterID), logString, true);
 
                     LOG_DEBUG << logString.c_str();
                 } else {
-                    Services.parameterManagement.getParameter(parameterID)->get().setValueFromMessage(message);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                 }
             }
         }

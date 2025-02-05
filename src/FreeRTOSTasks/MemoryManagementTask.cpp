@@ -758,6 +758,55 @@ bool MemManTask::getParameter(ParameterId parameter, void* value) {
     return false;
 }
 
+uint64_t MemManTask::getParameterAsUINT64(ParameterId parameter) {
+    uint64_t result = 0;  // Ensure it's initialized to prevent undefined behavior
+    PARAMETER_TYPE type = getParameterType(parameter);
+
+    switch (type) {
+        case PARAMETER_TYPE::UINT8:
+        case PARAMETER_TYPE::INT8: {
+            uint8_t temp = 0;
+            if (getParameter(parameter, &temp)) {
+                result = static_cast<uint64_t>(temp);
+            }
+            break;
+        }
+
+        case PARAMETER_TYPE::UINT16:
+        case PARAMETER_TYPE::INT16: {
+            uint16_t temp = 0;
+            if (getParameter(parameter, &temp)) {
+                result = static_cast<uint64_t>(temp);
+            }
+            break;
+        }
+
+        case PARAMETER_TYPE::UINT32:
+        case PARAMETER_TYPE::INT32:
+        case PARAMETER_TYPE::FLOAT: {
+            uint32_t temp = 0;
+            if (getParameter(parameter, &temp)) {
+                result = static_cast<uint64_t>(temp);
+            }
+            break;
+        }
+
+        case PARAMETER_TYPE::UINT64:
+        case PARAMETER_TYPE::INT64:
+        case PARAMETER_TYPE::DOUBLE: {
+            uint64_t temp = 0;
+            if (getParameter(parameter, &temp)) {
+                result = temp;
+            }
+            break;
+        }
+
+        default:
+            // Handle unknown types safely
+            break;
+    }
+    return result;
+}
 
 void MemManTask::execute() {
     // Enable LCLs
