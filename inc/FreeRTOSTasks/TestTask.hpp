@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "FreeRTOS.h"
 #include <queue.h>
@@ -8,8 +8,8 @@
 class TestTask : public Task {
 private:
     StackType_t taskStack[TestTaskStack];
-    
-    const uint16_t delayMs = 5000;
+
+    const uint16_t delayMs = 3000;
 
 public:
     void execute();
@@ -19,7 +19,7 @@ public:
     static inline TaskHandle_t TestTaskHandle;
 
     void createTask() {
-        TestTaskHandle = xTaskCreateStatic(vClassTask < TestTask > , this->TaskName,
+        TestTaskHandle = xTaskCreateStatic(vClassTask<TestTask>, this->TaskName,
                                            TestTaskStack, this,
                                            TestTaskPriority, this->taskStack,
                                            &(this->taskBuffer));

@@ -37,6 +37,7 @@ include_directories(
         src/config/default/peripheral/pio
         src/config/default/peripheral/rtc
         src/config/default/peripheral/systick
+        src/config/default/peripheral/tc
         src/config/default/peripheral/twihs/master
         src/config/default/system
         src/config/default/system/cache
@@ -130,4 +131,5 @@ set(CMAKE_EXE_LINKER_FLAGS
 )
 
 # Compiler definitions
+target_compile_options(${PROJECT_NAME}.elf PRIVATE -Wno-psabi)
 add_compile_definitions(LOGLEVEL_TRACE)
