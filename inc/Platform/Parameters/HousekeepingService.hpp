@@ -27,7 +27,7 @@ namespace HousekeepingStructures {
                 }
             },
             {
-                3, 5000, false,
+                3, 5000, true,
                 {
                     EPS_MODE, EPS_CONF, EPS_RESET_CAUSE, EPS_UPTIME, EPS_ERROR, EPS_RC_CNT_PWRON, EPS_RC_CNT_WDG,
                     EPS_RC_CNT_CMD, EPS_RC_CNT_MCU, EPS_RC_CNT_EMLOPO, EPS_PREVCMD_ELAPSED, EPS_UNIX_TIME,
@@ -36,21 +36,21 @@ namespace HousekeepingStructures {
             },
 
             {
-                4, 5000, false,
+                4, 5000, true,
                 {
                     COMMS_uhf_power_amp_tempID, COMMS_pcb_tempID, COMMS_gnss_tempID, COMMS_antenna_deployment_statusID,
                     COMMS_gnss_latID, COMMS_gnss_longID, COMMS_gnss_altID, COMMS_gnss_timeID, COMMS_gnss_ack_timeoutID,
                     COMMS_gnss_cmd_retriesID, COMMS_gnss_error_timeoutID, COMMS_error_timeout_cnt_thrhdID,
-                    COMMS_gnss_delay_cmdsID, COMMS_satellites_trackedID, COMMS_gnss_fix_qualityID, COMMS_commit_hashID,
+                    COMMS_gnss_delay_cmdsID, COMMS_satellites_trackedID, COMMS_gnss_fix_qualityID, COMMS_commit_hashID
                 }
             },
             {
-                5, 5000, false,
+                5, 5000, true,
                 {
                     PAY_xID, PAY_yID, PAY_zID, PAY_uptimeID, PAY_timeID, PAY_psu_12vID, PAY_psu_5vID, PAY_psu_33vID,
                     PAY_mcu_die_temperatureID, PAY_main_board_temperatureID, PAY_seed_ld_output_powerID,
                     PAY_fsm_chamber_temperatureID, PAY_fsm_chamber_pressureID, PAY_fsmd_voltage_converter_temperatureID,
-                    PAY_fsmd_drivers_temperatureID, PAY_camera_pcb_temperatureID, PAY_camera_sensor_temperatureID,
+                    PAY_fsmd_drivers_temperatureID, PAY_camera_pcb_temperatureID, PAY_camera_sensor_temperatureID
                     // PAY_fso_aux_temperature_1ID, PAY_fso_aux_temperature_2ID, PAY_oad_temperatureID,
                     // PAY_optical_amplifier_combiner_heater_temperatureID,
                     // PAY_optical_amplifier_fiber_mirror_temperatureID,

@@ -70,7 +70,7 @@ extern "C" void main_cpp() {
     // payloadTestTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
-    // housekeepingTask.emplace();
+    housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
@@ -88,7 +88,7 @@ extern "C" void main_cpp() {
     //    payloadTestTask->createTask();
     canGatekeeperTask->createTask();
     canParserTask->createTask();
-    // housekeepingTask->createTask();
+    housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
     //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
@@ -98,7 +98,7 @@ extern "C" void main_cpp() {
     timeKeepingTask->createTask();
     // TestTask->createTask();
     watchdogTask->createTask();
-    heartbeatTask->createTask();
+    // heartbeatTask->createTask();
 
     __enable_irq();
     can_ack_handler.initialize_semaphore();

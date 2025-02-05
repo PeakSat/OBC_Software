@@ -7,7 +7,7 @@
  */
 class MCUTemperatureTask : public Task {
 private:
-    const uint16_t delayMs = 1000;
+    const uint16_t delayMs = 7000;
 
     StackType_t taskStack[MCUTemperatureTaskStack];
 
