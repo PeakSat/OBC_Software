@@ -1,13 +1,15 @@
 #include "mutex_Handler.h"
 
-
 SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
 
+
 StaticSemaphore_t Semaphore_Group_A_buffer;
 StaticSemaphore_t Semaphore_Group_B_buffer;
 StaticSemaphore_t Semaphore_Group_C_buffer;
+
+
 
 void initializeSemaphores() {
     Semaphore_Group_A = xSemaphoreCreateMutexStatic(&Semaphore_Group_A_buffer);
