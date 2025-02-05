@@ -7,18 +7,21 @@
  */
 class MCUTemperatureTask : public Task {
 private:
-    const uint16_t delayMs = 7000;
+    const uint16_t delayMs = 1000;
 
     StackType_t taskStack[MCUTemperatureTaskStack];
 
-public:
-    void execute();
+    inline static TaskHandle_t AFEC0HandlingTaskHandle = nullptr;
 
-    MCUTemperatureTask() : Task("MCUTemperatureSensor") {}
+public:
+    void execute() const;
+
+    MCUTemperatureTask();
 
     void createTask() {
-        xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTaskStack, this,
-                          MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
+        AFEC0HandlingTaskHandle = xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName,
+                                                    MCUTemperatureTaskStack, this,
+                                                    MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 
