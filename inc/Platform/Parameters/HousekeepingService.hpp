@@ -7,6 +7,7 @@
 namespace HousekeepingStructures {
     using namespace PeakSatParameters;
 
+
     static etl::array<HousekeepingStructure, ECSSMaxHousekeepingStructures> structures = {
         {
             // OBC Parameters that will be monitored in the campaign
