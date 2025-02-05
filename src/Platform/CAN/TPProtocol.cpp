@@ -78,11 +78,11 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
             vTaskDelay(1);
             CAN::Driver::initialize();
             vTaskDelay(1);
-            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+            PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Main));
             if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                 return 0;
             } else {
-                OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+            PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Reductant));
                 if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                     return 0;
                 } else {

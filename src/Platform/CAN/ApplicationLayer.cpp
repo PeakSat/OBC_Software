@@ -6,10 +6,10 @@
 
 namespace CAN::Application {
     void switchBus() {
-        if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
-            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+        if ( PeakSatParameters::obcCANBUSActive.getValue() == PeakSatParameters::Main) {
+             PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Reductant));
         } else {
-            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+             PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Main));
         }
     }
 

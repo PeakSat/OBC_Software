@@ -182,7 +182,7 @@ void CAN::Driver::send(const CAN::Packet& message) {
     etl::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
 
 
-    if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
+    if (PeakSatParameters::obcCANBUSActive.getValue() == PeakSatParameters::Main) {
         if (MCAN0_TxFifoFreeLevelGet() < 1) {
             // LOG_ERROR << "CAN0 Tx FIFO full";
 
