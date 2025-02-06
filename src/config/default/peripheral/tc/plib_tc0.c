@@ -244,7 +244,7 @@ void TC0_CH2_TimerInitialize (void)
                                                         TC_CMR_WAVE_Msk ;
 
     /* write period */
-    TC0_REGS->TC_CHANNEL[2].TC_RC = 65535U;
+    TC0_REGS->TC_CHANNEL[2].TC_RC = 65372U;
 
 
     /* enable interrupt */
