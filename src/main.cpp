@@ -93,7 +93,7 @@ extern "C" void main_cpp() {
     //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
-    memManTask->createTask();
+    // memManTask->createTask();
     //    nandTask->createTask();
     timeKeepingTask->createTask();
     // TestTask->createTask();
