@@ -28,22 +28,22 @@ constexpr BaseType_t OnBoardMonitoringTaskPriority = tskIDLE_PRIORITY + 2;
 constexpr uint16_t AmbientTemperatureTaskStack = 1000;
 constexpr uint16_t CANGatekeeperTaskStack = 3500;
 constexpr uint16_t CANParserTaskStack = 5300;
-constexpr uint16_t HousekeepingTaskStack = 3500;
+constexpr uint16_t HousekeepingTaskStack = 3300;
 constexpr uint16_t MCUTemperatureTaskStack = 500;
 //const uint16_t MRAMTaskStack = 5000;
 
-constexpr uint16_t NANDTaskStack = 4000;
-constexpr uint16_t MemoryManagementTaskStack = 3000;
+constexpr uint16_t NANDTaskStack = 100;
+constexpr uint16_t MemoryManagementTaskStack = 1000;
 constexpr uint16_t PayloadTestTaskStack = 500;
 constexpr uint16_t StatisticsReportingTaskStack = 2000;
-constexpr uint16_t TCHandlingTaskStack = 3000;
+constexpr uint16_t TCHandlingTaskStack = 1000;
 constexpr uint16_t TimeBasedSchedulingTaskStack = 500;
 constexpr uint16_t TimeKeepingTaskStack = 500;
 constexpr uint16_t PayloadGatekeeperTaskStack = 3000;
 constexpr uint16_t UARTGatekeeperTaskStack = 1000;
-constexpr uint16_t WatchdogTaskStack = 1000;
-constexpr uint16_t HeartbeatTaskStack = 2000;
-constexpr uint16_t OnBoardMonitoringTaskStack = 2000;
+constexpr uint16_t WatchdogTaskStack = 200;
+constexpr uint16_t HeartbeatTaskStack = 1800;
+constexpr uint16_t OnBoardMonitoringTaskStack = 1000;
 
 
-constexpr uint16_t TestTaskStack = 2000;
+constexpr uint16_t TestTaskStack = 1000;
