@@ -27,15 +27,30 @@ TestTask::TestTask() : Task("TestTask") {
     // LOG_INFO << "Initialised instance of TestTask";
 }
 
-uint8_t ping_msg[] = {0xFE, 0x05, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04};
+req_set_time request_time;
+res_set_time response_time;
+
+req_get_ldd_telemetries request_gpo;
+res_get_ldd_telemetries response_gpo;
 
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
 
+    request_time.timestamp = 1738070674;
+    if(PayloadGatekeeperTask->sendrecvPayload(request_time.req_code, static_cast<void*>(&request_time), static_cast<void*>(&response_time))){
+        LOG_DEBUG<<"Payload Responded with time: "<<response_time.timestamp<<" Status: "<<response_time.status;
+    }
+
+
     while (true) {
-        //monitorAllTasks();
-        LOG_DEBUG<<"Sending ping message to payload";
-        PayloadGatekeeperTask->addPayloadSendQueue(ping_msg, 8, false);
-        vTaskDelay(pdMS_TO_TICKS(this->delayMs));
+
+        if(PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))){
+            LOG_DEBUG<<"LDD TM Amp out pow  :"<<response_gpo.amplifier_output_power;
+            LOG_DEBUG<<"LDD TM ld temp      :"<<response_gpo.ld_temperature;
+            LOG_DEBUG<<"LDD TM Time (s)     :"<<response_gpo.time;
+
+        }
+
+        vTaskDelay(5000);
     }
 }
