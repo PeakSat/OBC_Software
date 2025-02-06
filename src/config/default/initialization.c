@@ -48,7 +48,6 @@
 #include "device.h"
 
 
-
 // ****************************************************************************
 // ****************************************************************************
 // Section: Configuration Bits
@@ -178,6 +177,7 @@ const SYS_TIME_INIT sysTimeInitData =
 
 void SYS_Initialize ( void* data )
 {
+
     /* MISRAC 2012 deviation block start */
     /* MISRA C-2012 Rule 2.2 deviated in this file.  Deviation record ID -  H3_MISRAC_2012_R_2_2_DR_1 */
 
@@ -187,28 +187,28 @@ void SYS_Initialize ( void* data )
     CLOCK_Initialize();
 	PIO_Initialize();
 
-
-
     XDMAC_Initialize();
 
-	RSWDT_REGS->RSWDT_MR = RSWDT_MR_WDDIS_Msk;	// Disable RSWDT 
+	RSWDT_REGS->RSWDT_MR = RSWDT_MR_WDDIS_Msk;	// Disable RSWDT
 
 	WDT_Initialize();
 
 
     PWM0_Initialize();
 
-  
 
- 
-    TC0_CH0_TimerInitialize(); 
-    TC0_CH1_TimerInitialize(); 
-    
+
+
+    TC0_CH0_TimerInitialize();
+    TC0_CH1_TimerInitialize();
+
 	RTC_Initialize();
 
 	RSTC_Initialize();
 
     AFEC0_Initialize();
+
+    SMC_Initialize();
 
 	UART2_Initialize();
 
@@ -232,17 +232,29 @@ void SYS_Initialize ( void* data )
     /* Initialize I2C0 Driver Instance */
     sysObj.drvI2C0 = DRV_I2C_Initialize(DRV_I2C_INDEX_0, (SYS_MODULE_INIT *)&drvI2C0InitData);
 
+    /* MISRAC 2012 deviation block start */
+    /* Following MISRA-C rules deviated in this block  */
+    /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
+    /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
+
+
+    /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
+    H3_MISRAC_2012_R_11_3_DR_1 & H3_MISRAC_2012_R_11_8_DR_1*/
+        
     sysObj.sysTime = SYS_TIME_Initialize(SYS_TIME_INDEX_0, (SYS_MODULE_INIT *)&sysTimeInitData);
+    
+    /* MISRAC 2012 deviation block end */
 
 
+    /* MISRAC 2012 deviation block end */
     APP_Initialize();
 
 
     NVIC_Initialize();
 
+
     /* MISRAC 2012 deviation block end */
 }
-
 
 /*******************************************************************************
  End of File

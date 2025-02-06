@@ -31,7 +31,7 @@
 //#include "MRAMTask.hpp"
 #include "HeartbeatTask.hpp"
 #include "MemoryManagementTask.hpp"
-#include "PayloadTestTask.hpp"
+#include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
 // Task Header files end
@@ -64,10 +64,11 @@ uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 
 
 extern "C" void main_cpp() {
+    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    // payloadTestTask.emplace();
+    PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
     housekeepingTask.emplace();
@@ -80,17 +81,16 @@ extern "C" void main_cpp() {
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
-    heartbeatTask.emplace();
 
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    //    payloadTestTask->createTask();
-    canGatekeeperTask->createTask();
-    canParserTask->createTask();
-    housekeepingTask->createTask();
-    onBoardMonitoringTask->createTask();
-    //     tcHandlingTask->createTask();
+    PayloadGatekeeperTask->createTask();
+//    canGatekeeperTask->createTask();
+//    canTestTask->createTask();
+//    housekeepingTask->createTask();
+//    onBoardMonitoringTask->createTask();
+//     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
     // memManTask->createTask();
