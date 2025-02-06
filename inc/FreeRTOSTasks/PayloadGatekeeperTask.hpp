@@ -13,6 +13,10 @@
 #include "general_definitions.hpp"
 #include "ATLAS_Frame_Definitions.hpp"
 #include "ATLAS_payload.hpp"
+#include "ATLAS_Response_Structs.hpp"
+#include "ATLAS_Request_Structs.hpp"
+#include "ATLAS_Response_Handlers.hpp"
+#include "ATLAS_Request_Handlers.hpp"
 
 class PayloadGatekeeperTask : public Task {
 private:
@@ -20,6 +24,7 @@ private:
     StackType_t taskStack[PayloadGatekeeperTaskStack];
 
     static const uint8_t maxFrameQueueSize = 5;
+    static const uint16_t maxReadDelayms = 2000;
 
     StaticQueue_t xPayloadSendFrameQueue;
     QueueHandle_t xFrameSendQueueHandle;
@@ -47,55 +52,17 @@ public:
                           PayloadGatekeeperTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 
-    bool addPayloadSendQueue(uint8_t* payload, uint16_t size, bool isISR){
-        internal_buffer[0] = size & 0xFF;
-        internal_buffer[1] = (size>>8) & 0xFF;
-        memcpy(&internal_buffer[2], payload, size);
+    bool addPayloadSendQueue(uint8_t* payload, uint16_t size, bool isISR);
 
-        if(isISR){
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            xQueueSendToBackFromISR(xFrameSendQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
-            xTaskNotifyFromISR(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
-            return true;
-        }
+    bool addPayloadReceiveQueue(uint8_t* payload, uint16_t size, bool isISR);
 
-        if(xQueueSendToBack(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
-            xTaskNotify(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite);
-            return true;
-        }
-        // xTaskNotify(this->taskHandle, PAYLOAD_SND, eNoAction);
-        return false;
-    }
+    void setPayloadError(uint8_t error_code, bool isISR);
 
-    bool addPayloadReceiveQueue(uint8_t* payload, uint16_t size, bool isISR){
-        internal_buffer[0] = size & 0xFF;
-        internal_buffer[1] = (size>>8) & 0xFF;
-        memcpy(&internal_buffer[2], payload, size);
+    bool handlePayloadResponse(uint8_t command_code, uint8_t* payload, void* response_struct);
 
-        if(isISR){
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            xQueueSendToBackFromISR(xFrameReceiveQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
-            xTaskNotifyFromISR(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
-            return true;
-        }
+    uint16_t handlePayloadRequest(uint8_t command_code, void* request_struct, uint8_t* buffer, uint16_t &delay);
 
-        if(xQueueSendToBack(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
-            xTaskNotify(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite);
-            return true;
-        }
-        // xTaskNotify(taskHandle, PAYLOAD_RCV, eNoAction);
-        return false;
-    }
-
-    void setPayloadError(uint8_t error_code, bool isISR){
-        error = (uint8_t) error_code;
-        if(isISR){
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            xTaskNotifyFromISR(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
-            return;
-        }
-        xTaskNotify(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite);
-    }
+    bool sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct);
 
 };
 

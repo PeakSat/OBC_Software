@@ -37,6 +37,134 @@ void printError(uint8_t error){
 }
 
 
+bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t* payload, void* response_struct){
+    switch (command_code) {
+        case GET_MODE:
+            return handleResGetMode(payload, response_struct);
+        case SET_MODE:
+            return handleResSetMode(payload, response_struct);
+        case GET_TIME:
+            return handleResGetTime(payload, response_struct);
+        case SET_TIME:
+            return handleResSetTime(payload, response_struct);
+        case GET_MAIN_TELEMETRIES:
+            return handleResGetMainTelemetries(payload, response_struct);
+        case GET_SECONDARY_TELEMETRIES:
+            return handleResGetSecondaryTelemetries(payload, response_struct);
+        case GET_LDD_TELEMETRIES:
+            return handleResGetLddTelemetries(payload, response_struct);
+        case GET_FPGA_TELEMETRIES:
+            return handleResGetFpgaTelemetries(payload, response_struct);
+        case GET_POINTING_OFFSET:
+            return handleResGetPointingOffset(payload, response_struct);
+        default:
+            break;
+    }
+    return false;
+}
+
+uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void *request_struct, uint8_t* buffer, uint16_t &wr_delay) {
+    switch (command_code) {
+        case GET_MODE:
+            return handleReqGetMode(request_struct, buffer, wr_delay);
+        case SET_MODE:
+            return handleReqSetMode(request_struct, buffer, wr_delay);
+        case GET_TIME:
+            return handleReqGetTime(request_struct, buffer, wr_delay);
+        case SET_TIME:
+            return handleReqSetTime(request_struct, buffer, wr_delay);
+        case GET_MAIN_TELEMETRIES:
+            return handleReqGetMainTelemetries(request_struct, buffer, wr_delay);
+        case GET_SECONDARY_TELEMETRIES:
+            return handleReqGetSecondaryTelemetries(request_struct, buffer, wr_delay);
+        case GET_LDD_TELEMETRIES:
+            return handleReqGetLddTelemetries(request_struct, buffer, wr_delay);
+        case GET_FPGA_TELEMETRIES:
+            return handleReqGetFpgaTelemetries(request_struct, buffer, wr_delay);
+        case GET_POINTING_OFFSET:
+            return handleReqGetPointingOffset(request_struct, buffer, wr_delay);
+        default:
+            break;
+    }
+    return 0;
+}
+
+bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct){
+    LOG_DEBUG<<"Sending payload msg, CC: "<<command_code;
+
+    uint8_t payload_buffer[max_payload_size];
+    uint16_t payload_size = 0;
+    uint16_t write_read_delay = 500;
+
+    payload_size = handlePayloadRequest(command_code, request_struct, payload_buffer, write_read_delay);
+
+    sendPayloadMessage(payload_buffer, payload_size);
+    vTaskDelay(pdMS_TO_TICKS(write_read_delay));
+
+    if(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, pdMS_TO_TICKS(maxReadDelayms)) == pdTRUE){
+        uint16_t rcv_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
+        LOG_DEBUG<<"Received response size: "<<rcv_size;
+        if(handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)){
+            return true;
+        }
+        setPayloadError((uint8_t) ATLAS_Driver_Error::ANSWER_MISMATCH, false);
+        return false;
+    }
+    setPayloadError((uint8_t) ATLAS_Driver_Error::TIMEOUT, false);
+    return false;
+}
+
+
+bool PayloadGatekeeperTask::addPayloadSendQueue(uint8_t *payload, uint16_t size, bool isISR) {
+    internal_buffer[0] = size & 0xFF;
+    internal_buffer[1] = (size>>8) & 0xFF;
+    memcpy(&internal_buffer[2], payload, size);
+
+    if(isISR){
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xQueueSendToBackFromISR(xFrameSendQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
+        xTaskNotifyFromISR(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+        return true;
+    }
+
+    if(xQueueSendToBack(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
+        xTaskNotify(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite);
+        return true;
+    }
+    // xTaskNotify(this->taskHandle, PAYLOAD_SND, eNoAction);
+    return false;
+}
+
+bool PayloadGatekeeperTask::addPayloadReceiveQueue(uint8_t *payload, uint16_t size, bool isISR) {
+    internal_buffer[0] = size & 0xFF;
+    internal_buffer[1] = (size>>8) & 0xFF;
+    memcpy(&internal_buffer[2], payload, size);
+
+    if(isISR){
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xQueueSendToBackFromISR(xFrameReceiveQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
+//        xTaskNotifyFromISR(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+        return true;
+    }
+
+    if(xQueueSendToBack(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
+//        xTaskNotify(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite);
+        return true;
+    }
+    // xTaskNotify(taskHandle, PAYLOAD_RCV, eNoAction);
+    return false;
+}
+
+void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR){
+    error = (uint8_t) error_code;
+    if(isISR){
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xTaskNotifyFromISR(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+        return;
+    }
+    xTaskNotify(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite);
+}
+
 PayloadGatekeeperTask::PayloadGatekeeperTask() : Task("Payload Gatekeeper") {
     // Initialize send queue
     xFrameSendQueueHandle = xQueueCreateStatic(maxFrameQueueSize, (payload_size_size+max_payload_size), payloadSendFrameQueueStorage, &xPayloadSendFrameQueue);
@@ -74,7 +202,7 @@ void PayloadGatekeeperTask::execute() {
                 while(xQueueReceive(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
                     uint16_t snd_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
                     LOG_DEBUG<<"Sending payload msg, payload_size:"<<snd_size;
-                    sendPayloadMessage(&internal_buffer[2], snd_size);
+                    sendPayloadMessage(&internal_buffer[payload_size_size], snd_size);
                 }
                 // Start timer for callback
                 TC0_CH0_TimerStart();
