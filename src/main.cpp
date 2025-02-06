@@ -88,8 +88,8 @@ extern "C" void main_cpp() {
     PayloadGatekeeperTask->createTask();
     // canGatekeeperTask->createTask();
     // canParserTask->createTask();
-    housekeepingTask->createTask();
-    onBoardMonitoringTask->createTask();
+    // housekeepingTask->createTask();
+    // onBoardMonitoringTask->createTask();
 //     tcHandlingTask->createTask();
     // mcuTemperatureTask->createTask();
     // ambientTemperatureTask->createTask();

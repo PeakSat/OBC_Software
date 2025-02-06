@@ -41,7 +41,7 @@ constexpr uint16_t TimeBasedSchedulingTaskStack = 500;
 constexpr uint16_t TimeKeepingTaskStack = 500;
 constexpr uint16_t PayloadGatekeeperTaskStack = 3000;
 constexpr uint16_t UARTGatekeeperTaskStack = 1000;
-constexpr uint16_t WatchdogTaskStack = 200;
+constexpr uint16_t WatchdogTaskStack = 1000;
 constexpr uint16_t HeartbeatTaskStack = 1800;
 constexpr uint16_t OnBoardMonitoringTaskStack = 1000;
 
