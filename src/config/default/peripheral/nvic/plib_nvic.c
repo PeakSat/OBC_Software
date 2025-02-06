@@ -74,6 +74,8 @@ void NVIC_Initialize( void )
     NVIC_EnableIRQ(TC0_CH0_IRQn);
     NVIC_SetPriority(TC0_CH1_IRQn, 7);
     NVIC_EnableIRQ(TC0_CH1_IRQn);
+    NVIC_SetPriority(TC0_CH2_IRQn, 7);
+    NVIC_EnableIRQ(TC0_CH2_IRQn);
     NVIC_SetPriority(AFEC0_IRQn, 7);
     NVIC_EnableIRQ(AFEC0_IRQn);
     NVIC_SetPriority(MCAN0_INT0_IRQn, 7);
@@ -94,9 +96,6 @@ void NVIC_Initialize( void )
 
     /* Enable Bus fault */
     SCB->SHCSR |= (SCB_SHCSR_BUSFAULTENA_Msk);
-
-    /* Enable memory management fault */
-    SCB->SHCSR |= (SCB_SHCSR_MEMFAULTENA_Msk);
 
 }
 
@@ -128,27 +127,4 @@ void NVIC_INT_Restore( bool state )
         __disable_irq();
         __DMB();
     }
-}
-
-bool NVIC_INT_SourceDisable( IRQn_Type source )
-{
-    bool processorStatus;
-    bool intSrcStatus;
-
-    processorStatus = NVIC_INT_Disable();
-    intSrcStatus = (NVIC_GetEnableIRQ(source) != 0U);
-    NVIC_DisableIRQ( source );
-    NVIC_INT_Restore( processorStatus );
-
-    /* return the source status */
-    return intSrcStatus;
-}
-
-void NVIC_INT_SourceRestore( IRQn_Type source, bool status )
-{
-    if( status ) {
-       NVIC_EnableIRQ( source );
-    }
-
-    return;
 }

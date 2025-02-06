@@ -54,18 +54,18 @@
 * Note(s)     : none.
 *********************************************************************************************************
 */
-// void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
-// {
-//    ( void ) pcTaskName;
-//    ( void ) pxTask;
-//
-//    /* Run time task stack overflow checking is performed if
-//    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook  function is
-//    called if a task stack overflow is detected.  Note the system/interrupt
-//    stack is not checked. */
-//    taskDISABLE_INTERRUPTS();
-//    for( ;; );
-// }
+void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+{
+   ( void ) pcTaskName;
+   ( void ) pxTask;
+
+   /* Run time task stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook  function is
+   called if a task stack overflow is detected.  Note the system/interrupt
+   stack is not checked. */
+   taskDISABLE_INTERRUPTS();
+   for( ;; );
+}
 
 /*
 *********************************************************************************************************

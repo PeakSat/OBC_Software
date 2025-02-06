@@ -6,7 +6,7 @@
 
 void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context){
     PayloadGatekeeperTask->setPayloadError((uint8_t) ATLAS_Driver_Error::TIMEOUT, true);
-    TC0_CH0_TimerStop();
+    TC0_CH2_TimerStop();
 }
 
 
@@ -45,7 +45,7 @@ PayloadGatekeeperTask::PayloadGatekeeperTask() : Task("Payload Gatekeeper") {
     // Initialize communications
     setupATLASCommunications();
     // Initialize response timer callback
-    TC0_CH0_TimerCallbackRegister(responseTimerCallback, (uintptr_t) NULL);
+    TC0_CH2_TimerCallbackRegister(responseTimerCallback, (uintptr_t) NULL);
 }
 
 void PayloadGatekeeperTask::execute() {
@@ -63,7 +63,7 @@ void PayloadGatekeeperTask::execute() {
             case PAYLOAD_RCV:
                 // Woken to receive
                 // Stop any pending response timer
-                TC0_CH0_TimerStop();
+                TC0_CH2_TimerStop();
                 while(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
                     uint16_t rcv_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
                     LOG_DEBUG<<"Received payload msg, payload_size:"<<rcv_size;
@@ -77,7 +77,7 @@ void PayloadGatekeeperTask::execute() {
                     sendPayloadMessage(&internal_buffer[2], snd_size);
                 }
                 // Start timer for callback
-                TC0_CH0_TimerStart();
+                TC0_CH2_TimerStart();
                 break;
             case PAYLOAD_ERR:
                 // Woken to handle Error

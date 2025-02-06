@@ -140,6 +140,27 @@ void TC0_CH1_TimerCallbackRegister(TC_TIMER_CALLBACK callback, uintptr_t context
  
 
 
+
+void TC0_CH2_TimerInitialize (void);
+
+void TC0_CH2_TimerStart (void);
+
+void TC0_CH2_TimerStop (void);
+
+void TC0_CH2_TimerPeriodSet (uint16_t period);
+
+
+uint32_t TC0_CH2_TimerFrequencyGet (void);
+
+uint16_t TC0_CH2_TimerPeriodGet (void);
+
+uint16_t TC0_CH2_TimerCounterGet (void);
+
+void TC0_CH2_TimerCallbackRegister(TC_TIMER_CALLBACK callback, uintptr_t context);
+
+
+
+
 #ifdef __cplusplus // Provide C++ Compatibility
 }
 #endif
