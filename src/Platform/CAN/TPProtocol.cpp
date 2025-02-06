@@ -78,16 +78,18 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
             vTaskDelay(1);
             CAN::Driver::initialize();
             vTaskDelay(1);
-            PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Main));
+            uint8_t ActiveCANBus = PeakSatParameters::Main;
+            MemManTask::setParameter(PeakSatParameters::CANBUSActiveID, &ActiveCANBus);
             if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                 return 0;
             } else {
-            PeakSatParameters::obcCANBUSActive.setValue(static_cast<Driver::ActiveBus>(PeakSatParameters::CANBUSActive::Reductant));
+                ActiveCANBus = PeakSatParameters::Redundant;
+                MemManTask::setParameter(PeakSatParameters::CANBUSActiveID, &ActiveCANBus);
                 if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                     return 0;
                 } else {
                     //Packet transmit fialure
-                    LOG_ERROR << "Packet transmit fialure";
+                    LOG_ERROR << "Packet transmit failure";
                     return 1;
                 }
             }

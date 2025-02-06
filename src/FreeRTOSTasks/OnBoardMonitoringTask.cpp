@@ -28,9 +28,9 @@ void OnBoardMonitoringTask::execute() {
         }
 //        LOG_INFO<< "EPS Time: "<<PeakSatParameters::epsUNIX_MINUTE.getValue() << " : " << PeakSatParameters::epsUNIX_SECOND.getValue();
         onBoardMonitoring.checkAll();
-        if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().
+        if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().
                               checkingStatus != PMON::CheckingStatus::WithinLimits) {
-            auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().checkingStatus;
+            auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().checkingStatus;
             if (status == PMON::CheckingStatus::BelowLowLimit) {}
                           LOG_INFO << "parameter status: BelowLowLimit ";
         }

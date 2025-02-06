@@ -37,7 +37,7 @@ res_get_ldd_telemetries response_gpo;
 
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
-    ParameterId param = PeaksatParameters::EPS_UNIX_SECONDID;
+    ParameterId param = PeakSatParameters::EPS_UNIX_SECONDID;
     uint8_t temp = 0;
     memManTask->getParameter(param, static_cast<void*>(&temp));
 
@@ -57,18 +57,18 @@ void TestTask::execute() {
         }
 
         vTaskDelay(5000);
+        //
+        // String<64> logString = "The value for parameter with ID ";
+        // etl::to_string(param, logString, true);
+        // logString.append(" was ");
+        // temp+=5;
+        // etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
+        // memManTask->setParameter(param, static_cast<void*>(&temp));
+        // logString.append(" and is now ");
+        // etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
 
-        String<64> logString = "The value for parameter with ID ";
-        etl::to_string(param, logString, true);
-        logString.append(" was ");
-        temp+=5;
-        etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
-        memManTask->setParameter(param, static_cast<void*>(&temp));
-        logString.append(" and is now ");
-        etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
 
-
-        LOG_DEBUG << logString.c_str();
+        // LOG_DEBUG << logString.c_str();
         //monitorAllTasks();
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }

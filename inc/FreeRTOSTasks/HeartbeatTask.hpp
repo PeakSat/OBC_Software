@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include <queue.h>
 #include <etl/vector.h>
+#include <etl/optional.h>
 #include "TaskConfigs.hpp"
 
 inline bool heartbeatReceived = true;
