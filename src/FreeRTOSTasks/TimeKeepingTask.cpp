@@ -1,4 +1,11 @@
 #include "TimeKeepingTask.hpp"
+#include "TimeStamp.tpp"
+
+Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
+
+Time::DefaultCUC TimeKeepingTask::getSavedTime(){
+    return _onBoardTimeKeeper;
+}
 
 void TimeKeepingTask::execute() {
     // LOG_DEBUG << "Runtime init: " << this->TaskName;
@@ -17,7 +24,7 @@ void TimeKeepingTask::execute() {
 }
 
 void TimeKeepingTask::printOnBoardTime() {
-    UTCTimestamp timestamp = CommonParameters::time.getValue().toUTCtimestamp();
+    UTCTimestamp timestamp = _onBoardTimeKeeper.toUTCtimestamp();
     etl::string<29> printTime = "Time:";
     etl::to_string(timestamp.hour, printTime, true);
     printTime += "-";
@@ -36,7 +43,7 @@ void TimeKeepingTask::printOnBoardTime() {
 void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
     UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
     Time::DefaultCUC timeCUC(timeUTC);
-    CommonParameters::time.setValue(timeCUC);
+    _onBoardTimeKeeper = timeCUC;
 }
 
 void TimeKeepingTask::setEpoch(tm& dateTime) {

@@ -26,10 +26,10 @@ void MCUTemperatureTask::execute() const {
         AFEC0_ConversionStart();
         xTaskNotifyWait(0U, UINT32_MAX, &adc_conversion, portMAX_DELAY);
         const float voltageConversion = static_cast<float>(adc_conversion) * PositiveVoltageReference / MaxADCValue;
-        const float mcuTemperature =
-                (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
-        LOG_DEBUG << "The temperature of the MCU is: " << mcuTemperature << " degrees Celsius";
-        CommonParameters::mcuTemperature.setValue(mcuTemperature);
+        float MCUtemperature = (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
+
+        LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
+        memManTask->setParameter(PeaksatParameters::MCUTemperatureID, static_cast<void*>(&MCUtemperature));
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
 }

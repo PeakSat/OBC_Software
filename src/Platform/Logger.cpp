@@ -54,17 +54,20 @@ void Logger::log(Logger::LogLevel level, etl::istring& message) {
     output.append(message.c_str());
     output.append("\n");
 
-    if (CommonParameters::useRTT.getValue()) {
-        SEGGER_RTT_printf(0, output.c_str());
-    }
-    if (CommonParameters::useUART.getValue()) {
+// ToDo Fix this
+//    if (CommonParameters::useRTT.getValue()) {
+//        SEGGER_RTT_printf(0, output.c_str());
+//    }
+//    if (CommonParameters::useUART.getValue()) {
+    if(1) {
         if (uartGatekeeperTask) {
             uartGatekeeperTask->addToQueue(output);
         }
     }
-    // if (CommonParameters::useCAN.getValue()) {
-    //     Services.dummyService.logAsECSSMessage(output);
-    // }
+//    }
+//    if (CommonParameters::useCAN.getValue()) {
+//        Services.dummyService.logAsECSSMessage(output);
+//    }
 }
 
 template <>

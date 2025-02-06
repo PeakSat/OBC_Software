@@ -55,8 +55,8 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
 #if configGENERATE_RUN_TIME_STATS
 void configureDWTForRunTimeStats(void) {
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT access
-    DWT->CYCCNT = 0;                                // Reset the cycle counter
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable the cycle counter
+    DWT->CYCCNT = 0; // Reset the cycle counter
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Enable the cycle counter
 }
 
 uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
@@ -85,20 +85,19 @@ extern "C" void main_cpp() {
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    PayloadGatekeeperTask->createTask();
-    // canGatekeeperTask->createTask();
-    // canParserTask->createTask();
-    // housekeepingTask->createTask();
-    // onBoardMonitoringTask->createTask();
+//    payloadTestTask->createTask();
+//    canGatekeeperTask->createTask();
+//    canTestTask->createTask();
+//    housekeepingTask->createTask();
+//    onBoardMonitoringTask->createTask();
 //     tcHandlingTask->createTask();
-    // mcuTemperatureTask->createTask();
-    // ambientTemperatureTask->createTask();
-    // memManTask->createTask();
-    //    nandTask->createTask();
-    // timeKeepingTask->createTask();
-    TestTask->createTask();
+    mcuTemperatureTask->createTask();
+//  ambientTemperatureTask->createTask();
+  memManTask->createTask();
+//    nandTask->createTask();
+    timeKeepingTask->createTask();
+//    TestTask->createTask();
     watchdogTask->createTask();
-    // heartbeatTask->createTask();
 
     __enable_irq();
     can_ack_handler.initialize_semaphore();

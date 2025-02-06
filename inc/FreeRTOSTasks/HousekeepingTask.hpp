@@ -2,6 +2,7 @@
 #define OBC_SOFTWARE_HOUSEKEEPINGTASK_HPP
 
 #include "TaskConfigs.hpp"
+#include "ServicePool.hpp"
 
 /**
  * FreeRTOS task implementing the ST[03] Housekeeping Service.

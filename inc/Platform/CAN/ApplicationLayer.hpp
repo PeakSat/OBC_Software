@@ -11,6 +11,8 @@
 #include "PeakSatParameters.hpp"
 #include "TPMessage.hpp"
 #include "Definitions.hpp"
+#include "TimeGetter.hpp"
+#include "ServicePool.hpp"
 
 namespace CAN::Application {
     /**

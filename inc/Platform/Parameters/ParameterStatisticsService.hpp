@@ -12,9 +12,7 @@ namespace ParameterStatistics {
     /**
      * An array of parameter IDs. Statistics will be logged for each of these parameters
      */
-    inline const etl::array<uint16_t, NumOfStatistics> statisticParameterIDs = {
-        PeakSatParameters::OBCPCBTemperature1, PeakSatParameters::OBCMCUTemperature
-    };
+    inline const etl::array<uint16_t, NumOfStatistics> statisticParameterIDs = {PeaksatParameters::PCBTemperature1ID, PeaksatParameters::PCBTemperature2ID};
     /**
      * An array holding Statistic instances. Each Statistic will correspond to the similarly-numbered parameter from statisticParameterIDs
      * This is used in the initializeStatisticsMap function, which is called in the constructor of the ST04

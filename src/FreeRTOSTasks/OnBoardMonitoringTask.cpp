@@ -26,14 +26,14 @@ void OnBoardMonitoringTask::execute() {
         if (get != EPS::ErrorCode::None) {
             LOG_ERROR<<"EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
-        LOG_INFO<< "EPS Time: "<<PeakSatParameters::epsUNIX_MINUTE.getValue() << " : " << PeakSatParameters::epsUNIX_SECOND.getValue();
+//        LOG_INFO<< "EPS Time: "<<PeakSatParameters::epsUNIX_MINUTE.getValue() << " : " << PeakSatParameters::epsUNIX_SECOND.getValue();
         onBoardMonitoring.checkAll();
-        if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().checkingStatus != PMON::CheckingStatus::WithinLimits) {
+        if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().
+                              checkingStatus != PMON::CheckingStatus::WithinLimits) {
             auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::OBCPCBTemperature1).get().checkingStatus;
-            if (status == PMON::CheckingStatus::BelowLowLimit) {
-                LOG_INFO << "parameter status: BelowLowLimit ";
-            }
+            if (status == PMON::CheckingStatus::BelowLowLimit) {}
+                          LOG_INFO << "parameter status: BelowLowLimit ";
         }
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
