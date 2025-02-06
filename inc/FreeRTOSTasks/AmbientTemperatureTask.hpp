@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "MemoryManagementTask.hpp"
 #include "MCP9808.hpp"
 
 /**
@@ -8,7 +9,7 @@
  */
 class AmbientTemperatureTask : public Task {
 private:
-    const uint16_t DelayMs = 1000;
+    const uint16_t DelayMs = 8000;
 
     /**
      * Number of sensors on the PCB

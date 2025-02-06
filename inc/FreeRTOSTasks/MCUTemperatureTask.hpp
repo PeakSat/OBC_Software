@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "MemoryManagementTask.hpp"
 
 /**
  * FreeRTOS task for periodically printing the value of the internal temperature sensor.

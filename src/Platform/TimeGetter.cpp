@@ -6,8 +6,5 @@ UTCTimestamp TimeGetter::getCurrentTimeUTC() {
 }
 
 Time::DefaultCUC TimeGetter::getCurrentTimeDefaultCUC() {
-    // ToDo: Fix this
-    //    return CommonParameters::time.getValue();
-    Time::DefaultCUC a = Time::DefaultCUC();        // Dummy
-    return a;
+    return timeKeepingTask->getSavedTime();
 }

@@ -13,26 +13,22 @@ void CANTestTask::execute() {
 
     String<ECSSMaxMessageSize> testPayload2("Giati?");
 
+    uint8_t activeBus = CAN::Driver::ActiveBus::Main;
+
     while (true) {
 
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        static bool canbus = true;
-        canbus = !canbus;
-        // ToDo set canbus parameter
-        if (canbus) {
-//            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Main);
+        if (activeBus == CAN::Driver::ActiveBus::Main) {
+            activeBus = CAN::Driver::ActiveBus::Redundant;
             CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload1.data(), false);
             LOG_DEBUG << "Sent CAN message to main CAN bus";
         } else {
-//            PeakSatParameters::obcCANBUSActive.setValue(CAN::Driver::ActiveBus::Redundant);
+            activeBus = CAN::Driver::ActiveBus::Main;
             CAN::Application::createLogMessage(CAN::NodeIDs::COMMS, false, testPayload2.data(), false);
             LOG_DEBUG << "Sent CAN message to redundant CAN bus";
         }
+        memManTask->setParameter(PeaksatParameters::CANBUSActiveID, static_cast<void*>(&activeBus));
+        xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
 
-
-                xTaskNotify(canGatekeeperTask->taskHandle, 0, eNoAction);
-
-        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

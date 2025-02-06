@@ -9,13 +9,11 @@ void MCUTemperatureTask::execute() {
         vTaskDelay(pdMS_TO_TICKS(1));
         uint16_t ADCconversion = AFEC0_ChannelResultGet(AFEC_CH11);
         float voltageConversion = static_cast<float>(ADCconversion) * PositiveVoltageReference / MaxADCValue;
-        const float MCUtemperature =
-            (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
+        float MCUtemperature = (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
 
-        // ToDo Update set value function for parameter
+        memManTask->setParameter(PeaksatParameters::MCUTemperatureID, static_cast<void*>(&MCUtemperature));
 
-        //        LOG_DEBUG << "Runtime exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
 }

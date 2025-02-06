@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "TimeStamp.hpp"
 #include "UTCTimestamp.hpp"
 #include "Time.hpp"
 
@@ -34,6 +35,8 @@ public:
      * This function prints the on-board time.
      */
     void printOnBoardTime();
+
+    Time::DefaultCUC getSavedTime();
 
     TimeKeepingTask() : Task("Timekeeping") {}
 

@@ -6,9 +6,10 @@
 
 namespace CAN::Application {
     Driver::ActiveBus switchBus(Driver::ActiveBus newBus) {
-        // ToDo Set parameter for can bus, fix return value (get parameter || return value of write)
-        //        PeakSatParameters::obcCANBUSActive.setValue(newBus);
-        return newBus;
+        memManTask->setParameter(PeaksatParameters::CANBUSActiveID, static_cast<void*>(&newBus));
+        uint8_t readActiveBus = 2;  // Initialise with value out of bounds
+        memManTask->getParameter(PeaksatParameters::CANBUSActiveID, static_cast<void*>(&readActiveBus));
+        return static_cast<Driver::ActiveBus>(readActiveBus);
     }
 
     void sendPingMessage(NodeIDs destinationAddress, bool isMulticast) {
@@ -33,10 +34,10 @@ namespace CAN::Application {
 
     void sendBusSwitchoverMessage() {
         Driver::ActiveBus newBus = Driver::Redundant;
-        // ToDo read CanBus parameter
-//        if (PeakSatParameters::obcCANBUSActive.getValue() == Driver::Redundant) {
-//            newBus = Driver::Main;
-//        }
+        memManTask->getParameter(PeaksatParameters::CANBUSActiveID, static_cast<void*>(&newBus));
+        if (newBus == Driver::Redundant) {
+            newBus = Driver::Main;
+        }
 
         etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
 

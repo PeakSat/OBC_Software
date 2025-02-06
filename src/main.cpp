@@ -73,7 +73,7 @@ extern "C" void main_cpp() {
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
-    // ambientTemperatureTask.emplace();
+    ambientTemperatureTask.emplace();
     memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
@@ -85,14 +85,14 @@ extern "C" void main_cpp() {
 //    payloadTestTask->createTask();
 //    canGatekeeperTask->createTask();
 //    canTestTask->createTask();
-//    housekeepingTask->createTask();
-//    onBoardMonitoringTask->createTask();
+    housekeepingTask->createTask();
+    onBoardMonitoringTask->createTask();
 //     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-//  ambientTemperatureTask->createTask();
-  memManTask->createTask();
+  ambientTemperatureTask->createTask();
+//  memManTask->createTask();
     timeKeepingTask->createTask();
-//    TestTask->createTask();
+    TestTask->createTask();
     watchdogTask->createTask();
 
     __enable_irq();

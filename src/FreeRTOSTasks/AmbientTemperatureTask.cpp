@@ -29,8 +29,9 @@ void AmbientTemperatureTask::execute() {
             LOG_INFO << "Sensor with address" << sensors[sensorCounter].getI2CUserAddress() << " responded with ambient temperature = " << ambientTemperature[sensorCounter];
         }
 
-        // ToDo Set parameter value for ambientTemperature[0] & ambientTemperature[1]
-
+        memManTask->setParameter(PeaksatParameters::PCBTemperature1ID, static_cast<void*>(&ambientTemperature[0]));
+        memManTask->setParameter(PeaksatParameters::PCBTemperature2ID, static_cast<void*>(&ambientTemperature[1]));
+        
         //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }

@@ -1,4 +1,6 @@
 #include "TestTask.hpp"
+#include "TypeDefinitions.hpp"
+#include "MemoryManagementTask.hpp"
 #include "task.h"
 
 void monitorAllTasks() {
@@ -29,8 +31,23 @@ TestTask::TestTask() : Task("TestTask") {
 
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
+    ParameterId param = PeaksatParameters::EPS_UNIX_SECONDID;
+    uint8_t temp = 0;
+    memManTask->getParameter(param, static_cast<void*>(&temp));
 
     while (true) {
+
+        String<64> logString = "The value for parameter with ID ";
+        etl::to_string(param, logString, true);
+        logString.append(" was ");
+        temp+=5;
+        etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
+        memManTask->setParameter(param, static_cast<void*>(&temp));
+        logString.append(" and is now ");
+        etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
+
+
+        LOG_DEBUG << logString.c_str();
         //monitorAllTasks();
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
