@@ -42,6 +42,7 @@ void TestTask::execute() {
     memManTask->getParameter(param, static_cast<void*>(&temp));
 
     request_time.timestamp = 1738070674;
+
     if(PayloadGatekeeperTask->sendrecvPayload(request_time.req_code, static_cast<void*>(&request_time), static_cast<void*>(&response_time))){
         LOG_DEBUG<<"Payload Responded with time: "<<response_time.timestamp<<" Status: "<<response_time.status;
     }
@@ -56,7 +57,7 @@ void TestTask::execute() {
 
         }
 
-        vTaskDelay(5000);
+        // vTaskDelay(5000);
         //
         // String<64> logString = "The value for parameter with ID ";
         // etl::to_string(param, logString, true);

@@ -14,26 +14,27 @@ void OnBoardMonitoringTask::execute() {
 
     auto get = eps.getConfigurationParameter<getTypeSize(EPS_CH_STARTUP_ENA_BF_DESC.type)>(EPS_CH_STARTUP_ENA_BF_DESC);
     if (get != EPS::ErrorCode::None) {
-        LOG_ERROR<<"EPS_CH_STARTUP_ENA_BF_DESC not set, error:" << static_cast<EPS::ErrorCode_t>(get);
+        LOG_ERROR << "EPS_CH_STARTUP_ENA_BF_DESC not set, error:" << static_cast<EPS::ErrorCode_t>(get);
     }
 
     auto& onBoardMonitoring = Services.onBoardMonitoringService;
     get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
     // get = eps.setConfigParamWithKey<>()
+    vTaskDelay(10);
+    get = eps.outputBusChannelOff(EPS::EPSChannels::RED_3V3);
     while (true) {
         vTaskDelay(10);
         get = eps.getSystemStatus();
         if (get != EPS::ErrorCode::None) {
-            LOG_ERROR<<"EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
+            LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
-//        LOG_INFO<< "EPS Time: "<<PeakSatParameters::epsUNIX_MINUTE.getValue() << " : " << PeakSatParameters::epsUNIX_SECOND.getValue();
-        onBoardMonitoring.checkAll();
-        if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().
-                              checkingStatus != PMON::CheckingStatus::WithinLimits) {
-            auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().checkingStatus;
-            if (status == PMON::CheckingStatus::BelowLowLimit) {}
-                          LOG_INFO << "parameter status: BelowLowLimit ";
-        }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        LOG_INFO << "EPS Time: " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTEID) << " : " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECONDID);
+        // onBoardMonitoring.checkAll();
+        // if (onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().checkingStatus != PMON::CheckingStatus::WithinLimits) {
+        //     auto status = onBoardMonitoring.getPMONDefinition(PeakSatParameters::PCBTemperature1ID).get().checkingStatus;
+        //     if (status == PMON::CheckingStatus::BelowLowLimit) {}
+        //     LOG_INFO << "parameter status: BelowLowLimit ";
+        // }
+        vTaskDelay(pdMS_TO_TICKS(3000));
     }
 }

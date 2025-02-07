@@ -27,8 +27,8 @@ namespace PeakSatParameters {
     constexpr ParameterId CANBUSLoad2ID = 408;
     constexpr ParameterId CANBUSActiveID = 416;
     enum CANBUSActive_enum : uint8_t {
-        Main=0,
-Redundant = 1
+        Main = 0,
+        Redundant = 1
     };
     constexpr ParameterId MCUFDIRID = 432;
     enum MCUFDIR_enum : uint8_t {
@@ -163,26 +163,26 @@ Redundant = 1
     constexpr ParameterId sdd_faultID = 27397;
     constexpr ParameterId ResetTypeID = 39328;
     enum ResetType_enum : uint8_t {
-        DoNothng = 0, 
-Soft = 55, 
-Hard = 66
+        DoNothng = 0,
+        Soft = 55,
+        Hard = 66
     };
     constexpr ParameterId UnixTimeSecondsID = 39348;
     constexpr ParameterId UnixTimeNanoSecondsID = 39364;
     constexpr ParameterId AdcsRunModeSelectID = 39376;
     enum AdcsRunModeSelect_enum : uint8_t {
         AdcsOff = 0,
-AdcsEnabled = 1,
-AdcsTriggered = 2,
-AdcsSimulation = 3
+        AdcsEnabled = 1,
+        AdcsTriggered = 2,
+        AdcsSimulation = 3
     };
     constexpr ParameterId RunModeDefaultID = 39392;
     constexpr ParameterId OpStateDefaultID = 39408;
     enum OpStateDefault_enum : uint8_t {
         OpStateManual = 0,
-OpStateAuto = 1,
-OpStateSafe = 2,
-OpStateFault = 3
+        OpStateAuto = 1,
+        OpStateSafe = 2,
+        OpStateFault = 3
     };
     constexpr ParameterId OpStateID = 39424;
     constexpr ParameterId IxxID = 39448;
@@ -194,11 +194,11 @@ OpStateFault = 3
     constexpr ParameterId RWL0_power_stateID = 39538;
     enum RWL0_power_state_enum : uint16_t {
         PowerOff = 0,
-PowerOn = 1,
-PowerNoChange = 2,
-PowerAuto = 3,
-PowerOnPass = 4,
-PowerOffUpgrade = 5
+        PowerOn = 1,
+        PowerNoChange = 2,
+        PowerAuto = 3,
+        PowerOnPass = 4,
+        PowerOffUpgrade = 5
     };
     constexpr ParameterId RWL1_power_stateID = 39554;
     constexpr ParameterId RWL2_power_stateID = 39570;
@@ -211,29 +211,29 @@ PowerOffUpgrade = 5
     constexpr ParameterId RwlFailIdID = 39680;
     enum RwlFailId_enum : uint8_t {
         RwlFailNone = 0,
-RwlFail0 = 1,
-RwlFail1 = 2,
-RwlFail2 = 3,
-RwlFail3 = 4
+        RwlFail0 = 1,
+        RwlFail1 = 2,
+        RwlFail2 = 3,
+        RwlFail3 = 4
     };
     constexpr ParameterId MountStackXID = 39696;
     enum MountStackX_enum : uint8_t {
         AxisNotUsed = 0,
-AxisPosX = 1,
-AxisNegX = 2,
-AxisPosY = 3,
-AxisNegY = 4,
-AxisPosZ = 5,
-AxisNegZ = 6,
-AxisThdA = 7,
-AxisThdB = 8,
-AxisThdC = 9,
-AxisThdD = 10,
-AxisPmdA = 11,
-AxisPmdB = 12,
-AxisPmdC = 13,
-AxisPmdD = 14,
-AxisSkew = 15
+        AxisPosX = 1,
+        AxisNegX = 2,
+        AxisPosY = 3,
+        AxisNegY = 4,
+        AxisPosZ = 5,
+        AxisNegZ = 6,
+        AxisThdA = 7,
+        AxisThdB = 8,
+        AxisThdC = 9,
+        AxisThdD = 10,
+        AxisPmdA = 11,
+        AxisPmdB = 12,
+        AxisPmdC = 13,
+        AxisPmdD = 14,
+        AxisSkew = 15
     };
     constexpr ParameterId MountStackYID = 39712;
     constexpr ParameterId MountStackZID = 39728;
@@ -259,16 +259,16 @@ AxisSkew = 15
     constexpr ParameterId MountStr0BetaID = 40051;
     constexpr ParameterId MountStr0GammaID = 40067;
     constexpr ParameterId EstModeMainDefaultID = 40112;
-    
+
     enum EstModeMainDefault_enum : uint8_t {
         EstNone = 0,
-EstGyro = 1, 
-EstMagRkf = 2,
-EstPitchRkf = 3, 
-EstTriad = 4, 
-EstFullEkf = 5,
-EstGyroEkf = 6,
-EstUser = 100
+        EstGyro = 1,
+        EstMagRkf = 2,
+        EstPitchRkf = 3,
+        EstTriad = 4,
+        EstFullEkf = 5,
+        EstGyroEkf = 6,
+        EstUser = 100
     };
     constexpr ParameterId EstModeBackupDefaultID = 40128;
     constexpr ParameterId EstModeMainID = 40144;
@@ -297,12 +297,12 @@ EstUser = 100
     constexpr ParameterId Str0AngVelYID = 40514;
     constexpr ParameterId Str0AngVelZID = 40530;
     constexpr ParameterId OrbModeID = 40544;
-    
+
     enum OrbMode_enum : uint8_t {
-        OrbTle = 0, 
-OrbTleGnss = 1,
-OrbAsgp4 = 2,
-OrbAsgp4Gnss = 3
+        OrbTle = 0,
+        OrbTleGnss = 1,
+        OrbAsgp4 = 2,
+        OrbAsgp4Gnss = 3
     };
     constexpr ParameterId BatchSizeID = 40562;
     constexpr ParameterId MaxTimeBetweenID = 40580;
@@ -335,38 +335,38 @@ OrbAsgp4Gnss = 3
     constexpr ParameterId ConModeSelectID = 41008;
     enum ConModeSelect_enum : uint8_t {
         ConNone = 0,
-ConBdot = 1,
-ConYspin = 2,
-ConBdot3 = 3,
-ConDetumble = 4,
-ConSunYspin = 5,
-ConZspin = 6,
-ConSunZspin = 7,
-ConGGboom = 8,
-ConGGsun = 9,
-ConYwheelInit = 10,
-ConYwheel = 11,
-ConXYZwheel = 12,
-ConSunTrack = 13,
-ConTgtTrack = 14,
-ConTgtSteer = 15,
-ConGndTrack = 16,
-ConIrcTrack = 17,
-ConMoonTrack = 18,
-ConSatTrack = 19,
-ConYawSun = 20,
-ConYawTarget = 21,
-ConRollSun = 22,
-ConRollTarget = 23,
-ConYawTargetBest = 24,
-ConFmcTarget = 25,
-ConYawSunSpin = 26,
-ConSunDetumble = 27,
-ConAstroSteer = 28,
-ConSunPayload = 29,
-ConStopRW = 50,
-ConHxyzRW = 51,
-ConUser = 100
+        ConBdot = 1,
+        ConYspin = 2,
+        ConBdot3 = 3,
+        ConDetumble = 4,
+        ConSunYspin = 5,
+        ConZspin = 6,
+        ConSunZspin = 7,
+        ConGGboom = 8,
+        ConGGsun = 9,
+        ConYwheelInit = 10,
+        ConYwheel = 11,
+        ConXYZwheel = 12,
+        ConSunTrack = 13,
+        ConTgtTrack = 14,
+        ConTgtSteer = 15,
+        ConGndTrack = 16,
+        ConIrcTrack = 17,
+        ConMoonTrack = 18,
+        ConSatTrack = 19,
+        ConYawSun = 20,
+        ConYawTarget = 21,
+        ConRollSun = 22,
+        ConRollTarget = 23,
+        ConYawTargetBest = 24,
+        ConFmcTarget = 25,
+        ConYawSunSpin = 26,
+        ConSunDetumble = 27,
+        ConAstroSteer = 28,
+        ConSunPayload = 29,
+        ConStopRW = 50,
+        ConHxyzRW = 51,
+        ConUser = 100
     };
     constexpr ParameterId ConModeDefaultID = 41024;
     constexpr ParameterId ConModeSafeID = 41040;
@@ -992,4 +992,4 @@ ConUser = 100
     constexpr ParameterId EPS_ADC_MCU_TEMP_V25T30ID = 61923;
     constexpr ParameterId EPS_ADC_MCU_TEMP_V25T85ID = 61939;
     constexpr ParameterId EPS_VIP_CURR_VD6_ENGID = 61951;
-}
+} // namespace PeakSatParameters

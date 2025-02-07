@@ -16,19 +16,19 @@ void printError(uint8_t error){
             LOG_DEBUG<<"No Error";
             break;
         case (uint8_t) ATLAS_Driver_Error::TIMEOUT:
-            LOG_DEBUG<<"TIMEOUT";
+            LOG_DEBUG<<"PAYLOAD TIMEOUT";
             break;
         case (uint8_t) ATLAS_Driver_Error::SIZE_OVERFLOW:
-            LOG_DEBUG<<"SIZE_OVERFLOW";
+            LOG_DEBUG<<"PAYLOAD SIZE_OVERFLOW";
             break;
         case (uint8_t) ATLAS_Driver_Error::RECEIVE_ERROR:
-            LOG_DEBUG<<"RECEIVE_ERROR";
+            LOG_DEBUG<<"PAYLOAD RECEIVE_ERROR";
             break;
         case (uint8_t) ATLAS_Driver_Error::TRANSMIT_ERROR:
-            LOG_DEBUG<<"TRANSMIT_ERROR";
+            LOG_DEBUG<<"PAYLOAD TRANSMIT_ERROR";
             break;
         case (uint8_t) ATLAS_Driver_Error::CRC_MISMATCH:
-            LOG_DEBUG<<"CRC_MISMATCH";
+            LOG_DEBUG<<"PAYLOAD CRC_MISMATCH";
             break;
         default:
             LOG_DEBUG<<"Unknown payload error code: "<< error;

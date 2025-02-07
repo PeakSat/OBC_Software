@@ -8,6 +8,7 @@ MCUTemperatureTask::MCUTemperatureTask(): Task("MCUTemperatureTask") {
             if (AFEC0HandlingTaskHandle != nullptr) {
                 const uint16_t adc_conversion = AFEC0_ChannelResultGet(AFEC_CH11);
                 xTaskNotifyFromISR(AFEC0HandlingTaskHandle, adc_conversion, eSetValueWithOverwrite, &higher_priority_task_woken);
+
                 portYIELD_FROM_ISR(higher_priority_task_woken);
             } else {
                 // Log error if ISR is called without a valid task handle

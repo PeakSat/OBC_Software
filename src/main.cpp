@@ -64,7 +64,6 @@ uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 
 
 extern "C" void main_cpp() {
-    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
