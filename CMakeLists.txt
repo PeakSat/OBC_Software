@@ -110,6 +110,7 @@ file(GLOB_RECURSE DRIVER_SOURCES
         "lib/Peripherals/LittleFS/*.c"
         "lib/Peripherals/RS422/*.cpp"
         "lib/Peripherals/ATLAS/*.cpp"
+        "lib/Peripherals/ADM/*.cpp"
         "lib/Peripherals/COBS/*.c"
         "lib/SEGGER/RTT/*.c"
 )

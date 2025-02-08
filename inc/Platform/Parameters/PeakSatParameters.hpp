@@ -88,6 +88,7 @@ namespace PeakSatParameters {
     constexpr ParameterId gnss_fix_qualityID = 13761;
     constexpr ParameterId gnss_TM_data_periodID = 13776;
     constexpr ParameterId commit_hashID = 13794;
+    constexpr ParameterId admTime = 13808;
     constexpr ParameterId pointing_offset_xID = 26229;
     constexpr ParameterId pointing_offset_yID = 26245;
     constexpr ParameterId pointing_offset_zID = 26261;
@@ -992,4 +993,6 @@ namespace PeakSatParameters {
     constexpr ParameterId EPS_ADC_MCU_TEMP_V25T30ID = 61923;
     constexpr ParameterId EPS_ADC_MCU_TEMP_V25T85ID = 61939;
     constexpr ParameterId EPS_VIP_CURR_VD6_ENGID = 61951;
+
+
 } // namespace PeakSatParameters
