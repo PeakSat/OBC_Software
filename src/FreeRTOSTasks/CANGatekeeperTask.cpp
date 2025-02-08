@@ -117,7 +117,7 @@ void CANGatekeeperTask::execute() {
                                 CANPacketHandler->TailPointer = 0;
                             }
                         }
-                        xQueueSendToBack(incomingPacketQueue, (void*) &CANPacketHandler, NULL);
+                        xQueueSendToBack(incomingPacketQueue, (void*) &CANPacketHandler, 0);
                         xTaskNotify(canParserTask->taskHandle, 0, eNoAction);
                     } else {
                         // Message not received correctly

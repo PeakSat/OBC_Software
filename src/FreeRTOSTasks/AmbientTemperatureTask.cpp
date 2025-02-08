@@ -14,7 +14,7 @@ void AmbientTemperatureTask::execute() {
 
     if (numberOfDisconnectedSensors == NumberOfTemperatureSensors) {
         LOG_ERROR << "Suspending ambient temperature task";
-//        vTaskSuspend(taskHandle);
+        //        vTaskSuspend(taskHandle);
     }
 
 
@@ -37,7 +37,12 @@ void AmbientTemperatureTask::execute() {
         LOG_INFO << "Sensor with address 0 responded with ambient temperature = " << ambientTemperature[0];
         LOG_INFO << "Sensor with address 1 responded with ambient temperature = " << ambientTemperature[1];
 
+        auto temp_result = MemManTask::getParameter<float>(PeakSatParameters::PCBTemperature1ID);
 
+
+        // Check if the operation was successful
+
+        LOG_DEBUG << "Sensor temperature cooler way: " << temp_result.value();
         //        LOG_DEBUG << "Runtime is exiting: " << this->TaskName;
         vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }

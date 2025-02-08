@@ -21,21 +21,21 @@ typedef struct {
     uint8_t last_reset_cause;
     uint8_t fw_ver[3];
     char git_hash_id[10];
-}bios_file_content;
+} bios_file_content;
 
-enum class FILE_RW_FLAGS: uint8_t{
+enum class FILE_RW_FLAGS : uint8_t {
     APPEND = 0,
     OVERWRITE = 1
 };
 
-inline const lfs_size_t MaxMemoryElementByteSize = 256;         // Static Read/Write Buffer sizes
-inline const lfs_size_t MaxMemoryLookaheadByteSize = 256;       // Lookahead buffer size
+inline const lfs_size_t MaxMemoryElementByteSize = 256;   // Static Read/Write Buffer sizes
+inline const lfs_size_t MaxMemoryLookaheadByteSize = 256; // Lookahead buffer size
 
-inline const lfs_size_t NAND_partition_size_bytes = 1048576;    // 1MB (128 pages)
-inline const lfs_size_t NAND_partition_blocks = 4096;           // Total number of blocks in the LUN
-inline const lfs_size_t NAND_wear_leveling_cycles = 500;        // Erase cycles for wear leveling
+inline const lfs_size_t NAND_partition_size_bytes = 1048576; // 1MB (128 pages)
+inline const lfs_size_t NAND_partition_blocks = 4096;        // Total number of blocks in the LUN
+inline const lfs_size_t NAND_wear_leveling_cycles = 500;     // Erase cycles for wear leveling
 
-class MemManTask : public Task{
+class MemManTask : public Task {
 private:
     StackType_t taskStack[MemoryManagementTaskStack];
 
@@ -49,7 +49,7 @@ private:
      * @param flag      APPEND or OVERWRITE
      * @return          0 on success, negative error code on failure
      */
-    static etl::expected<int, lfs_error> writeNANDFile(lfs *lfs, const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
+    static etl::expected<int, lfs_error> writeNANDFile(lfs* lfs, const char* filename, etl::span<const uint8_t>& data, FILE_RW_FLAGS flag);
 
     /**
      * @Description Writes the provided data to the specified file to the MRAM module,
@@ -60,7 +60,7 @@ private:
      * @param flag      APPEND or OVERWRITE
      * @return          0 on success, 1 on failure [TBD]
      */
-    static bool writeMRAM_File(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flag);
+    static bool writeMRAM_File(const char* filename, etl::span<const uint8_t>& data, FILE_RW_FLAGS flag);
 
     /**
      * @Description Reads the requested data from the specified file from the appropriate NAND module,
@@ -71,7 +71,7 @@ private:
      * @param data      Buffer to read data
      * @return          0 on success, negative error code on failure
      */
-    static etl::expected<int, lfs_error> readNANDFile(lfs *lfs, const char* filename, etl::span<uint8_t> &data);
+    static etl::expected<int, lfs_error> readNANDFile(lfs* lfs, const char* filename, etl::span<uint8_t>& data);
 
     /**
      * @Description Reads the requested data from the specified file from the MRAM module,
@@ -80,7 +80,7 @@ private:
      * @param data      Buffer to read data
      * @return          0 on success, 1 on failure [TBD]
      */
-    static bool readMRAM_File(const char* filename, etl::span<uint8_t> &data);
+    static bool readMRAM_File(const char* filename, etl::span<uint8_t>& data);
 
     /**
      * @Description Erases the specified file from the MRAM module,
@@ -99,7 +99,7 @@ private:
      * @param filename  Filename according to the filename convention (see filenames.hpp)
      * @return          The size of the file on success, negative error code on failure
      */
-    static etl::expected<size_t, lfs_error> getNANDFileSize(lfs *lfs, const char* filename);
+    static etl::expected<size_t, lfs_error> getNANDFileSize(lfs* lfs, const char* filename);
 
     /**
      * @Description Returns the size of the file requested in bytes from the MRAM module,
@@ -116,24 +116,24 @@ private:
      * @param lfs       LFS instance to be used.
      * @return          float percentage in success, negative error code on failure.
      */
-    static etl::expected<float, lfs_error> getUsedSpace(lfs *lfs);
+    static etl::expected<float, lfs_error> getUsedSpace(lfs* lfs);
 
     /**
      * @Description     Prints the filenames stored in the specified LFS instance.
      * @param lfs       LFS instance to be used.
      */
-    static void printAvailableFiles(lfs *lfs);
+    static void printAvailableFiles(lfs* lfs);
 
     static bool updateBiosFile();
 
 public:
     void execute();
 
-    MemManTask() : Task("MemManTask"){}
+    MemManTask() : Task("MemManTask") {}
 
     static inline TaskHandle_t memManHandle;
 
-    void createTask(){
+    void createTask() {
         memManHandle = xTaskCreateStatic(vClassTask<MemManTask>, this->TaskName,
                                          MemoryManagementTaskStack, this,
                                          MemoryManagementTaskPriority, this->taskStack,
@@ -149,7 +149,7 @@ public:
      * @param flag      APPEND or OVERWRITE
      * @return          0 on success, negative error code on failure.
      */
-    static etl::expected<int, lfs_error> writeToFile(const char* filename, etl::span<const uint8_t> &data, FILE_RW_FLAGS flags);
+    static etl::expected<int, lfs_error> writeToFile(const char* filename, etl::span<const uint8_t>& data, FILE_RW_FLAGS flags);
 
     /**
      * @Description Reads the requested data from the specified file,
@@ -159,7 +159,7 @@ public:
      * @param data      Data to be written
      * @return          0 on success, negative error code on failure.
      */
-    static etl::expected<int, lfs_error> readFromFile(const char* filename, etl::span<uint8_t> &data);
+    static etl::expected<int, lfs_error> readFromFile(const char* filename, etl::span<uint8_t>& data);
 
     /**
      * @Description Erases the specified file, this function handles internally the
@@ -174,7 +174,7 @@ public:
      * @param filename  Filename according to the filename convention (see filenames.hpp)
      * @return size on success, negative error code on failure.
      */
-    static etl::expected<size_t , lfs_error> getFileSize(const char* filename);
+    static etl::expected<size_t, lfs_error> getFileSize(const char* filename);
 
     /**
      * @Description Get the total memory use percentage of all memory modules available.
@@ -186,10 +186,29 @@ public:
 
     static bool setParameter(ParameterId parameter, void* value);
 
+    static etl::expected<etl::variant<uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double>, lfs_error> getParameter(ParameterId parameter);
+
     static bool getParameter(ParameterId parameter, void* value);
 
-    static uint64_t getParameterAsUINT64(ParameterId parameter);
+    template <typename T>
+    static etl::expected<T, lfs_error> getParameter(const ParameterId parameterId) {
+        auto temp_result = MemManTask::getParameter(parameterId);
 
+        if (!temp_result.has_value()) {
+            return etl::unexpected(temp_result.error());  // Propagate the error
+        }
+
+        // Access the etl::variant safely
+        const auto& result_value = temp_result.value();
+
+        if (etl::holds_alternative<T>(result_value)) {
+            return etl::get<T>(result_value);  // Extract and return the value
+        }
+
+        return etl::unexpected(LFS_ERR_IO); // Return type mismatch error
+    }
+
+    static uint64_t getParameterAsUINT64(ParameterId parameter);
 };
 
 inline std::optional<MemManTask> memManTask;

@@ -25,7 +25,7 @@ constexpr BaseType_t OnBoardMonitoringTaskPriority = tskIDLE_PRIORITY + 2;
 * The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
 * architecture with 4 byte stack, assigning 100 to the usStackDepth argument, will allocate 4x100=400 bytes.
 */
-constexpr uint16_t AmbientTemperatureTaskStack = 1000;
+constexpr uint16_t AmbientTemperatureTaskStack = 1200;
 constexpr uint16_t CANGatekeeperTaskStack = 3500;
 constexpr uint16_t CANParserTaskStack = 5300;
 constexpr uint16_t HousekeepingTaskStack = 3300;
@@ -33,7 +33,7 @@ constexpr uint16_t MCUTemperatureTaskStack = 500;
 //const uint16_t MRAMTaskStack = 5000;
 
 constexpr uint16_t NANDTaskStack = 100;
-constexpr uint16_t MemoryManagementTaskStack = 1000;
+constexpr uint16_t MemoryManagementTaskStack = 1200;
 constexpr uint16_t PayloadTestTaskStack = 500;
 constexpr uint16_t StatisticsReportingTaskStack = 2000;
 constexpr uint16_t TCHandlingTaskStack = 1000;
