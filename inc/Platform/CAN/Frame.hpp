@@ -15,7 +15,7 @@ namespace CAN {
  * The maximum data length that is currently configured in the peripheral.
  */
     static constexpr uint8_t MaxPayloadLength = 8;
-    static constexpr uint8_t MaxPacketLength = 1024;
+    static constexpr uint16_t MaxPacketLength = 1024;
 
     enum CANInstance {
         CAN1,

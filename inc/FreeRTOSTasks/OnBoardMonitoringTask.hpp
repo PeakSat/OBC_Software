@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "PayloadGatekeeperTask.hpp"
 #include "ServicePool.hpp"
 
 /**

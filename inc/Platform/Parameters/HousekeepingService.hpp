@@ -73,10 +73,7 @@ namespace HousekeepingStructures {
                 pointing_offset_xID,
                 pointing_offset_yID,
                 pointing_offset_zID,
-                uptimeID,
-                timeID, psu_12vID, psu_5vID, psu_33vID, mcu_die_temperatureID
-
-                            }
+                uptimeID}
             },
             //
             {
@@ -89,28 +86,28 @@ namespace HousekeepingStructures {
                     fsmd_voltage_converter_temperatureID,
                     fsmd_drivers_temperatureID,
                     camera_pcb_temperatureID,
-                    camera_sensor_temperatureID,
                     fso_aux_temperature_1ID,
                     fso_aux_temperature_2ID,
                     oad_temperatureID,
-                    optical_amplifier_combiner_heater_temperatureID,
-                    optical_amplifier_fiber_mirror_temperatureID,
-                    optical_amplifier_circulator_heater_temperatureID,
-                    ldd_temperatureID, ld_temperatureID,
-                    ldd_12v_currentID, ldd_psu_12vID,
-                    ldd_converter_input_currentID, ldd_ld_vID,
-                    ldd_ld_dac_set_vID, fsm_driver_12v_currentID,
-                    flashes_33v_currentID, fpga_5v_currentID, sdd_33v_currentID,
-                    pump_ld_powerID, mcu_33v_currentID, fpga_die_temperatureID,
-                    fpga_vdd1_voltageID, fpga_vdd18_voltageID, fpga_vdd25_voltageID,
-                    seed_ld_incoming_powerID, amplifier_output_powerID,
-                    amplifier_output_reflected_powerID, seed_diode_bias_currentID, tec_currentID,
-                    ldd_output_currentID, sd_temperature_violationsID, end_uptimeID, responseID, deviceID,
-                    firmwareID, firmware_is_confirmedID, bitstreamID, softcpu_1_firmwareID,
-                    softcpu_2_firmwareID, softcpu_3_firmwareID, softcpu_4_firmwareID, softcpu_5_firmwareID,
-                    softcpu_6_firmwareID, softcpu_7_firmwareID, softcpu_8_firmwareID, boot_countID,
-                    transmission_countID, hw_detID, storage0ID, storage1ID, storage2ID, storage3ID,
-                    ldd_faultID, fsm_faultID, fpga_faultID, v_cam_faultID, sdd_faultID, ResetTypeID
+                    timeID, psu_12vID, psu_5vID, psu_33vID, mcu_die_temperatureID
+                    // optical_amplifier_combiner_heater_temperatureID,
+                    // optical_amplifier_fiber_mirror_temperatureID,
+                    // optical_amplifier_circulator_heater_temperatureID,
+                    // ldd_temperatureID, ld_temperatureID,
+                    // ldd_12v_currentID, ldd_psu_12vID,
+                    // ldd_converter_input_currentID, ldd_ld_vID,
+                    // ldd_ld_dac_set_vID, fsm_driver_12v_currentID,
+                    // flashes_33v_currentID, fpga_5v_currentID, sdd_33v_currentID,
+                    // pump_ld_powerID, mcu_33v_currentID, fpga_die_temperatureID,
+                    // fpga_vdd1_voltageID, fpga_vdd18_voltageID, fpga_vdd25_voltageID,
+                    // seed_ld_incoming_powerID, amplifier_output_powerID,
+                    // amplifier_output_reflected_powerID, seed_diode_bias_currentID, tec_currentID,
+                    // ldd_output_currentID, sd_temperature_violationsID, end_uptimeID, responseID, deviceID,
+                    // firmwareID, firmware_is_confirmedID, bitstreamID, softcpu_1_firmwareID,
+                    // softcpu_2_firmwareID, softcpu_3_firmwareID, softcpu_4_firmwareID, softcpu_5_firmwareID,
+                    // softcpu_6_firmwareID, softcpu_7_firmwareID, softcpu_8_firmwareID, boot_countID,
+                    // transmission_countID, hw_detID, storage0ID, storage1ID, storage2ID, storage3ID,
+                    // ldd_faultID, fsm_faultID, fpga_faultID, v_cam_faultID, sdd_faultID, ResetTypeID
                 }
             },
         }
