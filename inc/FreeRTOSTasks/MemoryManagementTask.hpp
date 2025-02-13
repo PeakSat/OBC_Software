@@ -16,6 +16,7 @@
 #include "git_version.h"
 #include "lfs.h"
 
+
 typedef struct {
     uint boot_count;
     uint8_t last_reset_cause;
@@ -186,27 +187,7 @@ public:
 
     static bool setParameter(ParameterId parameter, void* value);
 
-    static etl::expected<etl::variant<uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double>, lfs_error> getParameter(ParameterId parameter);
-
     static bool getParameter(ParameterId parameter, void* value);
-
-    template <typename T>
-    static etl::expected<T, lfs_error> getParameter(const ParameterId parameterId) {
-        auto temp_result = MemManTask::getParameter(parameterId);
-
-        if (!temp_result.has_value()) {
-            return etl::unexpected(temp_result.error());  // Propagate the error
-        }
-
-        // Access the etl::variant safely
-        const auto& result_value = temp_result.value();
-
-        if (etl::holds_alternative<T>(result_value)) {
-            return etl::get<T>(result_value);  // Extract and return the value
-        }
-
-        return etl::unexpected(LFS_ERR_IO); // Return type mismatch error
-    }
 
     static uint64_t getParameterAsUINT64(ParameterId parameter);
 };

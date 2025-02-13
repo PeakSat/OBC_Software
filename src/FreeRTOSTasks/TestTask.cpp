@@ -47,7 +47,6 @@ void TestTask::execute() {
         LOG_DEBUG<<"Payload Responded with time: "<<response_time.timestamp<<" Status: "<<response_time.status;
     }
 
-
     while (true) {
 
         if(PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))){
@@ -56,6 +55,12 @@ void TestTask::execute() {
             LOG_DEBUG<<"LDD TM Time (s)     :"<<response_gpo.time;
 
         }
+
+
+
+        // LOG_DEBUG<<"commit_hashID"<<MemManTask::getParameterAsUINT64(PeakSatParameters::commit_hashID);
+        //
+        // LOG_DEBUG<<"UseCANID: "<<MemManTask::getParameterAsUINT64(PeakSatParameters::UseCANID);
 
         // vTaskDelay(5000);
         //

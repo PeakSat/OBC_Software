@@ -104,9 +104,13 @@ void OnBoardMonitoringTask::execute() {
     auto& onBoardMonitoring = Services.onBoardMonitoringService;
     get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
     vTaskDelay(10);
+    get = eps.outputBusChannelOn(EPS::EPSChannels::ADM_5V_1);
+    vTaskDelay(10);
     while (true) {
         vTaskDelay(10);
         get = eps.getSystemStatus();
+        vTaskDelay(10);
+        get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
         if (get != EPS::ErrorCode::None) {
             LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
@@ -120,11 +124,11 @@ void OnBoardMonitoringTask::execute() {
         // LOG_DEBUG<<"OBC Telemetry:";
         // housekeeping.housekeepingStructureReport(0);
         // LOG_DEBUG<<"EPS telemetry:";
-        // housekeeping.housekeepingStructureReport(1);
+        // housekeeping.housekeepingStructureReport(2);
         // LOG_DEBUG<<"COMMS-ADM Telemetry:";
-        // housekeeping.housekeepingStructureReport(2);
+        // housekeeping.housekeepingStructureReport(5);
         // LOG_DEBUG<<"Payload Telemetry:";
-        // housekeeping.housekeepingStructureReport(2);
+        // housekeeping.housekeepingStructureReport(3);
 
         vTaskDelay(pdMS_TO_TICKS(5000));
     }

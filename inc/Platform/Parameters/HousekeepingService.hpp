@@ -15,20 +15,27 @@ namespace HousekeepingStructures {
                 1000,
                 true,
                 {
-                    debugCounterID,
                     PCBTemperature1ID,
                     PCBTemperature2ID,
                     MCUTemperatureID,
-                    MCUInputVoltageID,
-                    MCUSystickID,
-                    LastFailedEventID,
                     MCUBootCounterID,
-                    OperationalModeID,
+                    MemoryPartitionID,
+                    MCUSystickID,
+                    CANBUSLoad1ID,
+                    CANBUSLoad2ID,
+                    CANBUSActiveID,
+                    NANDFLASHLCLThresholdID,
+                    MRAMLCLThresholdID,
+                    NANDFLASHONID,
+                    MRAMONID,
+                    UseCANID,
+                    UseRTTID,
+                    OnBoardTimeID
                 }
             },
             // OBC Mission Database parameters monitored every 3 sec
             {
-                1,
+                2,
                 3000,
                 true,
                 {
@@ -52,7 +59,7 @@ namespace HousekeepingStructures {
                     EPS_UNIX_SECONDID,
                 }
             },
-            {2, 5000, true, {
+            {5, 5000, true, {
                     cw_intervalID,
                     bfsk_beacon_intervalID,
                     uhf_tx_powerID,

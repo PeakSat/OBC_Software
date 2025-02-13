@@ -3,6 +3,7 @@
 //
 #include "MemoryManagementTask.hpp"
 
+
 MRAM mram(SMC::NCS0);
 MT29F mt29f_part_a(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
 MT29F mt29f_part_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
@@ -22,6 +23,7 @@ static uint8_t nand_b_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must matc
 
 lfs_t lfs_nand_a;
 lfs_t lfs_nand_b;
+
 
 // Error Translating functions
 
@@ -756,92 +758,6 @@ bool MemManTask::getParameter(ParameterId parameter, void* value) {
         return true;
     }
     return false;
-}
-
-etl::expected<etl::variant<uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double>,
-              lfs_error>
-MemManTask::getParameter(const ParameterId parameter) {
-    const PARAMETER_TYPE paramType = getParameterType(parameter);
-
-    // Create a buffer for storing the value read from MRAM
-    etl::variant<uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t, float, double> result;
-
-    switch (paramType) {
-        case PARAMETER_TYPE::UINT8: {
-            uint8_t value = 0U;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::INT8: {
-            int8_t value = 0;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::UINT16: {
-            uint16_t value = 0U;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::INT16: {
-            int16_t value = 0;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::UINT32: {
-            uint32_t value = 0U;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::INT32: {
-            int32_t value = 0;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::UINT64: {
-            uint64_t value = 0U;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::INT64: {
-            int64_t value = 0;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::FLOAT: {
-            float value = 0.0F;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        case PARAMETER_TYPE::DOUBLE: {
-            double value = 0.0;
-            if (mram.mramReadParameter(parameter, &value) == MRAM_Errno::MRAM_NONE) {
-                result = value;
-            }
-            break;
-        }
-        default:
-            return etl::unexpected(LFS_ERR_IO);
-            break; // Return LFS_ERR_IO if type is unknown
-    }
-    return result;
 }
 
 uint64_t MemManTask::getParameterAsUINT64(ParameterId parameter) {

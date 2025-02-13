@@ -34,6 +34,8 @@
 #include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
+
+#include <MRAMTask.hpp>
 // Task Header files end
 
 
@@ -72,30 +74,35 @@ extern "C" void main_cpp() {
     canParserTask.emplace();
     housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
-    // tcHandlingTask.emplace();
+    tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     ambientTemperatureTask.emplace();
     // nandTask.emplace();
+    // mramTask.emplace();
     memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
+    heartbeatTask.emplace();
 
 
     __disable_irq();
     uartGatekeeperTask->createTask();
     PayloadGatekeeperTask->createTask();
     canGatekeeperTask->createTask();
+    canParserTask->createTask();
     housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
-    //     tcHandlingTask->createTask();
+    tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
     memManTask->createTask();
     //    nandTask->createTask();
+    // mramTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
+    heartbeatTask->createTask();
 
     __enable_irq();
     can_ack_handler.initialize_semaphore();

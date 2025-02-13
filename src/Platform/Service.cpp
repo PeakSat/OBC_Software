@@ -33,6 +33,7 @@ void Service::storeMessage(Message& message) {
         data.append(" ");
     }
     CAN::Application::createCCSDSPacketMessage(CAN::NodeIDs::COMMS, false, message, false);
+    LOG_DEBUG<<"CAN MESSAGE SIZE: "<<message.dataSize;
 
     output.append(data.c_str());
 

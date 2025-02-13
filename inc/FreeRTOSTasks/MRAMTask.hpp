@@ -1,26 +1,26 @@
-//#pragma once
+// #pragma once
 //
-//#include "TaskConfigs.hpp"
-//#include "MR4A08BUYS45.hpp"
+// #include "TaskConfigs.hpp"
+// #include "MR4A08BUYS45.hpp"
 //
-//class MRAMTask : public Task {
-//private:
-//    const uint16_t DelayMs = 15000;
+// class MRAMTask : public Task {
+// private:
+//     const uint16_t DelayMs = 15000;
 //
-//    StackType_t taskStack[MRAMTaskStack];
+//     StackType_t taskStack[MRAMTaskStack];
 //
-//public:
-//    void execute();
+// public:
+//     void execute();
 //
-//    MRAMTask() : Task("MRAMTask") {}
+//     MRAMTask() : Task("MRAMTask") {}
 //
-//    static inline TaskHandle_t mramTaskHandle;
+//     static inline TaskHandle_t mramTaskHandle;
 //
-//    void createTask() {
-//        mramTaskHandle = xTaskCreateStatic(vClassTask<MRAMTask>, this->TaskName,
-//                                           MRAMTaskStack, this, MRAMTaskPriority, this->taskStack,
-//                                           &(this->taskBuffer));
-//    }
-//};
+//     void createTask() {
+//         mramTaskHandle = xTaskCreateStatic(vClassTask<MRAMTask>, this->TaskName,
+//                                            MRAMTaskStack, this, MRAMTaskPriority, this->taskStack,
+//                                            &(this->taskBuffer));
+//     }
+// };
 //
-//inline std::optional<MRAMTask> mramTask;
+// inline std::optional<MRAMTask> mramTask;

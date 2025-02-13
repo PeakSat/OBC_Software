@@ -56,27 +56,21 @@ void TCHandlingTask::execute() {
         xQueueReceive(messageQueueHandle, static_cast<void*>(&messageOut), portMAX_DELAY);
 
         // xQueueReceive does a low-level copy of the message string, so we need to call
-        // etl::string::repair() to rearrange the string pointers and prevent memory errors.
+        // etl::string::repair() //to rearrange the string pointers and prevent memory errors.
         messageOut.repair();
-//        auto cobsDecodedMessage = COBSdecode<MaxUsartTCSize>(messageOut);
-//
-//        uint8_t messageLength = cobsDecodedMessage.size();
-//        uint8_t* ecssTCBytes = reinterpret_cast<uint8_t*>(cobsDecodedMessage.data());
-//
-        // auto ecssTC = MessageParser::parse(ecssTCBytes, messageLength);
+       auto cobsDecodedMessage = COBSdecode<MaxUsartTCSize>(messageOut);
 
-        LOG_DEBUG << "Received new TC[" << messageOut.c_str() << "]";
-        if(!strcmp(messageOut.c_str(), "RSTMEM")){
-            LOG_DEBUG<<"Formating NAND memory";
-            bool err = memManTask->formatNANDmodules();
-            LOG_DEBUG << "Operation returned code: "<<err;
-        }
+       uint8_t messageLength = cobsDecodedMessage.size();
+       uint8_t* ecssTCBytes = reinterpret_cast<uint8_t*>(cobsDecodedMessage.data());
 
-//        if (ecssTC.applicationId == CAN::NodeID) {
-//            MessageParser::execute(ecssTC);
-//        } else {
-//            auto destination = static_cast<CAN::NodeIDs>(ecssTC.applicationId);
-//            CAN::Application::createPacketMessage(destination, false, cobsDecodedMessage, Message::TC, false);
-//        }
+        auto ecssTC = MessageParser::parse(ecssTCBytes, messageLength);
+
+
+       if (ecssTC.applicationId == CAN::NodeID) {
+           MessageParser::execute(ecssTC);
+       } else {
+           auto destination = static_cast<CAN::NodeIDs>(ecssTC.applicationId);
+            CAN::Application::createPacketMessage(destination, false, cobsDecodedMessage, Message::TC, false);
+       }
     }
 }
