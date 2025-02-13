@@ -5,29 +5,29 @@
 #include "PayloadGatekeeperTask.hpp"
 
 void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context){
-    PayloadGatekeeperTask->setPayloadError((uint8_t) ATLAS_Driver_Error::TIMEOUT, true);
+    PayloadGatekeeperTask->setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT), true);
     TC0_CH2_TimerStop();
 }
 
 
 void printError(uint8_t error){
     switch (error) {
-        case (uint8_t) ATLAS_Driver_Error::NONE:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::NONE):
             LOG_DEBUG<<"No Error";
             break;
-        case (uint8_t) ATLAS_Driver_Error::TIMEOUT:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT):
             LOG_DEBUG<<"PAYLOAD TIMEOUT";
             break;
-        case (uint8_t) ATLAS_Driver_Error::SIZE_OVERFLOW:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::SIZE_OVERFLOW):
             LOG_DEBUG<<"PAYLOAD SIZE_OVERFLOW";
             break;
-        case (uint8_t) ATLAS_Driver_Error::RECEIVE_ERROR:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::RECEIVE_ERROR):
             LOG_DEBUG<<"PAYLOAD RECEIVE_ERROR";
             break;
-        case (uint8_t) ATLAS_Driver_Error::TRANSMIT_ERROR:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::TRANSMIT_ERROR):
             LOG_DEBUG<<"PAYLOAD TRANSMIT_ERROR";
             break;
-        case (uint8_t) ATLAS_Driver_Error::CRC_MISMATCH:
+        case static_cast<uint8_t>(ATLAS_Driver_Error::CRC_MISMATCH):
             LOG_DEBUG<<"PAYLOAD CRC_MISMATCH";
             break;
         default:
@@ -102,15 +102,15 @@ bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_
     vTaskDelay(pdMS_TO_TICKS(write_read_delay));
 
     if(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, pdMS_TO_TICKS(maxReadDelayms)) == pdTRUE){
-        uint16_t rcv_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
+        uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
         LOG_DEBUG<<"Received response size: "<<rcv_size;
         if(handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)){
             return true;
         }
-        setPayloadError((uint8_t) ATLAS_Driver_Error::ANSWER_MISMATCH, false);
+        setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::ANSWER_MISMATCH), false);
         return false;
     }
-    setPayloadError((uint8_t) ATLAS_Driver_Error::TIMEOUT, false);
+    setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT), false);
     return false;
 }
 
@@ -181,7 +181,7 @@ void PayloadGatekeeperTask::execute() {
     LOG_DEBUG << "Runtime init: " << this->TaskName;
     vTaskDelay(pdMS_TO_TICKS(2000));
 
-    uint32_t ulNotifiedValue;
+    uint32_t ulNotifiedValue = 0;
 
     while (true) {
 
@@ -193,14 +193,14 @@ void PayloadGatekeeperTask::execute() {
                 // Stop any pending response timer
                 TC0_CH2_TimerStop();
                 while(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
-                    uint16_t rcv_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
+                    uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
                     LOG_DEBUG<<"Received payload msg, payload_size:"<<rcv_size;
                 }
                 break;
             case PAYLOAD_SND:
                 // Woken to transmit
                 while(xQueueReceive(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
-                    uint16_t snd_size = ((uint16_t) internal_buffer[1]<<8 | internal_buffer[0]);    // LSB first
+                    uint16_t snd_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
                     LOG_DEBUG<<"Sending payload msg, payload_size:"<<snd_size;
                     sendPayloadMessage(&internal_buffer[payload_size_size], snd_size);
                 }
