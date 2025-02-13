@@ -54,28 +54,17 @@ void Logger::log(Logger::LogLevel level, etl::istring& message) {
     output.append(message.c_str());
     output.append("\n");
 
-// ToDo Fix this
-//    if (CommonParameters::useRTT.getValue()) {
-//        SEGGER_RTT_printf(0, output.c_str());
-//    }
-//    if (CommonParameters::useUART.getValue()) {
-    if(1) {
-        if (uartGatekeeperTask) {
-            uartGatekeeperTask->addToQueue(output);
-        }
+    if (uartGatekeeperTask) {
+        uartGatekeeperTask->addToQueue(output);
     }
-//    }
-//    if (CommonParameters::useCAN.getValue()) {
-//        Services.dummyService.logAsECSSMessage(output);
-//    }
 }
 
-template <>
-void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, char* value) {
-    message.append(value);
-}
+    template <>
+    void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE> & message, char* value) {
+        message.append(value);
+    }
 
-template <>
-void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, const char* value) {
-    message.append(value);
-}
+    template <>
+    void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE> & message, const char* value) {
+        message.append(value);
+    }

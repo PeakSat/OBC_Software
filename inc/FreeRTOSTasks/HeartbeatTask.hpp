@@ -21,7 +21,7 @@ public:
 
     void createTask() {
         this->taskHandle = xTaskCreateStatic(vClassTask<HeartbeatTask>, this->TaskName,
-                                             HeartbeatTaskStack, this, tskIDLE_PRIORITY + 1,
+                                             HeartbeatTaskStack, this,HeartBeatTaskPriority,
                                              this->taskStack, &(this->taskBuffer));
     }
 };

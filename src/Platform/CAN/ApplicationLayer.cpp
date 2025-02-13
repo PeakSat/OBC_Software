@@ -10,13 +10,13 @@
 namespace CAN::Application {
     void switchBus() {
         uint8_t readActiveCANbus = 2;
-        MemManTask::getParameter(PeakSatParameters::CANBUSActiveID, static_cast<void*>(&readActiveCANbus));
+        MemManTask::getParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         if (readActiveCANbus == PeakSatParameters::Main) {
             readActiveCANbus = PeakSatParameters::Redundant;
-            MemManTask::setParameter(PeakSatParameters::CANBUSActiveID, static_cast<void*>(&readActiveCANbus));
+            MemManTask::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         } else {
             readActiveCANbus = PeakSatParameters::Main;
-            MemManTask::setParameter(PeakSatParameters::CANBUSActiveID, static_cast<void*>(&readActiveCANbus));
+            MemManTask::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         }
     }
 

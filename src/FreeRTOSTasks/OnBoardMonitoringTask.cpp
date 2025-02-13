@@ -89,7 +89,6 @@ void getADMParameters() {
             LOG_DEBUG<<"ADM Error getting state";
     }
     MemManTask::setParameter(PeakSatParameters::antenna_deployment_statusID, &admStatus);
-    MemManTask::setParameter(PeakSatParameters::admTime, &time);
 }
 void OnBoardMonitoringTask::execute() {
 
@@ -119,7 +118,6 @@ void OnBoardMonitoringTask::execute() {
         vTaskDelay(10);
         getADMParameters();
         LOG_INFO<<"ADM Status: "<< MemManTask::getParameterAsUINT64(PeakSatParameters::antenna_deployment_statusID);
-        LOG_INFO<<"ADM time: "<< MemManTask::getParameterAsUINT64(PeakSatParameters::admTime);
 
         // LOG_DEBUG<<"OBC Telemetry:";
         // housekeeping.housekeepingStructureReport(0);

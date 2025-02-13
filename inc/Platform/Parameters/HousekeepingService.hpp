@@ -15,22 +15,22 @@ namespace HousekeepingStructures {
                 1000,
                 true,
                 {
-                    PCBTemperature1ID,
-                    PCBTemperature2ID,
-                    MCUTemperatureID,
-                    MCUBootCounterID,
-                    MemoryPartitionID,
-                    MCUSystickID,
-                    CANBUSLoad1ID,
-                    CANBUSLoad2ID,
-                    CANBUSActiveID,
-                    NANDFLASHLCLThresholdID,
-                    MRAMLCLThresholdID,
-                    NANDFLASHONID,
-                    MRAMONID,
-                    UseCANID,
-                    UseRTTID,
-                    OnBoardTimeID
+                    // PCBTemperature1ID,
+                    // PCBTemperature2ID,
+                    // MCUTemperatureID,
+                    // MCUBootCounterID,
+                    // MemoryPartitionID,
+                    // MCUSystickID,
+                    // CANBUSLoad1ID,
+                    // CANBUSLoad2ID,
+                    // CANBUSActiveID,
+                    // NANDFLASHLCLThresholdID,
+                    // MRAMLCLThresholdID,
+                    // NANDFLASHONID,
+                    // MRAMONID,
+                    // UseCANID,
+                    // UseRTTID,
+                    // OnBoardTimeID
                 }
             },
             // OBC Mission Database parameters monitored every 3 sec
@@ -82,7 +82,6 @@ namespace HousekeepingStructures {
                     pointing_offset_zID,
                     uptimeID,
                     antenna_deployment_statusID,
-                    admTime
                 }
             },
             //

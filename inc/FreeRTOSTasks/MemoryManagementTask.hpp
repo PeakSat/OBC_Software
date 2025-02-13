@@ -1,7 +1,3 @@
-//
-// Created by tats on 2/12/2024.
-//
-
 #pragma once
 
 #include "TaskConfigs.hpp"
@@ -29,16 +25,16 @@ enum class FILE_RW_FLAGS : uint8_t {
     OVERWRITE = 1
 };
 
-inline const lfs_size_t MaxMemoryElementByteSize = 256;   // Static Read/Write Buffer sizes
-inline const lfs_size_t MaxMemoryLookaheadByteSize = 256; // Lookahead buffer size
 
-inline const lfs_size_t NAND_partition_size_bytes = 1048576; // 1MB (128 pages)
-inline const lfs_size_t NAND_partition_blocks = 4096;        // Total number of blocks in the LUN
-inline const lfs_size_t NAND_wear_leveling_cycles = 500;     // Erase cycles for wear leveling
 
 class MemManTask : public Task {
 private:
     StackType_t taskStack[MemoryManagementTaskStack];
+
+    inline static MRAM mram{SMC::NCS0};
+    inline static MT29F mt29f_part_a{SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN};
+    inline static MT29F mt29f_part_b{SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN};
+
 
     /**
      * @Description Writes the provided data to the specified file in the appropriate NAND module,
@@ -128,6 +124,27 @@ private:
     static bool updateBiosFile();
 
 public:
+    static constexpr lfs_size_t MaxMemoryElementByteSize = 256;   // Static Read/Write Buffer sizes
+    static constexpr lfs_size_t MaxMemoryLookaheadByteSize = 256; // Lookahead buffer size
+
+    static constexpr lfs_size_t NAND_partition_size_bytes = 1048576; // 1MB (128 pages)
+    static constexpr lfs_size_t NAND_partition_blocks = 4096;        // Total number of blocks in the LUN
+    static constexpr lfs_size_t NAND_wear_leveling_cycles = 500;     // Erase cycles for wear leveling
+
+    inline static uint8_t file_buffer[MaxMemoryElementByteSize] = {};
+
+    inline static uint8_t nand_a_read_buffer[MaxMemoryElementByteSize] = {};
+    inline static uint8_t nand_a_prog_buffer[MaxMemoryElementByteSize] = {};
+    inline static uint8_t nand_a_lookahead_buffer[MaxMemoryLookaheadByteSize] = {};
+
+    inline static uint8_t nand_b_read_buffer[MaxMemoryElementByteSize] = {};
+    inline static uint8_t nand_b_prog_buffer[MaxMemoryElementByteSize] = {};
+    inline static uint8_t nand_b_lookahead_buffer[MaxMemoryLookaheadByteSize] = {};
+
+    inline static lfs_t lfs_nand_a{};
+    inline static lfs_t lfs_nand_b{};
+
+
     void execute();
 
     MemManTask() : Task("MemManTask") {}
@@ -140,6 +157,68 @@ public:
                                          MemoryManagementTaskPriority, this->taskStack,
                                          &(this->taskBuffer));
     }
+
+
+        /**
+     * @Description  Low level read function, controlled by LittleFS
+     *               not meant to be called by the user
+     *
+     * @param c      : Specific configurations of the memory module
+     * @param block  : Block to read
+     * @param off    : Offset inside the block
+     * @param buffer : Read data storage
+     * @param size   : Size of the data to read
+     * @return       : 0 on success, negative error code on failure
+     */
+    static int lfs_nand_a_read(const struct lfs_config* c, lfs_block_t block, lfs_off_t off, void* buffer, lfs_size_t size);
+    static int lfs_nand_b_read(const struct lfs_config* c, lfs_block_t block, lfs_off_t off, void* buffer, lfs_size_t size);
+
+    /**
+     * @Description  Low level write function, controlled by LittleFS
+     *               not meant to be called by the user
+     *
+     * @param c      : Specific configurations of the memory module
+     * @param block  : Block to read
+     * @param off    : Offset inside the block
+     * @param buffer : Read data storage
+     * @param size   : Size of the data to read
+     * @return       : 0 on success, negative error code on failure
+     */
+    static int lfs_nand_a_prog(const struct lfs_config* c, lfs_block_t block, lfs_off_t off, const void* buffer, lfs_size_t size);
+    static int lfs_nand_b_prog(const struct lfs_config* c, lfs_block_t block, lfs_off_t off, const void* buffer, lfs_size_t size);
+
+    /**
+     * @Description  Low level erase function, controlled by LittleFS
+     *               not meant to be called by the user
+     *
+     * @param c      : Specific configurations of the memory module
+     * @param block  : Block to read
+     * @return       : 0 on success, negative error code on failure
+     */
+    static int lfs_nand_a_erase(const struct lfs_config* c, lfs_block_t block);
+    static int lfs_nand_b_erase(const struct lfs_config* c, lfs_block_t block);
+
+    /**
+     * @Description  Low level sync function, controlled by LittleFS
+     *               not meant to be called by the user
+     *
+     * @param c : Specific configurations of the memory module
+     * @return  : 0 on success, negative error code on failure
+     */
+    static int lfs_nand_a_sync(const struct lfs_config *c);
+    static int lfs_nand_b_sync(const struct lfs_config *c);
+
+    /**
+     * @Description Mounts and if necessary format LFS on the NAND modules
+     * @return true on success
+     */
+    static bool configureMountFS_NAND();
+
+    /**
+     * Initializes and performs health checks on the NAND modules
+     * @return true on success
+     */
+    bool initNAND();
 
     /**
      * @Description Write the provided data to the specified file,

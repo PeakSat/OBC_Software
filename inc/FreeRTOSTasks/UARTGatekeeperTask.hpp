@@ -6,6 +6,8 @@
 #include "Peripheral_Definitions.hpp"
 #include "ECSS_Definitions.hpp"
 
+#include <OBC_Definitions.hpp>
+
 /**
  * Contains functionality of a Gatekeeper Task for the UART resource. It has the sole access to UART, to avoid any
  * deadlocks that might be caused by simultaneous requests of access to the same resource. It works by having anyone

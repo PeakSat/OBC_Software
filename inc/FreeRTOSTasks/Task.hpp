@@ -7,7 +7,6 @@
 #include "definitions.h"
 #include "Logger.hpp"
 #include "PeakSatParameters.hpp"
-#include "CommonParameters.hpp"
 #include "Definitions.hpp"
 
 /**

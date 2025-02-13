@@ -4,25 +4,25 @@
 #include "MemoryManagementTask.hpp"
 
 
-MRAM mram(SMC::NCS0);
-MT29F mt29f_part_a(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
-MT29F mt29f_part_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
-
-//// Static buffer allocations (aligned to requirements)
-static uint8_t file_buffer[MaxMemoryElementByteSize];
-
-static uint8_t nand_a_read_buffer[MaxMemoryElementByteSize];    // Must match read_size
-static uint8_t nand_a_prog_buffer[MaxMemoryElementByteSize];    // Must match prog_size
-static uint8_t nand_a_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must match lookahead_size
-
-static uint8_t nand_b_read_buffer[MaxMemoryElementByteSize];    // Must match read_size
-static uint8_t nand_b_prog_buffer[MaxMemoryElementByteSize];    // Must match prog_size
-static uint8_t nand_b_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must match lookahead_size
-
-// Global LFS instances
-
-lfs_t lfs_nand_a;
-lfs_t lfs_nand_b;
+// MRAM mram(SMC::NCS0);
+// MT29F mt29f_part_a(SMC::NCS3, MEM_NAND_BUSY_1_PIN, MEM_NAND_WR_ENABLE_PIN);
+// MT29F mt29f_part_b(SMC::NCS1, MEM_NAND_BUSY_2_PIN, MEM_NAND_WR_ENABLE_PIN);
+//
+// //// Static buffer allocations (aligned to requirements)
+// static uint8_t file_buffer[MaxMemoryElementByteSize];
+//
+// static uint8_t nand_a_read_buffer[MaxMemoryElementByteSize];    // Must match read_size
+// static uint8_t nand_a_prog_buffer[MaxMemoryElementByteSize];    // Must match prog_size
+// static uint8_t nand_a_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must match lookahead_size
+//
+// static uint8_t nand_b_read_buffer[MaxMemoryElementByteSize];    // Must match read_size
+// static uint8_t nand_b_prog_buffer[MaxMemoryElementByteSize];    // Must match prog_size
+// static uint8_t nand_b_lookahead_buffer[MaxMemoryLookaheadByteSize]; // Must match lookahead_size
+//
+// // Global LFS instances
+//
+// lfs_t lfs_nand_a;
+// lfs_t lfs_nand_b;
 
 
 // Error Translating functions
@@ -75,18 +75,7 @@ void printMRAMErrno(MRAM_Errno error){
 
 // LFS functions for NAND part A
 
-/**
- * @Description  Low level read function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @param off    : Offset inside the block
- * @param buffer : Read data storage
- * @param size   : Size of the data to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
+int MemManTask::lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
         return LFS_ERR_INVAL; // Invalid input
@@ -99,7 +88,7 @@ int lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     uint8_t LUN = 0;
 
     // Wrap the output buffer in a span for the `readNAND` function
-    etl::span<uint8_t> data(reinterpret_cast<uint8_t*>(buffer), size);
+    etl::span<uint8_t> data(static_cast<uint8_t*>(buffer), size);
 
     // Call the `readNAND` function
     MT29F_Errno result = mt29f_part_a.readNAND(LUN, position, data);
@@ -112,18 +101,7 @@ int lfs_nand_a_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     return LFS_ERR_OK;
 }
 
-/**
- * @Description  Low level write function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @param off    : Offset inside the block
- * @param buffer : Read data storage
- * @param size   : Size of the data to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
+int MemManTask::lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
         return LFS_ERR_INVAL; // Invalid input
@@ -136,7 +114,7 @@ int lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     uint8_t LUN = 0;
 
     // Wrap the input buffer in a span for the `writeNAND` function
-    etl::span<const uint8_t> data(reinterpret_cast<const uint8_t*>(buffer), size);
+    etl::span<const uint8_t> data(static_cast<const uint8_t*>(buffer), size);
 
     // Call the `writeNAND` function
     MT29F_Errno result =mt29f_part_a.writeNAND(LUN, position, data);
@@ -149,15 +127,7 @@ int lfs_nand_a_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     return LFS_ERR_OK;
 }
 
-/**
- * @Description  Low level erase function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_a_erase(const struct lfs_config *c, lfs_block_t block) {
+int MemManTask::lfs_nand_a_erase(const struct lfs_config *c, lfs_block_t block) {
     uint8_t LUN = 0; // LUN always 0
     MT29F_Errno result = mt29f_part_a.eraseBlock(LUN, block);
     // Handle the result of the erase block operation
@@ -169,14 +139,8 @@ int lfs_nand_a_erase(const struct lfs_config *c, lfs_block_t block) {
     return LFS_ERR_OK;  // Success
 }
 
-/**
- * @Description  Low level sync function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c : Specific configurations of the memory module
- * @return  : 0 on success, negative error code on failure
- */
-int lfs_nand_a_sync(const struct lfs_config *c) {
+
+int MemManTask::lfs_nand_a_sync(const struct lfs_config *c) {
     // Perform any necessary synchronization
     if (!mt29f_part_a.getRDYstatus()) {
         return LFS_ERR_IO;  // Return an error if the sync fails
@@ -186,19 +150,7 @@ int lfs_nand_a_sync(const struct lfs_config *c) {
 }
 
 // LFS functions for NAND part B
-
-/**
- * @Description  Low level read function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @param off    : Offset inside the block
- * @param buffer : Read data storage
- * @param size   : Size of the data to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
+int MemManTask::lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
     if (buffer == NULL || size == 0) {
         return LFS_ERR_INVAL; // Invalid input
@@ -211,7 +163,7 @@ int lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     uint8_t LUN = 0;
 
     // Wrap the output buffer in a span for the `readNAND` function
-    etl::span<uint8_t> data(reinterpret_cast<uint8_t*>(buffer), size);
+    etl::span<uint8_t> data(static_cast<uint8_t*>(buffer), size);
 
     // Call the `readNAND` function
     MT29F_Errno result = mt29f_part_b.readNAND(LUN, position, data);
@@ -224,20 +176,9 @@ int lfs_nand_b_read(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     return LFS_ERR_OK;
 }
 
-/**
- * @Description  Low level write function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @param off    : Offset inside the block
- * @param buffer : Read data storage
- * @param size   : Size of the data to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
+int MemManTask::lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size) {
     // Ensure the input parameters are valid
-    if (buffer == NULL || size == 0) {
+    if (buffer == nullptr || size == 0) {
         return LFS_ERR_INVAL; // Invalid input
     }
 
@@ -248,7 +189,7 @@ int lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     uint8_t LUN = 0;
 
     // Wrap the input buffer in a span for the `writeNAND` function
-    etl::span<const uint8_t> data(reinterpret_cast<const uint8_t*>(buffer), size);
+    etl::span<const uint8_t> data(static_cast<const uint8_t*>(buffer), size);
 
     // Call the `writeNAND` function
     MT29F_Errno result =mt29f_part_b.writeNAND(LUN, position, data);
@@ -261,15 +202,7 @@ int lfs_nand_b_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off
     return LFS_ERR_OK;
 }
 
-/**
- * @Description  Low level erase function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c      : Specific configurations of the memory module
- * @param block  : Block to read
- * @return       : 0 on success, negative error code on failure
- */
-int lfs_nand_b_erase(const struct lfs_config *c, lfs_block_t block) {
+int MemManTask::lfs_nand_b_erase(const struct lfs_config *c, lfs_block_t block) {
 
     // LUN always 0
     uint8_t LUN = 0;
@@ -285,14 +218,7 @@ int lfs_nand_b_erase(const struct lfs_config *c, lfs_block_t block) {
     return LFS_ERR_OK;  // Success
 }
 
-/**
- * @Description  Low level sync function, controlled by LittleFS
- *               not meant to be called by the user
- *
- * @param c : Specific configurations of the memory module
- * @return  : 0 on success, negative error code on failure
- */
-int lfs_nand_b_sync(const struct lfs_config *c) {
+int MemManTask::lfs_nand_b_sync(const struct lfs_config *c) {
     // Perform any necessary synchronization
     if (!mt29f_part_b.getRDYstatus()) {
         return LFS_ERR_IO;  // Return an error if the sync fails
@@ -303,54 +229,45 @@ int lfs_nand_b_sync(const struct lfs_config *c) {
 
 // LFS Configuration & Mounting Functions
 
-const struct lfs_config nand_a_cfg = {
-    // block device operations
-    .read  = lfs_nand_a_read,
-    .prog  = lfs_nand_a_prog,
-    .erase = lfs_nand_a_erase,
-    .sync  = lfs_nand_a_sync,
+constexpr struct lfs_config nand_a_cfg = {
+    .read = MemManTask::lfs_nand_a_read,
+    .prog = MemManTask::lfs_nand_a_prog,
+    .erase = MemManTask::lfs_nand_a_erase,
+    .sync = MemManTask::lfs_nand_a_sync,
 
-    // block device configuration
-    .read_size = MaxMemoryElementByteSize,
-    .prog_size = MaxMemoryElementByteSize,
-    .block_size = NAND_partition_size_bytes,
-    .block_count = NAND_partition_blocks,
-    .block_cycles = NAND_wear_leveling_cycles,
-    .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
-    .lookahead_size = MaxMemoryLookaheadByteSize,
+    .read_size = MemManTask::MaxMemoryElementByteSize,
+    .prog_size = MemManTask::MaxMemoryElementByteSize,
+    .block_size = MemManTask::NAND_partition_size_bytes,
+    .block_count = MemManTask::NAND_partition_blocks,
+    .block_cycles = MemManTask::NAND_wear_leveling_cycles,
+    .cache_size = MemManTask::MaxMemoryElementByteSize,
+    .lookahead_size = MemManTask::MaxMemoryLookaheadByteSize,
 
-    // Static memory buffers
-    .read_buffer = nand_a_read_buffer,
-    .prog_buffer = nand_a_prog_buffer,
-    .lookahead_buffer = nand_a_lookahead_buffer,
+    .read_buffer = MemManTask::nand_a_read_buffer,
+    .prog_buffer = MemManTask::nand_a_prog_buffer,
+    .lookahead_buffer = MemManTask::nand_a_lookahead_buffer,
 };
 
-const struct lfs_config nand_b_cfg = {
-    // block device operations
-    .read  = lfs_nand_b_read,
-    .prog  = lfs_nand_b_prog,
-    .erase = lfs_nand_b_erase,
-    .sync  = lfs_nand_b_sync,
+constexpr struct lfs_config nand_b_cfg = {
+    .read  = MemManTask::lfs_nand_b_read,
+    .prog  = MemManTask::lfs_nand_b_prog,
+    .erase = MemManTask::lfs_nand_b_erase,
+    .sync  = MemManTask::lfs_nand_b_sync,
 
-    // block device configuration
-    .read_size = MaxMemoryElementByteSize,
-    .prog_size = MaxMemoryElementByteSize,
-    .block_size = NAND_partition_size_bytes,
-    .block_count = NAND_partition_blocks,
-    .block_cycles = NAND_wear_leveling_cycles,
-    .cache_size = MaxMemoryElementByteSize, // Must match read_size & prog_size
-    .lookahead_size = MaxMemoryLookaheadByteSize,
+    .read_size = MemManTask::MaxMemoryElementByteSize,
+    .prog_size = MemManTask::MaxMemoryElementByteSize,
+    .block_size = MemManTask::NAND_partition_size_bytes,
+    .block_count = MemManTask::NAND_partition_blocks,
+    .block_cycles = MemManTask::NAND_wear_leveling_cycles,
+    .cache_size = MemManTask::MaxMemoryElementByteSize,
+    .lookahead_size = MemManTask::MaxMemoryLookaheadByteSize,
 
-    .read_buffer = nand_b_read_buffer,
-    .prog_buffer = nand_b_prog_buffer,
-    .lookahead_buffer = nand_b_lookahead_buffer,
+    .read_buffer = MemManTask::nand_b_read_buffer,
+    .prog_buffer = MemManTask::nand_b_prog_buffer,
+    .lookahead_buffer = MemManTask::nand_b_lookahead_buffer,
 };
 
-/**
- * @Description Mounts and if necessary format LFS on the NAND modules
- * @return true on success
- */
-bool configureMountFS_NAND(){
+bool MemManTask::configureMountFS_NAND(){
     int err_nand_a = lfs_mount(&lfs_nand_a, &nand_a_cfg);
     if (err_nand_a) {
         // Format if we can't mount the filesystem
@@ -382,11 +299,7 @@ void initLCLs(){
     mramLCL.enableLCL();
 }
 
-/**
- * Initializes and performs health checks on the NAND modules
- * @return true on success
- */
-bool initNAND(){
+bool MemManTask::initNAND(){
     bool flag = false;
     if(mt29f_part_a.resetNAND()!=MT29F_Errno::NONE){
         LOG_DEBUG<<"Error reseting NAND A";

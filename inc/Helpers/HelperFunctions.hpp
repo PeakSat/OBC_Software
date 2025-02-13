@@ -1,8 +1,9 @@
 #pragma once
-
+#include "MemoryManagementTask.hpp"
 namespace HelperFunctions {
     inline void resetChecks() {
         const RSTC_RESET_CAUSE resetCause = RSTC_ResetCauseGet();
+        uint32_t resetCauseValue = resetCause;
         if (resetCause == RSTC_GENERAL_RESET) {
             LOG_DEBUG << "Last reset was: General reset.";
         } else if (resetCause == RSTC_BACKUP_RESET) {
@@ -16,5 +17,6 @@ namespace HelperFunctions {
         } else {
             LOG_DEBUG << "Last reset was: Undefined reset.";
         }
+        MemManTask::setParameter(PeakSatParameters::LAST_RESET_CAUSEID, static_cast<void*>(&resetCauseValue));
     }
 } //namespace HelperFunctions

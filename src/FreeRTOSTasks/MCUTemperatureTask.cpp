@@ -1,5 +1,7 @@
 #include "MCUTemperatureTask.hpp"
 
+#include <OBC_Definitions.hpp>
+
 MCUTemperatureTask::MCUTemperatureTask(): Task("MCUTemperatureTask") {
     AFEC0_CallbackRegister(
         [](uint32_t status, uintptr_t context) -> void {
@@ -30,7 +32,7 @@ void MCUTemperatureTask::execute() const {
         float MCUtemperature = (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
 
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
-        MemManTask::setParameter(PeakSatParameters::MCUTemperatureID, static_cast<void*>(&MCUtemperature));
+        MemManTask::setParameter(PeakSatParameters::MCU_TEMPERATUREID, static_cast<void*>(&MCUtemperature));
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
 }

@@ -182,7 +182,7 @@ void CAN::Driver::send(const CAN::Packet& message) {
     etl::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
 
     uint8_t getActiveCANBus = 2;
-    MemManTask::getParameter(PeakSatParameters::CANBUSActiveID, static_cast<void*>(&getActiveCANBus));
+    MemManTask::getParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&getActiveCANBus));
     if (getActiveCANBus == PeakSatParameters::Main) {
         if (MCAN0_TxFifoFreeLevelGet() < 1) {
             // LOG_ERROR << "CAN0 Tx FIFO full";
