@@ -121,7 +121,9 @@ private:
      */
     static void printAvailableFiles(lfs* lfs);
 
-    static bool updateBiosFile();
+    static lfs_error updateBiosFile();
+
+    void printNANDError(MT29F_Errno error);
 
 public:
     static constexpr lfs_size_t MaxMemoryElementByteSize = 256;   // Static Read/Write Buffer sizes
@@ -218,7 +220,7 @@ public:
      * Initializes and performs health checks on the NAND modules
      * @return true on success
      */
-    bool initNAND();
+    static bool initNAND();
 
     /**
      * @Description Write the provided data to the specified file,
@@ -226,7 +228,7 @@ public:
      *              memory module.
      * @param filename  Filename according to the filename convention (see filenames.hpp)
      * @param data      Data to be written
-     * @param flag      APPEND or OVERWRITE
+     * @param flags      APPEND or OVERWRITE
      * @return          0 on success, negative error code on failure.
      */
     static etl::expected<int, lfs_error> writeToFile(const char* filename, etl::span<const uint8_t>& data, FILE_RW_FLAGS flags);
