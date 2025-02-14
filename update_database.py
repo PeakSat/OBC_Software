@@ -144,7 +144,8 @@ for idx, row in enumerate(valid_rows):
 
             # Add to the corresponding namespace block
             block_lines = namespace_blocks[acronym]
-            block_lines.append(f"    const ParameterId {variable_name}ID = {encoded_id};")
+            padding = " " * (60 - len(variable_name))
+            block_lines.append(f"    constexpr ParameterId {variable_name}ID{padding} = {encoded_id};")
 
             # Enum definitions (if type is "enum")
             if variable_type in {"uint8_t", "uint16_t", "uint32_t", "uint64_t",
