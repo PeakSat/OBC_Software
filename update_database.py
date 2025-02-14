@@ -99,6 +99,9 @@ for sheet_name in workbook.sheetnames:
         if id_cell.value and isinstance(id_cell.value, str):
             valid_rows.append(row)
 
+firstParamID = 0
+lastParamID = 0
+
 # Process all valid rows
 for idx, row in enumerate(valid_rows):
     id_cell = row[0]  # First column
@@ -142,10 +145,17 @@ for idx, row in enumerate(valid_rows):
             # Encode the ID with the new encoding rule
             encoded_id = encode_id(numeric_id, variable_type)
 
+            if firstParamID == 0 or firstParamID > encoded_id:
+                firstParamID = encoded_id
+
+            if lastParamID < encoded_id:
+                lastParamID = encoded_id
+
+
             # Add to the corresponding namespace block
             block_lines = namespace_blocks[acronym]
-            padding = " " * (60 - len(variable_name))
-            block_lines.append(f"    constexpr ParameterId {variable_name}ID{padding} = {encoded_id};")
+            padding = " " * (60 - (len(variable_name) + len(acronym)))
+            block_lines.append(f"    constexpr ParameterId {acronym}_{variable_name}_ID{padding} = {encoded_id};")
 
             # Enum definitions (if type is "enum")
             if variable_type in {"uint8_t", "uint16_t", "uint32_t", "uint64_t",
@@ -156,6 +166,11 @@ for idx, row in enumerate(valid_rows):
                 block_lines.append(enum_lines)
 
             break
+
+padding = " " * (64 - len("FIRST_PARAM_ID") )
+namespace_blocks["OBDH"].append(f"    constexpr ParameterId FIRST_PARAM_ID{padding} = {firstParamID};")
+padding = " " * (64 - len("LAST_PARAM_ID") )
+namespace_blocks["OBDH"].append(f"    constexpr ParameterId LAST_PARAM_ID{padding} = {lastParamID};")
 
 # Build the .hpp file
 hhp_lines.append(f"namespace PeaksatParameters {{")
