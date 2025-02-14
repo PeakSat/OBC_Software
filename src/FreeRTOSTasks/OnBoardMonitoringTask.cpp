@@ -9,9 +9,6 @@ using namespace EPSParameters;
 using namespace EPSParameters::ParameterDescriptors;
 
 
-
-
-
 void OnBoardMonitoringTask::execute() {
 
     EPS eps;
