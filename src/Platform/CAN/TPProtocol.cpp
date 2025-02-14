@@ -4,6 +4,8 @@
 
 #include "CANGatekeeperTask.hpp"
 
+#include <mutex_Handler.h>
+
 using namespace CAN;
 
 void TPProtocol::parseMessage(TPMessage& message) {
@@ -132,7 +134,11 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent
     }
 
     // First Frame
-    xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
+    // xSemaphoreTake(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE, portMAX_DELAY);
+    while (!takeSemaphoreGroup(smphr_groups::GROUP_B)) {
+            // Wait to acquire semaphore
+    }
+
     {
         // 4 MSB bits is the Frame Type identifier and the 4 LSB are the leftmost 4 bits of the data length.
         uint8_t firstByte = (First << 6) | ((messageSize >> 8) & 0b111111);
@@ -169,12 +175,24 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent
         xTaskNotifyGive(canGatekeeperTask->taskHandle);
     }
 
-    if (xSemaphoreTake(can_ack_handler.CAN_ACK_SEMAPHORE, pdMS_TO_TICKS(can_ack_handler.TIMEOUT)) == pdTRUE) {
-        LOG_DEBUG << "CAN ACK received!";
-        xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
-        return false;
+    TickType_t start_ticks = xTaskGetTickCount();
+    while (!takeSemaphoreGroup(smphr_groups::GROUP_A)) {
+        if (xTaskGetTickCount() - start_ticks > pdMS_TO_TICKS(CAN_TIMEOUT_MS)) {
+            LOG_ERROR << "Timeout waiting for CAN ACK";
+            releaseSemaphoreGroup(smphr_groups::GROUP_B);
+            return true;
+        }
     }
-    LOG_ERROR << "Timeout waiting for CAN ACK";
-    xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+    LOG_DEBUG << "CAN ACK received!";
+    releaseSemaphoreGroup(smphr_groups::GROUP_B);
     return true;
+
+    // if (xSemaphoreTake(can_ack_handler.CAN_ACK_SEMAPHORE, pdMS_TO_TICKS(can_ack_handler.TIMEOUT)) == pdTRUE) {
+    //     LOG_DEBUG << "CAN ACK received!";
+    //     xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+    //     return false;
+    // }
+    // LOG_ERROR << "Timeout waiting for CAN ACK";
+    // xSemaphoreGive(CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE);
+    // return true;
 }

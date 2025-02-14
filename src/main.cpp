@@ -8,12 +8,11 @@
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
 #include "HelperFunctions.hpp"
-
+#include "mutex_Handler.h"
 
 // ECSS Header Files
 #include "ErrorHandler.hpp"
 #include "Message.hpp"
-
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -97,7 +96,7 @@ extern "C" void main_cpp() {
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
     memManTask->createTask();
-    //    nandTask->createTask();
+    // nandTask->createTask();
     // mramTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
@@ -105,9 +104,10 @@ extern "C" void main_cpp() {
     heartbeatTask->createTask();
 
     __enable_irq();
-    can_ack_handler.initialize_semaphore();
-    CAN_TRANSMIT_Handler.initialize_semaphore();
+
+    initializeSemaphores();
     HelperFunctions::resetChecks(); // get the last reason of reset
+
     vTaskStartScheduler();
 
     while (true) {
