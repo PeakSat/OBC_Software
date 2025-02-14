@@ -233,7 +233,6 @@ CAN::Packet CAN::Driver::getFrame(const MCAN_RX_BUFFER& rxBuffer) {
 }
 
 void CAN::Driver::initialize() {
-    CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE = xSemaphoreCreateMutex();
     MCAN0_MessageRAMConfigSet(CAN::Driver::mcan0MessageRAM);
     MCAN1_MessageRAMConfigSet(CAN::Driver::mcan1MessageRAM);
 

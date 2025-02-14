@@ -3,22 +3,23 @@
 SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
-
+SemaphoreHandle_t Semaphore_EPS     = NULL;
 
 StaticSemaphore_t Semaphore_Group_A_buffer;
 StaticSemaphore_t Semaphore_Group_B_buffer;
 StaticSemaphore_t Semaphore_Group_C_buffer;
-
-
+StaticSemaphore_t Semaphore_EPS_buffer;
 
 void initializeSemaphores() {
     Semaphore_Group_A = xSemaphoreCreateMutexStatic(&Semaphore_Group_A_buffer);
     Semaphore_Group_B = xSemaphoreCreateMutexStatic(&Semaphore_Group_B_buffer);
     Semaphore_Group_C = xSemaphoreCreateMutexStatic(&Semaphore_Group_C_buffer);
+    Semaphore_EPS     = xSemaphoreCreateBinaryStatic(&Semaphore_EPS_buffer);
 
     configASSERT(Semaphore_Group_A);
     configASSERT(Semaphore_Group_B);
     configASSERT(Semaphore_Group_C);
+    configASSERT(Semaphore_EPS);
 }
 
 /**
@@ -66,4 +67,15 @@ void releaseSemaphoreGroup(smphr_groups group) {
         default:
             break;
     }
+}
+
+bool takeSemaphoreEPS_ISR() {
+    return xSemaphoreTake(Semaphore_EPS, (TickType_t) 10) == pdTRUE;
+}
+
+void releaseSemaphoreEPS_ISR() {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xSemaphoreGiveFromISR(Semaphore_EPS, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    return;
 }
