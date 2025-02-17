@@ -93,6 +93,7 @@ include_directories(
         lib/Peripherals/LittleFS/inc
         lib/Peripherals/PeakSat_HAL/I2C_HAL/inc
         lib/Peripherals/EPS/inc
+        lib/Peripherals/ATLAS/binaries
 )
 
 # Show and add GitHash to code

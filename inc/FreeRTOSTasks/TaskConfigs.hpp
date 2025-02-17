@@ -33,7 +33,7 @@ constexpr uint16_t MCUTemperatureTaskStack = 500;
 // constexpr uint16_t MRAMTaskStack = 2000;
 
 constexpr uint16_t NANDTaskStack = 100;
-constexpr uint16_t MemoryManagementTaskStack = 1200;
+constexpr uint16_t MemoryManagementTaskStack = 2000;
 constexpr uint16_t PayloadTestTaskStack = 500;
 constexpr uint16_t StatisticsReportingTaskStack = 2000;
 constexpr uint16_t TCHandlingTaskStack = 1000;

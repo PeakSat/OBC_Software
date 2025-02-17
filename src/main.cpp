@@ -69,39 +69,39 @@ extern "C" void main_cpp() {
 
     uartGatekeeperTask.emplace();
     PayloadGatekeeperTask.emplace();
-    canGatekeeperTask.emplace();
-    canParserTask.emplace();
-    housekeepingTask.emplace();
-    onBoardMonitoringTask.emplace();
-    tcHandlingTask.emplace();
-    mcuTemperatureTask.emplace();
-    ambientTemperatureTask.emplace();
+    // canGatekeeperTask.emplace();
+    // canParserTask.emplace();
+    // housekeepingTask.emplace();
+    // onBoardMonitoringTask.emplace();
+    // tcHandlingTask.emplace();
+    // mcuTemperatureTask.emplace();
+    // ambientTemperatureTask.emplace();
     // nandTask.emplace();
     // mramTask.emplace();
-    memManTask.emplace();
+    // memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
-    heartbeatTask.emplace();
+    // heartbeatTask.emplace();
 
 
     __disable_irq();
     uartGatekeeperTask->createTask();
     PayloadGatekeeperTask->createTask();
-    canGatekeeperTask->createTask();
-    canParserTask->createTask();
-    housekeepingTask->createTask();
-    onBoardMonitoringTask->createTask();
-    tcHandlingTask->createTask();
-    mcuTemperatureTask->createTask();
-    ambientTemperatureTask->createTask();
-    memManTask->createTask();
+    // canGatekeeperTask->createTask();
+    // canParserTask->createTask();
+    // housekeepingTask->createTask();
+    // onBoardMonitoringTask->createTask();
+    // tcHandlingTask->createTask();
+    // mcuTemperatureTask->createTask();
+    // ambientTemperatureTask->createTask();
+    // memManTask->createTask();
     // nandTask->createTask();
     // mramTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
-    heartbeatTask->createTask();
+    // heartbeatTask->createTask();
 
     __enable_irq();
 

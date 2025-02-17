@@ -34,11 +34,12 @@ private:
     QueueHandle_t xFrameReceiveQueueHandle;
     uint8_t payloadReceiveFrameQueueStorage[maxFrameQueueSize*(payload_size_size+max_payload_size)];
 
-    uint8_t internal_buffer[payload_size_size+max_payload_size];
+    uint8_t internal_buffer[payload_size_size+max_payload_size] = {};
 
     uint8_t error = 0;
 
 public:
+
 
     void execute();
 
@@ -63,6 +64,8 @@ public:
     uint16_t handlePayloadRequest(uint8_t command_code, void* request_struct, uint8_t* buffer, uint16_t &delay);
 
     bool sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct);
+
+    bool uploadPayloadFile(uint8_t command_code, void* request_struct, void* response_struct);
 
 };
 

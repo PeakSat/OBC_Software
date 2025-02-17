@@ -191,7 +191,7 @@ void SYS_Initialize ( void* data )
 
 	RSWDT_REGS->RSWDT_MR = RSWDT_MR_WDDIS_Msk;	// Disable RSWDT
 
-	WDT_Initialize();
+	// WDT_Initialize();
 
 
     PWM0_Initialize();

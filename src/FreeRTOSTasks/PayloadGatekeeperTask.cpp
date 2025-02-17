@@ -4,6 +4,9 @@
 
 #include "PayloadGatekeeperTask.hpp"
 
+#include <binary_sw1.hpp>
+
+
 void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context){
     PayloadGatekeeperTask->setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT), true);
     TC0_CH2_TimerStop();
@@ -57,6 +60,14 @@ bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t*
             return handleResGetFpgaTelemetries(payload, response_struct);
         case GET_POINTING_OFFSET:
             return handleResGetPointingOffset(payload, response_struct);
+        case FILE_WRITE:
+            return handleResFileWrite(payload, response_struct);
+        case FILE_READ:
+            return handleResFileRead(payload, response_struct);
+        case FILE_GET_SIZE:
+            return handleResFileGetSize(payload, response_struct);
+        case FILE_DELETE:
+            return handleResFileDelete(payload, response_struct);
         default:
             break;
     }
@@ -83,6 +94,14 @@ uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void 
             return handleReqGetFpgaTelemetries(request_struct, buffer, wr_delay);
         case GET_POINTING_OFFSET:
             return handleReqGetPointingOffset(request_struct, buffer, wr_delay);
+        case FILE_WRITE:
+            return handleReqFileWrite(request_struct, buffer, wr_delay);
+        case FILE_READ:
+            return handleReqFileRead(request_struct, buffer, wr_delay);
+        case FILE_GET_SIZE:
+            return handleReqFileGetSize(request_struct, buffer, wr_delay);
+        case FILE_DELETE:
+            return handleReqFileDelete(request_struct, buffer, wr_delay);
         default:
             break;
     }
@@ -92,7 +111,7 @@ uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void 
 bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct){
     LOG_DEBUG<<"Sending payload msg, CC: "<<command_code;
 
-    uint8_t payload_buffer[max_payload_size];
+    uint8_t payload_buffer[max_payload_size] = {};
     uint16_t payload_size = 0;
     uint16_t write_read_delay = 500;
 
@@ -105,6 +124,9 @@ bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_
         uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
         LOG_DEBUG<<"Received response size: "<<rcv_size;
         if(handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)){
+            for (int i = 0 ; i<payload_size_size; i++) {
+                internal_buffer[i] = 0;
+            }
             return true;
         }
         setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::ANSWER_MISMATCH), false);
@@ -164,6 +186,29 @@ void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR){
     }
     xTaskNotify(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite);
 }
+
+bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, void* request_struct, void* response_struct) {
+    LOG_DEBUG<<"Sending payload msg, CC: "<<command_code;
+
+
+    etl::array<uint8_t, 2040> file_buffer{};
+    constexpr uint16_t file_size = 74048;
+    const uint16_t write_read_delay =2500;
+    for (int i = 0; i<file_size; i += max_payload_size) {
+        const uint16_t chunk_size = (i + max_payload_size > file_size) ? (file_size - i) : max_payload_size;
+        LOG_DEBUG << "sending chunk number: "<< i;
+        etl::copy(firmware_data + i, firmware_data + i + chunk_size, file_buffer.begin());
+        // uint32_t expected_checksum = crc32(firmware_data+i, chunk_size);
+        // uint32_t actual_checksum = crc32(&file_buffer[i], chunk_size);
+        // if (actual_checksum != expected_checksum) {
+        //     LOG_DEBUG<<"CRC mismatch";
+        // }
+        sendPayloadMessage(file_buffer.data(), file_buffer.size());
+    }
+
+}
+
+
 
 PayloadGatekeeperTask::PayloadGatekeeperTask() : Task("Payload Gatekeeper") {
     // Initialize send queue
