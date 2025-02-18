@@ -65,7 +65,8 @@ public:
 
     bool sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct);
 
-    bool uploadPayloadFile(uint8_t command_code, void* request_struct, void* response_struct);
+    bool uploadPayloadFile(uint8_t command_code, req_file_write request_struct, void* response_struct);
+
 
 };
 

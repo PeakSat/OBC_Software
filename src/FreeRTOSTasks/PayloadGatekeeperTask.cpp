@@ -5,6 +5,7 @@
 #include "PayloadGatekeeperTask.hpp"
 
 #include <binary_sw1.hpp>
+#include <etl/vector.h>
 
 
 void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context){
@@ -187,25 +188,33 @@ void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR){
     xTaskNotify(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite);
 }
 
-bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, void* request_struct, void* response_struct) {
-    LOG_DEBUG<<"Sending payload msg, CC: "<<command_code;
+bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_file_write request_struct, void* response_struct) {
+    LOG_DEBUG<<"Sending payload msg, CC: "<< command_code;
 
+    constexpr int32_t file_size = 74048;
+    constexpr int32_t maxChunkSize = sizeof(request_struct.data);
+    etl::vector<int32_t, 255> failedOffsets{};
 
-    etl::array<uint8_t, 2040> file_buffer{};
-    constexpr uint16_t file_size = 74048;
-    const uint16_t write_read_delay =2500;
-    for (int i = 0; i<file_size; i += max_payload_size) {
-        const uint16_t chunk_size = (i + max_payload_size > file_size) ? (file_size - i) : max_payload_size;
-        LOG_DEBUG << "sending chunk number: "<< i;
-        etl::copy(firmware_data + i, firmware_data + i + chunk_size, file_buffer.begin());
-        // uint32_t expected_checksum = crc32(firmware_data+i, chunk_size);
-        // uint32_t actual_checksum = crc32(&file_buffer[i], chunk_size);
-        // if (actual_checksum != expected_checksum) {
-        //     LOG_DEBUG<<"CRC mismatch";
-        // }
-        sendPayloadMessage(file_buffer.data(), file_buffer.size());
+    auto result = false;
+    for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
+        const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.offset = offset;
+        memcpy(request_struct.data,  const_cast<const uint8_t* >(&firmware_data[offset]), chunk_size);
+
+        if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
+            LOG_ERROR << "Retry failed at offset: " << offset;
+            failedOffsets.push_back(offset);
+            result = false;
+        }
+    }
+    for (const int32_t offset : failedOffsets) {
+        const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.offset = offset;
+        memcpy(request_struct.data,  const_cast<const uint8_t* >(&firmware_data[offset]), chunk_size);
+        result =  this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct));
     }
 
+    return result;
 }
 
 

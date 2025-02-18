@@ -70,21 +70,8 @@ void TestTask::execute() {
     request_file_delete.file_descriptor= 32;
 
 
-    for (int i = 0; i < 21; i++) {
-        request_file_write.data[i] = 0;
-    }
 
-    // for (int i = 0; i < 256; i++) {
-    //     if (PayloadGatekeeperTask->sendrecvPayload(request_file_write.req_code, static_cast<void*>(&request_file_write), static_cast<void*>(&response_file_write))) {
-    //         LOG_DEBUG << "------------------------ File: " << i << " ------------------------";
-    //         LOG_DEBUG << "Write file FD: " << response_file_write.file_descriptor;
-    //         LOG_DEBUG << "Write file ofset: " << response_file_write.offset;
-    //         LOG_DEBUG << "Write file size: " << response_file_write.size;
-    //         LOG_DEBUG<< "------------------------------------------------------------";
-    //     }
-    //     request_file_write.file_descriptor = i;
-    //     vTaskDelay(10);
-    // }
+
 
     if (PayloadGatekeeperTask->sendrecvPayload(request_file_delete.req_code, static_cast<void*>(&request_file_delete), static_cast<void*>(&response_file_delete))) {
         LOG_DEBUG << "Delete file: " << response_file_delete.file_descriptor;
@@ -92,6 +79,8 @@ void TestTask::execute() {
     }
 
     vTaskDelay(pdMS_TO_TICKS(100));
+
+    // uploadPayloadFile();
 
     if (PayloadGatekeeperTask->sendrecvPayload(request_file_write.req_code, static_cast<void*>(&request_file_write), static_cast<void*>(&response_file_write))) {
             LOG_DEBUG << "Write file FD: " << response_file_write.file_descriptor;
