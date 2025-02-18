@@ -1,6 +1,6 @@
 #include "TestTask.hpp"
 #include "TypeDefinitions.hpp"
-#include "MemoryManagementTask.hpp"
+#include "MemoryManager.hpp"
 #include "task.h"
 
 void monitorAllTasks() {
@@ -39,7 +39,7 @@ void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     ParameterId param = PeakSatParameters::EPS_UNIX_SECONDID;
     uint8_t temp = 0;
-    memManTask->getParameter(param, static_cast<void*>(&temp));
+    MemoryManager::getParameter(param, static_cast<void*>(&temp));
 
     request_time.timestamp = 1738070674;
 
@@ -58,9 +58,9 @@ void TestTask::execute() {
 
 
 
-        // LOG_DEBUG<<"commit_hashID"<<MemManTask::getParameterAsUINT64(PeakSatParameters::commit_hashID);
+        // LOG_DEBUG<<"commit_hashID"<<MemoryManager::getParameterAsUINT64(PeakSatParameters::commit_hashID);
         //
-        // LOG_DEBUG<<"UseCANID: "<<MemManTask::getParameterAsUINT64(PeakSatParameters::UseCANID);
+        // LOG_DEBUG<<"UseCANID: "<<MemoryManager::getParameterAsUINT64(PeakSatParameters::UseCANID);
 
         // vTaskDelay(5000);
         //
@@ -68,10 +68,10 @@ void TestTask::execute() {
         // etl::to_string(param, logString, true);
         // logString.append(" was ");
         // temp+=5;
-        // etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
-        // memManTask->setParameter(param, static_cast<void*>(&temp));
+        // etl::to_string(MemoryManager::getParameterAsUINT64(param), logString, true);
+        // MemoryManager::setParameter(param, static_cast<void*>(&temp));
         // logString.append(" and is now ");
-        // etl::to_string(memManTask->getParameterAsUINT64(param), logString, true);
+        // etl::to_string(MemoryManager::getParameterAsUINT64(param), logString, true);
 
 
         // LOG_DEBUG << logString.c_str();

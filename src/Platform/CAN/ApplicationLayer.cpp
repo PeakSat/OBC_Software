@@ -10,13 +10,13 @@
 namespace CAN::Application {
     void switchBus() {
         uint8_t readActiveCANbus = 2;
-        MemManTask::getParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
+        MemoryManager::getParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         if (readActiveCANbus == PeakSatParameters::Main) {
             readActiveCANbus = PeakSatParameters::Redundant;
-            MemManTask::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
+            MemoryManager::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         } else {
             readActiveCANbus = PeakSatParameters::Main;
-            MemManTask::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
+            MemoryManager::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, static_cast<void*>(&readActiveCANbus));
         }
     }
 
@@ -72,7 +72,7 @@ namespace CAN::Application {
             if (Services.parameterManagement.parameterExists(parameterID)) {
                 message.append(parameterID);
                 Services.parameterManagement.appendParameterToMessage(message, parameterID);
-                LOG_DEBUG << "param: " << MemManTask::getParameterAsUINT64(parameterID);
+                LOG_DEBUG << "param: " << MemoryManager::getParameterAsUINT64(parameterID);
                 // LOG_DEBUG<< AcubeSATParameters::obcPCBTemperature1;
             } else if (parameterID == 0) {
                 continue;
@@ -205,10 +205,10 @@ namespace CAN::Application {
                     etl::to_string(parameterID, logString, true);
                     logString.append(" was ");
 
-                    etl::to_string(MemManTask::getParameterAsUINT64(parameterID), logString, true);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
                     Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                     logString.append(" and is now ");
-                    etl::to_string(MemManTask::getParameterAsUINT64(parameterID), logString, true);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
 
                     LOG_DEBUG << logString.c_str();
                 } else {

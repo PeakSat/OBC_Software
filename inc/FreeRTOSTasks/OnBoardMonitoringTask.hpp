@@ -3,6 +3,7 @@
 #include "TaskConfigs.hpp"
 #include "PayloadGatekeeperTask.hpp"
 #include "ServicePool.hpp"
+#include <MemoryManager.hpp>
 
 /**
  * FreeRTOS task implementing the ST[03] Housekeeping Service.

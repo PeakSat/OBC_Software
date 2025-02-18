@@ -11,7 +11,7 @@
 #include "PeakSatParameters.hpp"
 #include "TPMessage.hpp"
 #include "Definitions.hpp"
-#include "MemoryManagementTask.hpp"
+#include "MemoryManager.hpp"
 
 namespace CAN::Application {
     /**

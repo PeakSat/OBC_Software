@@ -28,7 +28,7 @@
 #include "TCHandlingTask.hpp"
 
 #include "HeartbeatTask.hpp"
-#include "MemoryManagementTask.hpp"
+#include "MemoryManager.hpp"
 #include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
@@ -74,7 +74,6 @@ extern "C" void main_cpp() {
     tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     ambientTemperatureTask.emplace();
-    memManTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -91,7 +90,6 @@ extern "C" void main_cpp() {
     tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
-    memManTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
