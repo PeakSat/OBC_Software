@@ -67,6 +67,8 @@ bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t*
             return handleResFileRead(payload, response_struct);
         case FILE_GET_SIZE:
             return handleResFileGetSize(payload, response_struct);
+        case FILE_GET_REGION_CRC:
+            return handleResFileGetRegionCRC(payload, response_struct);
         case FILE_DELETE:
             return handleResFileDelete(payload, response_struct);
         default:
@@ -101,6 +103,8 @@ uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void 
             return handleReqFileRead(request_struct, buffer, wr_delay);
         case FILE_GET_SIZE:
             return handleReqFileGetSize(request_struct, buffer, wr_delay);
+        case FILE_GET_REGION_CRC:
+            return handleReqFileGetRegionCRC(request_struct, buffer, wr_delay);
         case FILE_DELETE:
             return handleReqFileDelete(request_struct, buffer, wr_delay);
         default:
@@ -125,9 +129,6 @@ bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_
         uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
         LOG_DEBUG<<"Received response size: "<<rcv_size;
         if(handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)){
-            for (int i = 0 ; i<payload_size_size; i++) {
-                internal_buffer[i] = 0;
-            }
             return true;
         }
         setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::ANSWER_MISMATCH), false);
@@ -195,11 +196,18 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
     constexpr int32_t maxChunkSize = sizeof(request_struct.data);
     etl::vector<int32_t, 255> failedOffsets{};
 
+    req_file_get_region_crc requestGetFileRegionCRCStruct;
+    res_file_get_region_crc responseGetFileRegionCRCStruct;
+
+    requestGetFileRegionCRCStruct.file_descriptor = request_struct.file_descriptor;
+    requestGetFileRegionCRCStruct.offset = request_struct.offset;
+    requestGetFileRegionCRCStruct.size = request_struct.size;
+
     auto result = false;
     for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
-        memcpy(request_struct.data,  const_cast<const uint8_t* >(&firmware_data[offset]), chunk_size);
+        memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), chunk_size);
 
         if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
             LOG_ERROR << "Retry failed at offset: " << offset;
@@ -207,12 +215,27 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
             result = false;
         }
     }
+    const auto localRegionChecksum = crc32(const_cast<uint8_t* >(&firmware_data[0]), file_size);
+
     for (const int32_t offset : failedOffsets) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
         memcpy(request_struct.data,  const_cast<const uint8_t* >(&firmware_data[offset]), chunk_size);
         result =  this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct));
+        if (not result) {
+            LOG_ERROR << "Retry failed at offset: " << offset;
+        }
     }
+
+    if (not this->sendrecvPayload(requestGetFileRegionCRCStruct.req_code, static_cast<void*>(&requestGetFileRegionCRCStruct),
+    static_cast<void*>(&responseGetFileRegionCRCStruct))) {
+        LOG_ERROR << "CRC failed with status: " << responseGetFileRegionCRCStruct.status;
+    }
+
+    LOG_INFO<<"Local crc: " << localRegionChecksum;
+    LOG_INFO<<"Response crc: " << responseGetFileRegionCRCStruct.checksum;
+
+    result = (responseGetFileRegionCRCStruct.checksum = localRegionChecksum);
 
     return result;
 }
