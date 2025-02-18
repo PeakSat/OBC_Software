@@ -18,3 +18,12 @@ void releaseSemaphoreGroup(smphr_groups group);
 bool takeSemaphoreEPS_ISR();
 
 void releaseSemaphoreEPS_ISR();
+
+bool takeMutexSMC();
+void releaseMutexSMC();
+
+bool takeMutexMRAM();
+void releaseMutexMRAM();
+
+bool takeMutexNAND();
+void releaseMutexNAND();

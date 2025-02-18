@@ -28,7 +28,6 @@
 #include "TCHandlingTask.hpp"
 
 #include "HeartbeatTask.hpp"
-#include "MemoryManager.hpp"
 #include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"

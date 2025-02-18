@@ -4,22 +4,34 @@ SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
 SemaphoreHandle_t Semaphore_EPS     = NULL;
+SemaphoreHandle_t Mutex_SMC     = NULL;
+SemaphoreHandle_t Mutex_MRAM    = NULL;
+SemaphoreHandle_t Mutex_NAND    = NULL;
 
 StaticSemaphore_t Semaphore_Group_A_buffer;
 StaticSemaphore_t Semaphore_Group_B_buffer;
 StaticSemaphore_t Semaphore_Group_C_buffer;
 StaticSemaphore_t Semaphore_EPS_buffer;
+StaticSemaphore_t Mutex_SMC_buffer;
+StaticSemaphore_t Mutex_MRAM_buffer;
+StaticSemaphore_t Mutex_NAND_buffer;
 
 void initializeSemaphores() {
     Semaphore_Group_A = xSemaphoreCreateMutexStatic(&Semaphore_Group_A_buffer);
     Semaphore_Group_B = xSemaphoreCreateMutexStatic(&Semaphore_Group_B_buffer);
     Semaphore_Group_C = xSemaphoreCreateMutexStatic(&Semaphore_Group_C_buffer);
     Semaphore_EPS     = xSemaphoreCreateBinaryStatic(&Semaphore_EPS_buffer);
+    Mutex_SMC  = xSemaphoreCreateMutexStatic(&Mutex_SMC_buffer);
+    Mutex_MRAM = xSemaphoreCreateMutexStatic(&Mutex_MRAM_buffer);
+    Mutex_NAND = xSemaphoreCreateMutexStatic(&Mutex_NAND_buffer);
 
     configASSERT(Semaphore_Group_A);
     configASSERT(Semaphore_Group_B);
     configASSERT(Semaphore_Group_C);
     configASSERT(Semaphore_EPS);
+    configASSERT(Mutex_SMC);
+    configASSERT(Mutex_MRAM);
+    configASSERT(Mutex_NAND);
 }
 
 /**
@@ -70,12 +82,35 @@ void releaseSemaphoreGroup(smphr_groups group) {
 }
 
 bool takeSemaphoreEPS_ISR() {
-    return xSemaphoreTake(Semaphore_EPS, (TickType_t) 10) == pdTRUE;
+    return xSemaphoreTake(Semaphore_EPS, (TickType_t) 100) == pdTRUE;
 }
 
 void releaseSemaphoreEPS_ISR() {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xSemaphoreGiveFromISR(Semaphore_EPS, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    return;
+}
+
+bool takeMutexSMC() {
+    return xSemaphoreTake(Mutex_SMC, (TickType_t) 100) == pdTRUE;
+}
+
+void releaseMutexSMC() {
+    xSemaphoreGive(Mutex_SMC);
+}
+
+bool takeMutexMRAM() {
+    return xSemaphoreTake(Mutex_MRAM, (TickType_t) 100) == pdTRUE;
+}
+
+void releaseMutexMRAM() {
+    xSemaphoreGive(Mutex_MRAM);
+}
+
+bool takeMutexNAND() {
+    return xSemaphoreTake(Mutex_NAND, (TickType_t) 100) == pdTRUE;
+}
+
+void releaseMutexNAND() {
+    xSemaphoreGive(Mutex_NAND);
 }
