@@ -203,27 +203,33 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
     requestGetFileRegionCRCStruct.offset = request_struct.offset;
     requestGetFileRegionCRCStruct.size = request_struct.size;
 
-    auto result = false;
+    bool result = false;
     for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
-        memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), chunk_size);
+        memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
 
         if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
             LOG_ERROR << "Retry failed at offset: " << offset;
             failedOffsets.push_back(offset);
-            result = false;
         }
     }
     const auto localRegionChecksum = crc32(const_cast<uint8_t* >(&firmware_data[0]), file_size);
 
-    for (const int32_t offset : failedOffsets) {
-        const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
-        request_struct.offset = offset;
-        memcpy(request_struct.data,  const_cast<const uint8_t* >(&firmware_data[offset]), chunk_size);
-        result =  this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct));
-        if (not result) {
-            LOG_ERROR << "Retry failed at offset: " << offset;
+    while (not failedOffsets.empty()) {
+        for (etl::vector<int32_t, 255>::iterator it = failedOffsets.begin(); it != failedOffsets.end();) {
+            const int32_t offset = *it;
+            const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+            request_struct.offset = offset;
+
+            memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
+
+            if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
+                it = failedOffsets.erase(it);  // Move iterator to next valid position
+            } else {
+                LOG_ERROR << "Retry failed at offset: " << offset;
+                ++it;  // Only move forward if retry failed
+            }
         }
     }
 
@@ -235,7 +241,7 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
     LOG_INFO<<"Local crc: " << localRegionChecksum;
     LOG_INFO<<"Response crc: " << responseGetFileRegionCRCStruct.checksum;
 
-    result = (responseGetFileRegionCRCStruct.checksum = localRegionChecksum);
+    result = (responseGetFileRegionCRCStruct.checksum == localRegionChecksum);
 
     return result;
 }
