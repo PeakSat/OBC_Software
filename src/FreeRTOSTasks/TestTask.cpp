@@ -55,48 +55,51 @@ void TestTask::execute() {
 
     request_time.timestamp = 1738070674;
 
+    // if (PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))) {
+    //     LOG_DEBUG << "LDD TM Amp out pow  :" << response_gpo.amplifier_output_power;
+    //     LOG_DEBUG << "LDD TM ld temp      :" << response_gpo.ld_temperature;
+    //     LOG_DEBUG << "LDD TM Time (s)     :" << response_gpo.time;
+    // }
+
     // if (PayloadGatekeeperTask->sendrecvPayload(request_time.req_code, static_cast<void*>(&request_time), static_cast<void*>(&response_time))) {
     //     LOG_DEBUG << "Payload Responded with time: " << response_time.timestamp << " Status: " << response_time.status;
     // }
 
-    request_file_write.file_descriptor = 32;
-    request_file_write.offset = 11;
-    request_file_write.size = 21;
+    request_file_write.file_descriptor = 65;
+    request_file_write.offset = 0;
+    request_file_write.size = 2030;
 
-    request_file_read.file_descriptor = 32;
+    request_file_read.file_descriptor = 65;
     request_file_read.offset = 11;
     request_file_read.size = 21;
 
-    request_file_delete.file_descriptor= 32;
+    request_file_delete.file_descriptor= 65;
 
 
+    // if (PayloadGatekeeperTask->sendrecvPayload(request_file_delete.req_code, static_cast<void*>(&request_file_delete), static_cast<void*>(&response_file_delete))) {
+    //     LOG_DEBUG << "Delete file: " << response_file_delete.file_descriptor;
+    //     LOG_DEBUG << "Delete file status: " << response_file_delete.status;
+    // }
+    //
+    // vTaskDelay(pdMS_TO_TICKS(100));
+    //
+    // PayloadGatekeeperTask->uploadPayloadFile(request_file_write.req_code, request_file_write, static_cast<void*>(&response_file_write));
+    //
+    // // if (PayloadGatekeeperTask->sendrecvPayload(request_file_write.req_code, static_cast<void*>(&request_file_write), static_cast<void*>(&response_file_write))) {
+    // //         LOG_DEBUG << "Write file FD: " << response_file_write.file_descriptor;
+    // //         LOG_DEBUG << "Write file ofset: " << response_file_write.offset;
+    // //         LOG_DEBUG << "Write file size: " << response_file_write.size;
+    // //         LOG_DEBUG<< "------------------------------------------------------------";
+    // //     }
+    // vTaskDelay(pdMS_TO_TICKS(100));
+    // if (PayloadGatekeeperTask->sendrecvPayload(request_file_read.req_code, static_cast<void*>(&request_file_read), static_cast<void*>(&response_file_read))) {
+    //     LOG_DEBUG << "READ FD    : " << response_file_read.file_descriptor;
+    //     LOG_DEBUG << "READ offset: " << response_file_read.offset;
+    //     LOG_DEBUG << "READ size  : " << response_file_read.size;
+    // }
+    // vTaskDelay(pdMS_TO_TICKS(1000));
 
-
-
-    if (PayloadGatekeeperTask->sendrecvPayload(request_file_delete.req_code, static_cast<void*>(&request_file_delete), static_cast<void*>(&response_file_delete))) {
-        LOG_DEBUG << "Delete file: " << response_file_delete.file_descriptor;
-        LOG_DEBUG << "Delete file status: " << response_file_delete.status;
-    }
-
-    vTaskDelay(pdMS_TO_TICKS(100));
-
-    // uploadPayloadFile();
-
-    if (PayloadGatekeeperTask->sendrecvPayload(request_file_write.req_code, static_cast<void*>(&request_file_write), static_cast<void*>(&response_file_write))) {
-            LOG_DEBUG << "Write file FD: " << response_file_write.file_descriptor;
-            LOG_DEBUG << "Write file ofset: " << response_file_write.offset;
-            LOG_DEBUG << "Write file size: " << response_file_write.size;
-            LOG_DEBUG<< "------------------------------------------------------------";
-        }
-    vTaskDelay(pdMS_TO_TICKS(100));
-    if (PayloadGatekeeperTask->sendrecvPayload(request_file_read.req_code, static_cast<void*>(&request_file_read), static_cast<void*>(&response_file_read))) {
-        LOG_DEBUG << "READ FD    : " << response_file_read.file_descriptor;
-        LOG_DEBUG << "READ offset: " << response_file_read.offset;
-        LOG_DEBUG << "READ size  : " << response_file_read.size;
-    }
-    vTaskDelay(pdMS_TO_TICKS(1000));
-
-
+request_file_get_size.file_descriptor = 65;
     if (PayloadGatekeeperTask->sendrecvPayload(request_file_get_size.req_code, static_cast<void*>(&request_file_get_size), static_cast<void*>(&response_file_get_size))) {
         LOG_DEBUG << "size" << response_file_get_size.size;
         LOG_DEBUG << "FD: " << response_file_get_size.file_descriptor;

@@ -65,15 +65,14 @@ void OnBoardMonitoringTask::execute() {
         vTaskDelay(10);
         get = eps.getSystemStatus();
         vTaskDelay(10);
-        get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
         if (get != EPS::ErrorCode::None) {
             LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
-        LOG_INFO << "EPS time: " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTEID) << " : " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECONDID);
-        updatePayloadParameters();
+        // LOG_INFO << "EPS time: " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTEID) << " : " << MemManTask::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECONDID);
+        // updatePayloadParameters();
         vTaskDelay(10);
-        ADM::getADMParameters();
-        LOG_INFO<<"ADM Status: "<< MemManTask::getParameterAsUINT64(PeakSatParameters::antenna_deployment_statusID);
+        // ADM::getADMParameters();
+        // LOG_INFO<<"ADM Status: "<< MemManTask::getParameterAsUINT64(PeakSatParameters::antenna_deployment_statusID);
 
         // LOG_DEBUG<<"OBC Telemetry:";
         // housekeeping.housekeepingStructureReport(0);
