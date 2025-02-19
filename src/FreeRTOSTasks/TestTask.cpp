@@ -133,16 +133,12 @@ void TestTask::execute() {
 
     request_capture_images.count=1;
 
-    /**
-     * KIKA THEMASTRE FILL THOSE
-     */
 
-    // TODO
-    // request_capture_images.size =;
-    request_capture_images.type = 0x00;
+    request_capture_images.size = 0x01; // roi
+    request_capture_images.type = 0x00; // raw
 
     PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
-    testPayload();
+    // testPayload();
 
     while (true) {
 

@@ -207,6 +207,7 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
     bool result = false;
     for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
         memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
         LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
@@ -249,10 +250,17 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
 
 bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_read request_struct, res_file_read response_struct) {
     constexpr int32_t maxChunkSize = sizeof(response_struct);
-    etl::vector<int32_t, 255> failedOffsets{};
+    // etl::vector<int32_t, 255> failedOffsets{};
+    bool result = false;
 
     req_file_get_size requestGetFileSize;
     res_file_get_size responseGetFileSize;
+    req_file_get_region_crc requestGetFileRegionCRCStruct;
+    res_file_get_region_crc responseGetFileRegionCRCStruct;
+
+    requestGetFileRegionCRCStruct.file_descriptor = request_struct.file_descriptor;
+    requestGetFileRegionCRCStruct.offset = request_struct.offset;
+    requestGetFileRegionCRCStruct.size = request_struct.size;
 
     int32_t file_size = 0U;
 
@@ -276,16 +284,30 @@ bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_r
     for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
+        requestGetFileRegionCRCStruct.offset = offset;
+        requestGetFileRegionCRCStruct.size = chunk_size;
         LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
         if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
             LOG_DEBUG << "Data acquired from offset: " << offset;
             memcpy(response_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
 
+            //request region CRC and compare with local CRC
+            if (not this->sendrecvPayload(requestGetFileRegionCRCStruct.req_code, static_cast<void*>(&requestGetFileRegionCRCStruct),
+                                  static_cast<void*>(&responseGetFileRegionCRCStruct))) {
+                LOG_ERROR << "CRC failed with status: " << responseGetFileRegionCRCStruct.status;
+                                  }
+            const auto localRegionChecksum = crc32(const_cast<uint8_t*>(&response_struct.data[0]), chunk_size);
+            LOG_INFO << "Local crc: " << localRegionChecksum;
+            LOG_INFO << "Response crc: " << responseGetFileRegionCRCStruct.checksum;
+            result = (responseGetFileRegionCRCStruct.checksum == localRegionChecksum);
+
         } else {
-            LOG_ERROR << "Writing failed at offset: " << offset;
-            failedOffsets.push_back(offset);
+            LOG_ERROR << "Reading failed at offset: " << offset;
+            // failedOffsets.push_back(offset);
+            result = false;
         }
     }
+    return result;
 }
 
 bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_images request_struct, res_capture_images response_struct) {
@@ -293,6 +315,12 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
     bool ImageCaptureResult = false;
     bool ImageDownloadCommandResult = false;
     bool ImageDownloadResult = false;
+
+    constexpr int maxAttempts = 5;
+
+    req_get_mode request_get_mode;
+    res_get_mode response_get_mode;
+
     req_capture_images_status requestGetImageStatus;
     res_capture_images_status responseGetImageStatus;
 
@@ -302,11 +330,24 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
     req_prepare_images_for_download_status request_prepare_images_for_download_status;
     res_prepare_images_for_download_status response_prepare_images_for_download_status;
 
+    // check if in correct mode
+    if (this->sendrecvPayload(request_get_mode.req_code, static_cast<void*>(&request_get_mode), static_cast<void*>(&response_get_mode))) {
+        LOG_INFO << "GET MODE : " << response_get_mode.mode;
+        if (response_get_mode.mode!= static_cast<ATLAS_mode_t>(ATLAS_mode::TRANSIEVE)) {
+            LOG_DEBUG<< "Attempted to issue capture image command, but ATLAS is not in TRANSIEVE mode";
+            return false;
+        }
+    } else {
+        LOG_ERROR << "error at: response_get_mode ";
+    }
+
+    // issue command to capture image
     if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
         LOG_ERROR << "Capture Image command failed";
     }
 
-    for (int i = 0; i < 5; i++) {
+    // poll image capturing status
+    for (int i = 0; i < maxAttempts; i++) {
         if (not this->sendrecvPayload(requestGetImageStatus.req_code,
                                       static_cast<void*>(&requestGetImageStatus), static_cast<void*>(&responseGetImageStatus))) {
             LOG_ERROR << "responseGetImageStatus command failed";
@@ -319,6 +360,7 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 
+    // issue command to download image to ATLAS
     if (ImageCaptureResult) {
         if (not this->sendrecvPayload(request_prepare_images_for_download.req_code,
                                       static_cast<void*>(&request_prepare_images_for_download), static_cast<void*>(&response_prepare_images_for_download))) {
@@ -328,12 +370,13 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
         }
     }
     if (ImageDownloadCommandResult) {
-
-        for (int i = 0; i < 5; i++) {
+        // poll image download status
+        for (int i = 0; i < maxAttempts; i++) {
             if (not this->sendrecvPayload(request_prepare_images_for_download_status.req_code,
                                           static_cast<void*>(&request_prepare_images_for_download_status), static_cast<void*>(&response_prepare_images_for_download_status))) {
                 LOG_ERROR << "responseGetImageStatus command failed";
             }
+            LOG_INFO<< "Download at: "<< response_prepare_images_for_download_status.status <<"%";
             if (response_prepare_images_for_download_status.status == 100) {
                 LOG_DEBUG << "Image has downloaded!";
                 ImageDownloadResult = true;
@@ -341,7 +384,9 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
             }
             vTaskDelay(pdMS_TO_TICKS(100));
         }
+        /** placeholder for read downloaded file **/
     }
+
     return ImageDownloadResult;
 }
 
