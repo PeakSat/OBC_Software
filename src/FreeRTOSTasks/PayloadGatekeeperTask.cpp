@@ -208,9 +208,9 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
         request_struct.offset = offset;
         memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
-        LOG_DEBUG<<"Writing at offset: " <<offset;
+        LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
         if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
-            LOG_ERROR << "Retry failed at offset: " << offset;
+            LOG_ERROR << "Writing failed at offset: " << offset;
             failedOffsets.push_back(offset);
         }
     }
