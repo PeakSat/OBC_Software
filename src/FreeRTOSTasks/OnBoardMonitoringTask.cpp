@@ -11,33 +11,7 @@ using namespace EPSParameters;
 using namespace EPSParameters::ParameterDescriptors;
 
 
-MRAM mram2(SMC::NCS0);
 
-void mramTest() {
-    uint8_t testMramByte = 123;
-    uint32_t MramA7Id       = 0b00000000000010000000;
-    uint32_t MramA9Id       = 0b00000000001000000000;
-    uint32_t MramA7or9Id    = 0b00000000001010000000;
-    uint8_t readTestByte = 0;
-    uint8_t readTestA9 = 0;
-    uint8_t readTest97 = 0;
-
-    mram2.mramReadByte(MramA9Id, readTestA9);
-    LOG_DEBUG << "Mram read test byte A9 init: " << readTestA9;
-    mram2.mramWriteByte(MramA7Id, testMramByte);
-    mram2.mramReadByte(MramA7Id, readTestByte);
-    LOG_DEBUG << "MramA7Id:" << readTestByte;
-    mram2.mramReadByte(MramA9Id, readTestA9);
-    LOG_DEBUG << "Mram read test byte A9 after A7: " << readTestA9;
-    mram2.mramWriteByte(MramA9Id, testMramByte);
-    mram2.mramReadByte(MramA9Id, readTestByte);
-    LOG_DEBUG << "MramA9Id:" << readTestByte;
-    mram2.mramReadByte(MramA7Id, readTestByte);
-    LOG_DEBUG << "MramA7Id after A9 write:" << readTestByte;
-    mram2.mramReadByte(MramA7or9Id, readTest97);
-    LOG_DEBUG << "MramA7 or A9 Id after A9 write:" << readTest97;
-    MemoryManager::setParameter(789, &readTest97);
-}
 void OnBoardMonitoringTask::execute() {
 
     EPS eps;
