@@ -131,6 +131,17 @@ TestTask::TestTask() : Task("TestTask") {
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
 
+    request_capture_images.count=1;
+
+    /**
+     * KIKA THEMASTRE FILL THOSE
+     */
+
+    // TODO
+    // request_capture_images.size =;
+    request_capture_images.type = 0x00;
+
+    PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
     testPayload();
 
     while (true) {

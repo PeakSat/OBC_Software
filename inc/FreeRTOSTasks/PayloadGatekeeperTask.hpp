@@ -67,6 +67,9 @@ public:
 
     bool uploadPayloadFile(uint8_t command_code, req_file_write request_struct, void* response_struct);
 
+    bool downloadPayloadFile(uint8_t command_code, req_file_read request_struct, res_file_read response_struct);
+
+    bool takePayloadImage(uint8_t command_code, req_capture_images request_struct, res_capture_images response_struct);
 
 };
 

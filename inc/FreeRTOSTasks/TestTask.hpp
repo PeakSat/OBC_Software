@@ -39,6 +39,9 @@ private:
     static req_set_mode request_set_mode;
     static res_set_mode response_set_mode;
 
+    static req_capture_images request_capture_images;
+    static res_capture_images response_capture_images;
+
 
 public:
     void execute();

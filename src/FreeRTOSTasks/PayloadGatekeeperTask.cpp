@@ -6,42 +6,43 @@
 
 #include <binary_sw1.hpp>
 #include <etl/vector.h>
+#include <sys/_intsup.h>
 
 
-void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context){
+void responseTimerCallback(TC_TIMER_STATUS status, uintptr_t context) {
     PayloadGatekeeperTask->setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT), true);
     TC0_CH2_TimerStop();
 }
 
 
-void printError(uint8_t error){
+void printError(uint8_t error) {
     switch (error) {
         case static_cast<uint8_t>(ATLAS_Driver_Error::NONE):
-            LOG_DEBUG<<"No Error";
+            LOG_DEBUG << "No Error";
             break;
         case static_cast<uint8_t>(ATLAS_Driver_Error::TIMEOUT):
-            LOG_DEBUG<<"PAYLOAD TIMEOUT";
+            LOG_DEBUG << "PAYLOAD TIMEOUT";
             break;
         case static_cast<uint8_t>(ATLAS_Driver_Error::SIZE_OVERFLOW):
-            LOG_DEBUG<<"PAYLOAD SIZE_OVERFLOW";
+            LOG_DEBUG << "PAYLOAD SIZE_OVERFLOW";
             break;
         case static_cast<uint8_t>(ATLAS_Driver_Error::RECEIVE_ERROR):
-            LOG_DEBUG<<"PAYLOAD RECEIVE_ERROR";
+            LOG_DEBUG << "PAYLOAD RECEIVE_ERROR";
             break;
         case static_cast<uint8_t>(ATLAS_Driver_Error::TRANSMIT_ERROR):
-            LOG_DEBUG<<"PAYLOAD TRANSMIT_ERROR";
+            LOG_DEBUG << "PAYLOAD TRANSMIT_ERROR";
             break;
         case static_cast<uint8_t>(ATLAS_Driver_Error::CRC_MISMATCH):
-            LOG_DEBUG<<"PAYLOAD CRC_MISMATCH";
+            LOG_DEBUG << "PAYLOAD CRC_MISMATCH";
             break;
         default:
-            LOG_DEBUG<<"Unknown payload error code: "<< error;
+            LOG_DEBUG << "Unknown payload error code: " << error;
             break;
     }
 }
 
 
-bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t* payload, void* response_struct){
+bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t* payload, void* response_struct) {
     switch (command_code) {
         case GET_MODE:
             return handleResGetMode(payload, response_struct);
@@ -77,7 +78,7 @@ bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t*
     return false;
 }
 
-uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void *request_struct, uint8_t* buffer, uint16_t &wr_delay) {
+uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void* request_struct, uint8_t* buffer, uint16_t& wr_delay) {
     switch (command_code) {
         case GET_MODE:
             return handleReqGetMode(request_struct, buffer, wr_delay);
@@ -113,8 +114,8 @@ uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void 
     return 0;
 }
 
-bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct){
-    LOG_DEBUG<<"Sending payload msg, CC: "<<command_code;
+bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_struct, void* response_struct) {
+    LOG_DEBUG << "Sending payload msg, CC: " << command_code;
 
     uint8_t payload_buffer[max_payload_size] = {};
     uint16_t payload_size = 0;
@@ -125,10 +126,10 @@ bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_
     sendPayloadMessage(payload_buffer, payload_size);
     vTaskDelay(pdMS_TO_TICKS(write_read_delay));
 
-    if(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, pdMS_TO_TICKS(maxReadDelayms)) == pdTRUE){
-        uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
-        LOG_DEBUG<<"Received response size: "<<rcv_size;
-        if(handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)){
+    if (xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, pdMS_TO_TICKS(maxReadDelayms)) == pdTRUE) {
+        uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) << 8 | internal_buffer[0]); // LSB first
+        LOG_DEBUG << "Received response size: " << rcv_size;
+        if (handlePayloadResponse(command_code, &internal_buffer[payload_size_size], response_struct)) {
             return true;
         }
         setPayloadError(static_cast<uint8_t>(ATLAS_Driver_Error::ANSWER_MISMATCH), false);
@@ -139,19 +140,19 @@ bool PayloadGatekeeperTask::sendrecvPayload(uint8_t command_code, void* request_
 }
 
 
-bool PayloadGatekeeperTask::addPayloadSendQueue(uint8_t *payload, uint16_t size, bool isISR) {
+bool PayloadGatekeeperTask::addPayloadSendQueue(uint8_t* payload, uint16_t size, bool isISR) {
     internal_buffer[0] = size & 0xFF;
-    internal_buffer[1] = (size>>8) & 0xFF;
+    internal_buffer[1] = (size >> 8) & 0xFF;
     memcpy(&internal_buffer[2], payload, size);
 
-    if(isISR){
+    if (isISR) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         xQueueSendToBackFromISR(xFrameSendQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
         xTaskNotifyFromISR(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
         return true;
     }
 
-    if(xQueueSendToBack(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
+    if (xQueueSendToBack(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE) {
         xTaskNotify(taskHandle, PAYLOAD_SND, eSetValueWithOverwrite);
         return true;
     }
@@ -159,29 +160,29 @@ bool PayloadGatekeeperTask::addPayloadSendQueue(uint8_t *payload, uint16_t size,
     return false;
 }
 
-bool PayloadGatekeeperTask::addPayloadReceiveQueue(uint8_t *payload, uint16_t size, bool isISR) {
+bool PayloadGatekeeperTask::addPayloadReceiveQueue(uint8_t* payload, uint16_t size, bool isISR) {
     internal_buffer[0] = size & 0xFF;
-    internal_buffer[1] = (size>>8) & 0xFF;
+    internal_buffer[1] = (size >> 8) & 0xFF;
     memcpy(&internal_buffer[2], payload, size);
 
-    if(isISR){
+    if (isISR) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         xQueueSendToBackFromISR(xFrameReceiveQueueHandle, internal_buffer, &xHigherPriorityTaskWoken);
-//        xTaskNotifyFromISR(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+        //        xTaskNotifyFromISR(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
         return true;
     }
 
-    if(xQueueSendToBack(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
-//        xTaskNotify(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite);
+    if (xQueueSendToBack(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE) {
+        //        xTaskNotify(taskHandle, PAYLOAD_RCV, eSetValueWithOverwrite);
         return true;
     }
     // xTaskNotify(taskHandle, PAYLOAD_RCV, eNoAction);
     return false;
 }
 
-void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR){
+void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR) {
     error = (uint8_t) error_code;
-    if(isISR){
+    if (isISR) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         xTaskNotifyFromISR(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
         return;
@@ -190,7 +191,7 @@ void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR){
 }
 
 bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_file_write request_struct, void* response_struct) {
-    LOG_DEBUG<<"Sending payload msg, CC: "<< command_code;
+    LOG_DEBUG << "Sending payload msg, CC: " << command_code;
 
     constexpr int32_t file_size = 74048;
     constexpr int32_t maxChunkSize = sizeof(request_struct.data);
@@ -214,45 +215,141 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
             failedOffsets.push_back(offset);
         }
     }
-    const auto localRegionChecksum = crc32(const_cast<uint8_t* >(&firmware_data[0]), file_size);
+    const auto localRegionChecksum = crc32(const_cast<uint8_t*>(&firmware_data[0]), file_size);
 
     // while (not failedOffsets.empty()) {
-        for (etl::vector<int32_t, 255>::iterator it = failedOffsets.begin(); it != failedOffsets.end();) {
-            const int32_t offset = *it;
-            const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
-            request_struct.offset = offset;
+    for (etl::vector<int32_t, 255>::iterator it = failedOffsets.begin(); it != failedOffsets.end();) {
+        const int32_t offset = *it;
+        const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.offset = offset;
 
-            memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
+        memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
 
-            if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
-                it = failedOffsets.erase(it);  // Move iterator to next valid position
-            } else {
-                LOG_ERROR << "Retry failed at offset: " << offset;
-                ++it;  // Only move forward if retry failed
-            }
+        if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
+            it = failedOffsets.erase(it); // Move iterator to next valid position
+        } else {
+            LOG_ERROR << "Retry failed at offset: " << offset;
+            ++it; // Only move forward if retry failed
         }
+    }
     // }
 
     if (not this->sendrecvPayload(requestGetFileRegionCRCStruct.req_code, static_cast<void*>(&requestGetFileRegionCRCStruct),
-    static_cast<void*>(&responseGetFileRegionCRCStruct))) {
+                                  static_cast<void*>(&responseGetFileRegionCRCStruct))) {
         LOG_ERROR << "CRC failed with status: " << responseGetFileRegionCRCStruct.status;
     }
 
-    LOG_INFO<<"Local crc: " << localRegionChecksum;
-    LOG_INFO<<"Response crc: " << responseGetFileRegionCRCStruct.checksum;
+    LOG_INFO << "Local crc: " << localRegionChecksum;
+    LOG_INFO << "Response crc: " << responseGetFileRegionCRCStruct.checksum;
 
     result = (responseGetFileRegionCRCStruct.checksum == localRegionChecksum);
 
     return result;
 }
 
+bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_read request_struct, res_file_read response_struct) {
+    constexpr int32_t maxChunkSize = sizeof(response_struct);
+    etl::vector<int32_t, 255> failedOffsets{};
 
+    req_file_get_size requestGetFileSize;
+    res_file_get_size responseGetFileSize;
+
+    int32_t file_size = 0U;
+
+    requestGetFileSize.file_descriptor = request_struct.file_descriptor;
+
+    // acquire file size
+    if (this->sendrecvPayload(requestGetFileSize.req_code, static_cast<void*>(&requestGetFileSize), static_cast<void*>(&responseGetFileSize))) {
+        if (responseGetFileSize.size >= 0) {
+            LOG_DEBUG << "Request File Size: " << requestGetFileSize.file_descriptor;
+            file_size = responseGetFileSize.size;
+        } else {
+            LOG_DEBUG << "Request File Size Error: " << requestGetFileSize.file_descriptor;
+            return false;
+        }
+
+    } else {
+        LOG_ERROR << "Request File Size failed";
+        return false;
+    }
+
+    for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
+        const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.offset = offset;
+        LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
+        if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
+            LOG_DEBUG << "Data acquired from offset: " << offset;
+            memcpy(response_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
+
+        } else {
+            LOG_ERROR << "Writing failed at offset: " << offset;
+            failedOffsets.push_back(offset);
+        }
+    }
+}
+
+bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_images request_struct, res_capture_images response_struct) {
+
+    bool ImageCaptureResult = false;
+    bool ImageDownloadCommandResult = false;
+    bool ImageDownloadResult = false;
+    req_capture_images_status requestGetImageStatus;
+    res_capture_images_status responseGetImageStatus;
+
+    req_prepare_images_for_download request_prepare_images_for_download;
+    res_prepare_images_for_download response_prepare_images_for_download;
+
+    req_prepare_images_for_download_status request_prepare_images_for_download_status;
+    res_prepare_images_for_download_status response_prepare_images_for_download_status;
+
+    if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
+        LOG_ERROR << "Capture Image command failed";
+    }
+
+    for (int i = 0; i < 5; i++) {
+        if (not this->sendrecvPayload(requestGetImageStatus.req_code,
+                                      static_cast<void*>(&requestGetImageStatus), static_cast<void*>(&responseGetImageStatus))) {
+            LOG_ERROR << "responseGetImageStatus command failed";
+        }
+        if (responseGetImageStatus.progress == response_struct.count) {
+            LOG_DEBUG << "Image has been captured, prepare for download...";
+            ImageCaptureResult = true;
+            break;
+        }
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
+    if (ImageCaptureResult) {
+        if (not this->sendrecvPayload(request_prepare_images_for_download.req_code,
+                                      static_cast<void*>(&request_prepare_images_for_download), static_cast<void*>(&response_prepare_images_for_download))) {
+            LOG_ERROR << "request_prepare_images_for_download command failed";
+        } else {
+            ImageDownloadCommandResult = true;
+        }
+    }
+    if (ImageDownloadCommandResult) {
+
+        for (int i = 0; i < 5; i++) {
+            if (not this->sendrecvPayload(request_prepare_images_for_download_status.req_code,
+                                          static_cast<void*>(&request_prepare_images_for_download_status), static_cast<void*>(&response_prepare_images_for_download_status))) {
+                LOG_ERROR << "responseGetImageStatus command failed";
+            }
+            if (response_prepare_images_for_download_status.status == 100) {
+                LOG_DEBUG << "Image has downloaded!";
+                ImageDownloadResult = true;
+                break;
+            }
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
+    }
+    return ImageDownloadResult;
+}
 
 PayloadGatekeeperTask::PayloadGatekeeperTask() : Task("Payload Gatekeeper") {
     // Initialize send queue
-    xFrameSendQueueHandle = xQueueCreateStatic(maxFrameQueueSize, (payload_size_size+max_payload_size), payloadSendFrameQueueStorage, &xPayloadSendFrameQueue);
+    xFrameSendQueueHandle = xQueueCreateStatic(maxFrameQueueSize, (payload_size_size + max_payload_size), payloadSendFrameQueueStorage, &xPayloadSendFrameQueue);
     // Initialize receive queue
-    xFrameReceiveQueueHandle = xQueueCreateStatic(maxFrameQueueSize, (payload_size_size+max_payload_size), payloadReceiveFrameQueueStorage, &xPayloadReceiveFrameQueue);
+    xFrameReceiveQueueHandle = xQueueCreateStatic(maxFrameQueueSize, (payload_size_size + max_payload_size), payloadReceiveFrameQueueStorage, &xPayloadReceiveFrameQueue);
     // Initialize communications
     setupATLASCommunications();
     // Initialize response timer callback
@@ -275,16 +372,16 @@ void PayloadGatekeeperTask::execute() {
                 // Woken to receive
                 // Stop any pending response timer
                 TC0_CH2_TimerStop();
-                while(xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE){
-                    uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
-                    LOG_DEBUG<<"Received payload msg, payload_size:"<<rcv_size;
+                while (xQueueReceive(xFrameReceiveQueueHandle, internal_buffer, 0) == pdTRUE) {
+                    uint16_t rcv_size = (static_cast<uint16_t>(internal_buffer[1]) << 8 | internal_buffer[0]); // LSB first
+                    LOG_DEBUG << "Received payload msg, payload_size:" << rcv_size;
                 }
                 break;
             case PAYLOAD_SND:
                 // Woken to transmit
-                while(xQueueReceive(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE){
-                    uint16_t snd_size = (static_cast<uint16_t>(internal_buffer[1]) <<8 | internal_buffer[0]);    // LSB first
-                    LOG_DEBUG<<"Sending payload msg, payload_size:"<<snd_size;
+                while (xQueueReceive(xFrameSendQueueHandle, internal_buffer, 0) == pdTRUE) {
+                    uint16_t snd_size = (static_cast<uint16_t>(internal_buffer[1]) << 8 | internal_buffer[0]); // LSB first
+                    LOG_DEBUG << "Sending payload msg, payload_size:" << snd_size;
                     sendPayloadMessage(&internal_buffer[payload_size_size], snd_size);
                 }
                 // Start timer for callback
