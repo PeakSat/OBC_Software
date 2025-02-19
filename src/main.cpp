@@ -68,9 +68,9 @@ extern "C" void main_cpp() {
     PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
-    housekeepingTask.emplace();
+    // housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
-    tcHandlingTask.emplace();
+    // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     ambientTemperatureTask.emplace();
     timeKeepingTask.emplace();
@@ -84,9 +84,9 @@ extern "C" void main_cpp() {
     PayloadGatekeeperTask->createTask();
     canGatekeeperTask->createTask();
     canParserTask->createTask();
-    housekeepingTask->createTask();
+    // housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
-    tcHandlingTask->createTask();
+    // tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
     timeKeepingTask->createTask();

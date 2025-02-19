@@ -7,7 +7,7 @@
 
 void HousekeepingService::initializeHousekeepingStructures() {
     for (auto& structure: HousekeepingStructures::structures) {
-        housekeepingStructures.insert({structure.structureId, structure});
+        // housekeepingStructures.insert({structure.structureId, structure});
     }
 }
 

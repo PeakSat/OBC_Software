@@ -17,6 +17,6 @@ namespace HelperFunctions {
         } else {
             LOG_DEBUG << "Last reset was: Undefined reset.";
         }
-        MemoryManager::setParameter(PeakSatParameters::LAST_RESET_CAUSEID, static_cast<void*>(&resetCauseValue));
+        MemoryManager::setParameter(PeakSatParameters::OBDH_LAST_RESET_CAUSE_ID, static_cast<void*>(&resetCauseValue));
     }
 } //namespace HelperFunctions

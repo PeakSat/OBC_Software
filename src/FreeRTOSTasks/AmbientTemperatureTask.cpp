@@ -29,11 +29,11 @@ void AmbientTemperatureTask::execute() {
             // LOG_INFO << "Sensor with address" << sensors[sensorCounter].getI2CUserAddress() << " responded with ambient temperature = " << ambientTemperature[sensorCounter];
         }
 
-        MemoryManager::setParameter(PeakSatParameters::PCB_TEMPERATURE_1ID, static_cast<void*>(&ambientTemperature[0]));
-        MemoryManager::setParameter(PeakSatParameters::PCB_TEMPERATURE_2ID, static_cast<void*>(&ambientTemperature[1]));
+        MemoryManager::setParameter(PeakSatParameters::OBDH_PCB_TEMPERATURE_1_ID, static_cast<void*>(&ambientTemperature[0]));
+        MemoryManager::setParameter(PeakSatParameters::OBDH_PCB_TEMPERATURE_2_ID, static_cast<void*>(&ambientTemperature[1]));
 
-        MemoryManager::getParameter(PeakSatParameters::PCB_TEMPERATURE_1ID, static_cast<void*>(&ambientTemperature[0]));
-        MemoryManager::getParameter(PeakSatParameters::PCB_TEMPERATURE_2ID, static_cast<void*>(&ambientTemperature[1]));
+        MemoryManager::getParameter(PeakSatParameters::OBDH_PCB_TEMPERATURE_1_ID, static_cast<void*>(&ambientTemperature[0]));
+        MemoryManager::getParameter(PeakSatParameters::OBDH_PCB_TEMPERATURE_2_ID, static_cast<void*>(&ambientTemperature[1]));
         LOG_INFO << "Sensor with address 0 responded with ambient temperature = " << ambientTemperature[0];
         LOG_INFO << "Sensor with address 1 responded with ambient temperature = " << ambientTemperature[1];
 

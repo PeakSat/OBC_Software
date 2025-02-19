@@ -32,7 +32,7 @@ void MCUTemperatureTask::execute() const {
         float MCUtemperature = (voltageConversion - TypicalVoltageAt25) / TemperatureSensitivity + ReferenceTemperature;
 
         LOG_DEBUG << "The temperature of the MCU is: " << MCUtemperature << " degrees Celsius";
-        MemoryManager::setParameter(PeakSatParameters::MCU_TEMPERATUREID, static_cast<void*>(&MCUtemperature));
+        MemoryManager::setParameter(PeakSatParameters::OBDH_MCU_TEMPERATURE_ID, static_cast<void*>(&MCUtemperature));
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
 }

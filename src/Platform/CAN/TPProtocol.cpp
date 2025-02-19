@@ -81,12 +81,12 @@ bool TPProtocol::createCANTPMessage(const TPMessage& message, bool isISR) {
             CAN::Driver::initialize();
             vTaskDelay(1);
             uint8_t ActiveCANBus = PeakSatParameters::Main;
-            MemoryManager::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, &ActiveCANBus);
+            MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, &ActiveCANBus);
             if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                 return 0;
             } else {
                 ActiveCANBus = PeakSatParameters::Redundant;
-                MemoryManager::setParameter(PeakSatParameters::CAN_BUS_ACTIVEID, &ActiveCANBus);
+                MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, &ActiveCANBus);
                 if (!createCANTPMessageWithRetry(message, isISR, 2)) {
                     return 0;
                 } else {

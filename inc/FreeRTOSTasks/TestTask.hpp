@@ -10,7 +10,7 @@ class TestTask : public Task {
 private:
     StackType_t taskStack[TestTaskStack];
 
-    const uint16_t delayMs = 3000;
+    const uint16_t delayMs = 200;
 
 public:
     void execute();

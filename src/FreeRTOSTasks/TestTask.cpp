@@ -37,7 +37,7 @@ res_get_ldd_telemetries response_gpo;
 
 void TestTask::execute() {
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
-    ParameterId param = PeakSatParameters::EPS_UNIX_SECONDID;
+    ParameterId param = PeakSatParameters::EPS_UNIX_SECOND_ID;
     uint8_t temp = 0;
     MemoryManager::getParameter(param, static_cast<void*>(&temp));
 

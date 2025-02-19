@@ -59,24 +59,20 @@ void OnBoardMonitoringTask::execute() {
     vTaskDelay(10);
 
 
-
-
     while (true) {
         vTaskDelay(10);
         get = eps.getSystemStatus();
         vTaskDelay(10);
-        get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
         if (get != EPS::ErrorCode::None) {
             LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
-        LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTEID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECONDID);
+        LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
+        get = eps.getPIUHousekeepingDataRaw();
         updatePayloadParameters();
         vTaskDelay(10);
         ADM::getADMParameters();
-        LOG_INFO<<"ADM Status: "<< MemoryManager::getParameterAsUINT64(PeakSatParameters::antenna_deployment_statusID);
+        LOG_INFO<<"ADM Status: "<< MemoryManager::getParameterAsUINT64(PeakSatParameters::COMMS_ANTENNA_DEPLOYMENT_STATUS_ID);
         vTaskDelay(10);
-        mramTest();
-
 
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
