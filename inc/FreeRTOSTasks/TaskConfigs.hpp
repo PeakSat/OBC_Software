@@ -46,4 +46,4 @@ constexpr uint16_t HeartbeatTaskStack = 1800;
 constexpr uint16_t OnBoardMonitoringTaskStack = 3000;
 
 
-constexpr uint16_t TestTaskStack = 5000;
+constexpr uint16_t TestTaskStack = 8000;

@@ -310,13 +310,14 @@ bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_r
     return result;
 }
 
-bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_images request_struct, res_capture_images response_struct) {
+int8_t PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_images request_struct, res_capture_images response_struct) {
 
     bool ImageCaptureResult = false;
     bool ImageDownloadCommandResult = false;
-    bool ImageDownloadResult = false;
 
     constexpr int maxAttempts = 5;
+
+    int8_t stored_image_fd = 122;
 
     req_get_mode request_get_mode;
     res_get_mode response_get_mode;
@@ -379,7 +380,7 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
             LOG_INFO<< "Download at: "<< response_prepare_images_for_download_status.status <<"%";
             if (response_prepare_images_for_download_status.status == 100) {
                 LOG_DEBUG << "Image has downloaded!";
-                ImageDownloadResult = true;
+                stored_image_fd = response_prepare_images_for_download_status.file_descriptor;
                 break;
             }
             vTaskDelay(pdMS_TO_TICKS(100));
@@ -387,7 +388,7 @@ bool PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture_i
         /** placeholder for read downloaded file **/
     }
 
-    return ImageDownloadResult;
+    return stored_image_fd;
 }
 
 PayloadGatekeeperTask::PayloadGatekeeperTask() : Task("Payload Gatekeeper") {

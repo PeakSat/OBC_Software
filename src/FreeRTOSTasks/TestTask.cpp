@@ -72,7 +72,7 @@ void TestTask::getPayloadTelemetries() {
 }
 void TestTask::testPayload() {
 
-    request_file_write.file_descriptor = 66;
+    request_file_write.file_descriptor = 0;
     request_file_write.offset = 0;
     request_file_write.size = 2030;
 
@@ -80,9 +80,9 @@ void TestTask::testPayload() {
     request_file_read.offset = 11;
     request_file_read.size = 21;
 
-    request_file_delete.file_descriptor = 66;
+    request_file_delete.file_descriptor = 0;
 
-    request_file_get_size.file_descriptor = 66;
+    request_file_get_size.file_descriptor = 0;
 
     request_set_mode.mode = 0;
 
@@ -137,10 +137,22 @@ void TestTask::execute() {
     request_capture_images.size = 0x01; // roi
     request_capture_images.type = 0x00; // raw
 
-    PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
+    LOG_INFO<<"Set mode to PREHEAT";
+    changePayloadMode(ATLAS_mode::PREHEAT);
+    vTaskDelay(pdMS_TO_TICKS(180000));
+    LOG_INFO<<"Set mode to TRANSIEVE";
+    changePayloadMode(ATLAS_mode::TRANSIEVE);
+
+    vTaskDelay(pdMS_TO_TICKS(3000));
+    request_file_read.file_descriptor = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
+
     // testPayload();
 
     while (true) {
+        changePayloadMode(ATLAS_mode::TRANSIEVE);
 
         getPayloadTelemetries();
 
