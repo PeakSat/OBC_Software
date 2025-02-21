@@ -76,7 +76,7 @@ void TestTask::testPayload() {
     request_file_write.offset = 0;
     request_file_write.size = 2030;
 
-    request_file_read.file_descriptor = 66;
+    request_file_read.file_descriptor = 0;
     request_file_read.offset = 11;
     request_file_read.size = 21;
 
@@ -97,7 +97,7 @@ void TestTask::testPayload() {
 
     vTaskDelay(pdMS_TO_TICKS(100));
 
-    PayloadGatekeeperTask->uploadPayloadFile(request_file_write.req_code, request_file_write, static_cast<void*>(&response_file_write));
+    PayloadGatekeeperTask->uploadPayloadFile(request_file_write.req_code, request_file_write, response_file_write);
 
     vTaskDelay(pdMS_TO_TICKS(100));
     if (PayloadGatekeeperTask->sendrecvPayload(request_file_read.req_code, static_cast<void*>(&request_file_read), static_cast<void*>(&response_file_read))) {
@@ -137,19 +137,24 @@ void TestTask::execute() {
     request_capture_images.size = 0x01; // roi
     request_capture_images.type = 0x00; // raw
 
-    LOG_INFO<<"Set mode to PREHEAT";
-    changePayloadMode(ATLAS_mode::PREHEAT);
-    vTaskDelay(pdMS_TO_TICKS(180000));
-    LOG_INFO<<"Set mode to TRANSIEVE";
-    changePayloadMode(ATLAS_mode::TRANSIEVE);
+    // LOG_INFO<<"Set mode to PREHEAT";
+    // changePayloadMode(ATLAS_mode::PREHEAT);
+    // vTaskDelay(pdMS_TO_TICKS(180000));
+    // LOG_INFO<<"Set mode to TRANSIEVE";
+    // changePayloadMode(ATLAS_mode::TRANSIEVE);
+    //
+    // vTaskDelay(pdMS_TO_TICKS(3000));
+    // request_file_read.file_descriptor = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
+    // vTaskDelay(pdMS_TO_TICKS(1000));
+    //
+    // PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
 
-    vTaskDelay(pdMS_TO_TICKS(3000));
-    request_file_read.file_descriptor = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    testPayload();
 
-    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
-
-    // testPayload();
+    request_file_read.file_descriptor = 0;
+    request_file_read.offset=0;
+    request_file_read.size=0;
+    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read, response_file_read);
 
     while (true) {
         changePayloadMode(ATLAS_mode::TRANSIEVE);

@@ -43,7 +43,7 @@ constexpr uint16_t PayloadGatekeeperTaskStack = 3000;
 constexpr uint16_t UARTGatekeeperTaskStack = 1000;
 constexpr uint16_t WatchdogTaskStack = 1000;
 constexpr uint16_t HeartbeatTaskStack = 1800;
-constexpr uint16_t OnBoardMonitoringTaskStack = 3000;
+constexpr uint16_t OnBoardMonitoringTaskStack = 2500;
 
 
-constexpr uint16_t TestTaskStack = 8000;
+constexpr uint16_t TestTaskStack = 7000;

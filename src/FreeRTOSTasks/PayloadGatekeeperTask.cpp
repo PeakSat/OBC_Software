@@ -190,7 +190,7 @@ void PayloadGatekeeperTask::setPayloadError(uint8_t error_code, bool isISR) {
     xTaskNotify(taskHandle, PAYLOAD_ERR, eSetValueWithOverwrite);
 }
 
-bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_file_write request_struct, void* response_struct) {
+bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_file_write request_struct, res_file_write response_struct) {
     LOG_DEBUG << "Sending payload msg, CC: " << command_code;
 
     constexpr int32_t file_size = 74048;
@@ -202,12 +202,12 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
 
     requestGetFileRegionCRCStruct.file_descriptor = request_struct.file_descriptor;
     requestGetFileRegionCRCStruct.offset = request_struct.offset;
-    requestGetFileRegionCRCStruct.size = request_struct.size;
+    requestGetFileRegionCRCStruct.size = file_size;
 
     bool result = false;
     for (int32_t offset = 0; offset < file_size; offset += maxChunkSize) {
         const int32_t chunk_size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
-        request_struct.size = (file_size - offset > maxChunkSize) ? maxChunkSize : (file_size - offset);
+        request_struct.size = chunk_size;
         request_struct.offset = offset;
         memcpy(request_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
         LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
@@ -248,8 +248,8 @@ bool PayloadGatekeeperTask::uploadPayloadFile(const uint8_t command_code, req_fi
     return result;
 }
 
-bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_read request_struct, res_file_read response_struct) {
-    constexpr int32_t maxChunkSize = sizeof(response_struct);
+bool PayloadGatekeeperTask::downloadPayloadFile(const uint8_t command_code, req_file_read request_struct, res_file_read response_struct) {
+    constexpr int32_t maxChunkSize = sizeof(response_struct.data);
     // etl::vector<int32_t, 255> failedOffsets{};
     bool result = false;
 
@@ -266,6 +266,7 @@ bool PayloadGatekeeperTask::downloadPayloadFile(uint8_t command_code, req_file_r
 
     requestGetFileSize.file_descriptor = request_struct.file_descriptor;
 
+    LOG_DEBUG << "Sending payload msg, CC: " << command_code;
     // acquire file size
     if (this->sendrecvPayload(requestGetFileSize.req_code, static_cast<void*>(&requestGetFileSize), static_cast<void*>(&responseGetFileSize))) {
         if (responseGetFileSize.size >= 0) {
