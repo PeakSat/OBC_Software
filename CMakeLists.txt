@@ -103,13 +103,13 @@ CheckGitSetup()
 # Source files
 file(GLOB_RECURSE DRIVER_SOURCES
         "src/config/default/driver/i2c/src/*.c"
+        "lib/Peripherals/PeakSat_HAL/Memory_HAL/*.cpp"
         "lib/Peripherals/MCP9808/*.cpp"
         "lib/Peripherals/LCL/*.cpp"
         "lib/Peripherals/NANDFlash/*.cpp"
         "lib/Peripherals/MRAM/*.cpp"
         "lib/Peripherals/EPS/*.cpp"
         "lib/Peripherals/LittleFS/*.c"
-        "lib/Peripherals/PeakSat_HAL/Memory_HAL/*.cpp"
         "lib/Peripherals/RS422/*.cpp"
         "lib/Peripherals/ATLAS/*.cpp"
         "lib/Peripherals/ADM/*.cpp"

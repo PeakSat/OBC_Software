@@ -5,7 +5,7 @@ void AmbientTemperatureTask::execute() {
     uint8_t numberOfDisconnectedSensors = 0;
 
     for (auto& sensor: sensors) {
-        if (not sensor.isDeviceConnected()) {
+        if (not sensor.isDeviceConnected().value()) {
             LOG_ERROR << "Temperature sensor with address " << sensor.getI2CUserAddress()
                       << " was disconnected";
             numberOfDisconnectedSensors++;
@@ -20,12 +20,12 @@ void AmbientTemperatureTask::execute() {
 
     while (true) {
         for (uint8_t sensorCounter = 0; sensorCounter < NumberOfTemperatureSensors; sensorCounter++) {
-            if (not sensors[sensorCounter].isDeviceConnected()) {
+            if (not sensors[sensorCounter].isDeviceConnected().value()) {
                 LOG_ERROR << "Temperature sensor with address " << sensors[sensorCounter].getI2CUserAddress()
                           << " was disconnected";
                 continue;
             }
-            ambientTemperature[sensorCounter] = sensors[sensorCounter].getTemperature();
+            ambientTemperature[sensorCounter] = sensors[sensorCounter].getTemperature().value();
             // LOG_INFO << "Sensor with address" << sensors[sensorCounter].getI2CUserAddress() << " responded with ambient temperature = " << ambientTemperature[sensorCounter];
         }
 

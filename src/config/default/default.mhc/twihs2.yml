@@ -75,4 +75,4 @@ children:
         children:
         - {type: Value, value: drv_i2c_I2C_dependency}
 - type: ElementPosition
-  attributes: {x: '527', y: '432', id: twihs2}
+  attributes: {x: '649', y: '393', id: twihs2}
