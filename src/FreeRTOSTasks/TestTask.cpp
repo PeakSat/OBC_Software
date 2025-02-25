@@ -179,22 +179,22 @@ void TestTask::execute() {
     request_file_read.size=0;
 
 
-    LOG_INFO<<"Set mode to IDLE";
+    // LOG_INFO<<"Set mode to IDLE";
     changePayloadMode(ATLAS_mode::IDLE);
     vTaskDelay(pdMS_TO_TICKS(20000));
-    LOG_INFO<<"Set mode to PREHEAT";
-    changePayloadMode(ATLAS_mode::PREHEAT);
-    vTaskDelay(pdMS_TO_TICKS(180000));
-    LOG_INFO<<"Set mode to TRANSIEVE";
-    changePayloadMode(ATLAS_mode::TRANSIEVE);
+    // LOG_INFO<<"Set mode to PREHEAT";
+    // changePayloadMode(ATLAS_mode::PREHEAT);
+    // vTaskDelay(pdMS_TO_TICKS(180000));
+    // LOG_INFO<<"Set mode to TRANSIEVE";
+    // changePayloadMode(ATLAS_mode::TRANSIEVE);
 
-    vTaskDelay(pdMS_TO_TICKS(10000));
+    // vTaskDelay(pdMS_TO_TICKS(10000));
     request_file_read.file_descriptor = 0x50;
-    const auto result = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
-    LOG_INFO<<"takePayloadImage result: "<<result;
-    vTaskDelay(pdMS_TO_TICKS(60000));
-    LOG_INFO<<"Set mode to IDLE";
-    changePayloadMode(ATLAS_mode::IDLE);
+    // const auto result = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
+    // LOG_INFO<<"takePayloadImage result: "<<result;
+    // vTaskDelay(pdMS_TO_TICKS(60000));
+    // LOG_INFO<<"Set mode to IDLE";
+    // changePayloadMode(ATLAS_mode::IDLE);
 
     PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
 

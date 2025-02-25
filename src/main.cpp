@@ -79,7 +79,7 @@ extern "C" void main_cpp() {
     // nandTask.emplace();
     // mramTask.emplace();
     // memManTask.emplace();
-    timeKeepingTask.emplace();
+    // timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
     // heartbeatTask.emplace();
@@ -98,7 +98,7 @@ extern "C" void main_cpp() {
     // memManTask->createTask();
     // nandTask->createTask();
     // mramTask->createTask();
-    timeKeepingTask->createTask();
+    // timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
     // heartbeatTask->createTask();

@@ -1,6 +1,8 @@
 #include "UARTGatekeeperTask.hpp"
 #include "Peripheral_Definitions.hpp"
 
+#include <TestTask.hpp>
+
 UARTGatekeeperTask::UARTGatekeeperTask() : Task("UARTGatekeeperTask") {
     xUartQueue = xQueueCreateStatic(UARTQueueSize, sizeof(etl::string<LOGGER_MAX_MESSAGE_SIZE>), ucQueueStorageArea,
                                     &xStaticQueue);
@@ -25,6 +27,7 @@ void UARTGatekeeperTask::execute() {
         if constexpr (LogsAreCOBSEncoded) {
             auto cobsEncoded = COBSencode<LoggerMaxMessageSize>(output);
             XDMAC_ChannelTransfer(XDMAC_CHANNEL_0, cobsEncoded.data(), txRegisterAddress, cobsEncoded.size());
+            xTaskNotifyGive(TestTask::TestTaskHandle);
         } else {
             XDMAC_ChannelTransfer(XDMAC_CHANNEL_0, output.data(), txRegisterAddress, output.size());
         }

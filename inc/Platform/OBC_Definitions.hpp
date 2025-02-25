@@ -50,7 +50,7 @@ inline const uint8_t ReferenceTemperature = 25;
 /**
  * The size of the queue used to communicate with the UART Gatekeeper task
  */
-inline const uint8_t UARTQueueSize = 25;
+inline const uint8_t UARTQueueSize = 200;
 
 /**
  * The typical voltage output of the DAC of the AFEC channel at 25 Celsius
