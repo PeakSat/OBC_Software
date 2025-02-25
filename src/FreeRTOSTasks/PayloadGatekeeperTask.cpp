@@ -72,6 +72,14 @@ bool PayloadGatekeeperTask::handlePayloadResponse(uint8_t command_code, uint8_t*
             return handleResFileGetRegionCRC(payload, response_struct);
         case FILE_DELETE:
             return handleResFileDelete(payload, response_struct);
+        case CAPTURE_IMAGES:
+            return handleResCaptureImages(payload, response_struct);
+        case CAPTURE_IMAGES_STATUS:
+            return handleResCaptureImagesStatus(payload, response_struct);
+        case PREPARE_IMAGES_FOR_DOWNLOAD:
+            return handleResPrepareImagesForDownload(payload, response_struct);
+        case PREPARE_IMAGES_FOR_DOWNLOAD_STATUS:
+            return handleResPrepareImagesForDownloadStatus(payload, response_struct);
         default:
             break;
     }
@@ -108,6 +116,14 @@ uint16_t PayloadGatekeeperTask::handlePayloadRequest(uint8_t command_code, void*
             return handleReqFileGetRegionCRC(request_struct, buffer, wr_delay);
         case FILE_DELETE:
             return handleReqFileDelete(request_struct, buffer, wr_delay);
+        case CAPTURE_IMAGES:
+            return handleReqCaptureImage(request_struct, buffer, wr_delay);
+        case CAPTURE_IMAGES_STATUS:
+            return handleReqCaptureImageStatus(request_struct, buffer, wr_delay);
+        case PREPARE_IMAGES_FOR_DOWNLOAD:
+            return handleReqPrepareImagesForDownload(request_struct, buffer, wr_delay);
+        case PREPARE_IMAGES_FOR_DOWNLOAD_STATUS:
+            return handleReqPrepareImagesForDownloadStatus(request_struct, buffer, wr_delay);
         default:
             break;
     }
@@ -270,10 +286,10 @@ bool PayloadGatekeeperTask::downloadPayloadFile(const uint8_t command_code, req_
     // acquire file size
     if (this->sendrecvPayload(requestGetFileSize.req_code, static_cast<void*>(&requestGetFileSize), static_cast<void*>(&responseGetFileSize))) {
         if (responseGetFileSize.size >= 0) {
-            LOG_DEBUG << "Request File Size: " << requestGetFileSize.file_descriptor;
+            LOG_DEBUG << "Request File Size: " <<  responseGetFileSize.size;
             file_size = responseGetFileSize.size;
         } else {
-            LOG_DEBUG << "Request File Size Error: " << requestGetFileSize.file_descriptor;
+            LOG_DEBUG << "Request File Size Error at file: " << requestGetFileSize.file_descriptor;
             return false;
         }
 
@@ -287,17 +303,25 @@ bool PayloadGatekeeperTask::downloadPayloadFile(const uint8_t command_code, req_
         request_struct.offset = offset;
         requestGetFileRegionCRCStruct.offset = offset;
         requestGetFileRegionCRCStruct.size = chunk_size;
+        request_struct.size = chunk_size;
         LOG_DEBUG << "Chunk #" << (offset / maxChunkSize) + 1 << " | Offset: " << offset << " | Chunk Size: " << chunk_size;
         if (this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
             LOG_DEBUG << "Data acquired from offset: " << offset;
-            memcpy(response_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
+            // memcpy(response_struct.data, const_cast<const uint8_t*>(&firmware_data[offset]), static_cast<size_t>(chunk_size));
+
+            LOG_DEBUG << "----DATA FRAME START----" ;
+            for(int j = 0; j < chunk_size; j++) {
+                LOG_DEBUG<<response_struct.data[j];
+            }
+            LOG_DEBUG << "----DATA FRAME END----" ;
+
+            const auto localRegionChecksum = crc32(const_cast<uint8_t*>(&response_struct.data[0]), chunk_size);
 
             //request region CRC and compare with local CRC
             if (not this->sendrecvPayload(requestGetFileRegionCRCStruct.req_code, static_cast<void*>(&requestGetFileRegionCRCStruct),
                                   static_cast<void*>(&responseGetFileRegionCRCStruct))) {
                 LOG_ERROR << "CRC failed with status: " << responseGetFileRegionCRCStruct.status;
                                   }
-            const auto localRegionChecksum = crc32(const_cast<uint8_t*>(&response_struct.data[0]), chunk_size);
             LOG_INFO << "Local crc: " << localRegionChecksum;
             LOG_INFO << "Response crc: " << responseGetFileRegionCRCStruct.checksum;
             result = (responseGetFileRegionCRCStruct.checksum == localRegionChecksum);
@@ -315,10 +339,11 @@ int8_t PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture
 
     bool ImageCaptureResult = false;
     bool ImageDownloadCommandResult = false;
+    bool imageDownloadComplete = false;
 
-    constexpr int maxAttempts = 5;
+    constexpr int maxAttempts = 20;
 
-    int8_t stored_image_fd = 122;
+    int8_t stored_image_fd = 127;
 
     req_get_mode request_get_mode;
     res_get_mode response_get_mode;
@@ -328,9 +353,11 @@ int8_t PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture
 
     req_prepare_images_for_download request_prepare_images_for_download;
     res_prepare_images_for_download response_prepare_images_for_download;
+    request_prepare_images_for_download.image_number=0;
 
     req_prepare_images_for_download_status request_prepare_images_for_download_status;
     res_prepare_images_for_download_status response_prepare_images_for_download_status;
+    request_prepare_images_for_download_status.image_number = 0;
 
     // check if in correct mode
     if (this->sendrecvPayload(request_get_mode.req_code, static_cast<void*>(&request_get_mode), static_cast<void*>(&response_get_mode))) {
@@ -343,17 +370,20 @@ int8_t PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture
         LOG_ERROR << "error at: response_get_mode ";
     }
 
+    response_struct.status = 0;
     // issue command to capture image
     if (not this->sendrecvPayload(request_struct.req_code, static_cast<void*>(&request_struct), static_cast<void*>(&response_struct))) {
-        LOG_ERROR << "Capture Image command failed";
+        LOG_ERROR << "Capture Image command failed with error: " << response_struct.status;
     }
 
     // poll image capturing status
-    for (int i = 0; i < maxAttempts; i++) {
+   for (int i  =  0; i < maxAttempts; i++) {
         if (not this->sendrecvPayload(requestGetImageStatus.req_code,
                                       static_cast<void*>(&requestGetImageStatus), static_cast<void*>(&responseGetImageStatus))) {
             LOG_ERROR << "responseGetImageStatus command failed";
         }
+        LOG_DEBUG << "Image capture progress: " << responseGetImageStatus.progress ;
+        LOG_DEBUG << "Image capture status: " << responseGetImageStatus.status ;
         if (responseGetImageStatus.progress == response_struct.count) {
             LOG_DEBUG << "Image has been captured, prepare for download...";
             ImageCaptureResult = true;
@@ -373,16 +403,17 @@ int8_t PayloadGatekeeperTask::takePayloadImage(uint8_t command_code, req_capture
     }
     if (ImageDownloadCommandResult) {
         // poll image download status
-        for (int i = 0; i < maxAttempts; i++) {
+        while (not imageDownloadComplete){
             if (not this->sendrecvPayload(request_prepare_images_for_download_status.req_code,
                                           static_cast<void*>(&request_prepare_images_for_download_status), static_cast<void*>(&response_prepare_images_for_download_status))) {
                 LOG_ERROR << "responseGetImageStatus command failed";
             }
             LOG_INFO<< "Download at: "<< response_prepare_images_for_download_status.status <<"%";
-            if (response_prepare_images_for_download_status.status == 100) {
-                LOG_DEBUG << "Image has downloaded!";
+            if (response_prepare_images_for_download_status.status == 100||response_prepare_images_for_download_status.status == 99) {
+                LOG_DEBUG << "Image has downloaded at File: "<< response_prepare_images_for_download_status.file_descriptor;
                 stored_image_fd = response_prepare_images_for_download_status.file_descriptor;
-                break;
+                imageDownloadComplete= true;
+                // break;
             }
             vTaskDelay(pdMS_TO_TICKS(100));
         }

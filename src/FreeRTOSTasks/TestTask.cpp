@@ -6,6 +6,9 @@
 #include <binary_sw1.hpp>
 
 void TestTask::changePayloadMode(ATLAS_mode mode) {
+    req_set_mode request_set_mode;
+    res_set_mode response_set_mode;
+
     request_set_mode.mode = static_cast<ATLAS_mode_t>(mode);
     if (PayloadGatekeeperTask->sendrecvPayload(request_set_mode.req_code, static_cast<void*>(&request_set_mode), static_cast<void*>(&response_set_mode))) {
         LOG_INFO<<"ATLAS mode set to: "<<response_set_mode.mode;
@@ -16,6 +19,18 @@ void TestTask::changePayloadMode(ATLAS_mode mode) {
 
 
 void TestTask::getPayloadTelemetries() {
+    req_set_time request_time;
+    res_set_time response_time;
+
+    req_get_ldd_telemetries request_gpo;
+    res_get_ldd_telemetries response_gpo;
+
+    req_get_mode request_get_mode;
+    res_get_mode response_get_mode;
+
+    req_get_main_telemetries request_get_main_telemetry;
+    res_get_main_telemetries response_get_main_telemetry;
+
     request_time.timestamp = 1738070674;
 
     if (PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))) {
@@ -72,6 +87,19 @@ void TestTask::getPayloadTelemetries() {
 }
 void TestTask::testPayload() {
 
+    req_file_write request_file_write;
+    res_file_write response_file_write;
+
+    req_file_read request_file_read;
+    res_file_read response_file_read;
+
+    req_file_get_size request_file_get_size;
+    res_file_get_size response_file_get_size;
+
+    req_file_delete request_file_delete;
+    res_file_delete response_file_delete;
+
+
     request_file_write.file_descriptor = 0;
     request_file_write.offset = 0;
     request_file_write.size = 2030;
@@ -84,9 +112,8 @@ void TestTask::testPayload() {
 
     request_file_get_size.file_descriptor = 0;
 
-    request_set_mode.mode = 0;
 
-    getPayloadTelemetries();
+    // getPayloadTelemetries();
 
     if (PayloadGatekeeperTask->sendrecvPayload(request_file_delete.req_code, static_cast<void*>(&request_file_delete), static_cast<void*>(&response_file_delete))) {
         LOG_DEBUG << "Delete file: " << response_file_delete.file_descriptor;
@@ -119,9 +146,10 @@ void TestTask::testPayload() {
 
     vTaskDelay(pdMS_TO_TICKS(100));
 
-    for (int i = 0; i < 20; i++) {
-        LOG_DEBUG << response_file_read.data[i];
-    }
+    request_file_read.file_descriptor = 0;
+    request_file_read.offset=0;
+    request_file_read.size=0;
+    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read, response_file_read);
 }
 
 TestTask::TestTask() : Task("TestTask") {
@@ -129,37 +157,52 @@ TestTask::TestTask() : Task("TestTask") {
 }
 
 void TestTask::execute() {
+    req_capture_images request_capture_images;
+    res_capture_images response_capture_images;
+
+    req_file_read request_file_read;
+    res_file_read response_file_read;
+
     vTaskDelay(pdMS_TO_TICKS(this->delayMs));
+
+    // testPayload();
 
     request_capture_images.count=1;
 
 
-    request_capture_images.size = 0x01; // roi
+    request_capture_images.size = 0x00; // full frame
     request_capture_images.type = 0x00; // raw
 
-    // LOG_INFO<<"Set mode to PREHEAT";
-    // changePayloadMode(ATLAS_mode::PREHEAT);
-    // vTaskDelay(pdMS_TO_TICKS(180000));
-    // LOG_INFO<<"Set mode to TRANSIEVE";
-    // changePayloadMode(ATLAS_mode::TRANSIEVE);
-    //
-    // vTaskDelay(pdMS_TO_TICKS(3000));
-    // request_file_read.file_descriptor = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
-    // vTaskDelay(pdMS_TO_TICKS(1000));
-    //
-    // PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
+    request_capture_images.skip_count = 0x01;
 
-    testPayload();
-
-    request_file_read.file_descriptor = 0;
     request_file_read.offset=0;
     request_file_read.size=0;
-    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read, response_file_read);
+
+
+    LOG_INFO<<"Set mode to IDLE";
+    changePayloadMode(ATLAS_mode::IDLE);
+    vTaskDelay(pdMS_TO_TICKS(20000));
+    LOG_INFO<<"Set mode to PREHEAT";
+    changePayloadMode(ATLAS_mode::PREHEAT);
+    vTaskDelay(pdMS_TO_TICKS(180000));
+    LOG_INFO<<"Set mode to TRANSIEVE";
+    changePayloadMode(ATLAS_mode::TRANSIEVE);
+
+    vTaskDelay(pdMS_TO_TICKS(10000));
+    request_file_read.file_descriptor = 0x50;
+    const auto result = PayloadGatekeeperTask->takePayloadImage(request_capture_images.req_code, request_capture_images, response_capture_images);
+    LOG_INFO<<"takePayloadImage result: "<<result;
+    vTaskDelay(pdMS_TO_TICKS(60000));
+    LOG_INFO<<"Set mode to IDLE";
+    changePayloadMode(ATLAS_mode::IDLE);
+
+    PayloadGatekeeperTask->downloadPayloadFile(request_file_read.req_code, request_file_read,response_file_read);
+
+
 
     while (true) {
-        changePayloadMode(ATLAS_mode::TRANSIEVE);
 
-        getPayloadTelemetries();
+        // getPayloadTelemetries();
 
         vTaskDelay(pdMS_TO_TICKS(this->delayMs));
     }
