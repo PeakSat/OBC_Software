@@ -48,20 +48,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "peripheral/clk/plib_clk.h"
-#include "peripheral/pio/plib_pio.h"
-#include "peripheral/nvic/plib_nvic.h"
-#include "peripheral/mpu/plib_mpu.h"
-#include "peripheral/systick/plib_systick.h"
-#include "peripheral/xdmac/plib_xdmac.h"
-#include "peripheral/wdt/plib_wdt.h"
-#include "peripheral/pwm/plib_pwm0.h"
 #include "peripheral/efc/plib_efc.h"
+#include "peripheral/tc/plib_tc0.h"
 #include "peripheral/rtc/plib_rtc.h"
-#include "peripheral/rstc/plib_rstc.h"
+#include "driver/i2c/drv_i2c.h"
 #include "system/time/sys_time.h"
-#include "peripheral/afec/plib_afec0.h"
-#include "peripheral/smc/plib_smc.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/uart/plib_uart0.h"
 #include "peripheral/mcan/plib_mcan0.h"
@@ -74,6 +65,18 @@
 #include "system/cache/sys_cache.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
+#include "peripheral/clk/plib_clk.h"
+#include "peripheral/pio/plib_pio.h"
+#include "peripheral/nvic/plib_nvic.h"
+#include "peripheral/mpu/plib_mpu.h"
+#include "peripheral/xdmac/plib_xdmac.h"
+#include "peripheral/wdt/plib_wdt.h"
+#include "peripheral/pwm/plib_pwm0.h"
+#include "peripheral/rstc/plib_rstc.h"
+#include "peripheral/afec/plib_afec0.h"
+#include "peripheral/smc/plib_smc.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "app.h"
 
 
@@ -85,12 +88,6 @@ extern "C" {
 
 #endif
 // DOM-IGNORE-END
-
-/* Device Information */
-#define DEVICE_NAME			 "ATSAMV71Q21B"
-#define DEVICE_ARCH			 "CORTEX-M7"
-#define DEVICE_FAMILY		 "SAMV"
-#define DEVICE_SERIES		 "SAMV71"
 
 /* CPU clock frequency */
 #define CPU_CLOCK_FREQUENCY 300000000
@@ -205,6 +202,15 @@ Remarks:
 
 typedef struct
 {
+    /* I2C0 Driver Object */
+    SYS_MODULE_OBJ drvI2C0;
+
+    /* I2C1 Driver Object */
+    SYS_MODULE_OBJ drvI2C1;
+
+    /* I2C2 Driver Object */
+    SYS_MODULE_OBJ drvI2C2;
+
     SYS_MODULE_OBJ  sysTime;
 
 } SYSTEM_OBJECTS;

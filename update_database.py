@@ -80,6 +80,8 @@ hhp_lines = []
 # Add the header lines for the .hpp file
 hhp_lines.append("#pragma once")
 
+hhp_lines.append("#include <TypeDefinitions.hpp>")
+
 # Process each subsystem separately
 namespace_blocks = {acronym: [] for acronym in subsystem_config.keys()}
 valid_rows = []
@@ -173,7 +175,7 @@ padding = " " * (64 - len("LAST_PARAM_ID") )
 namespace_blocks["OBDH"].append(f"    constexpr ParameterId LAST_PARAM_ID{padding} = {lastParamID};")
 
 # Build the .hpp file
-hhp_lines.append(f"namespace PeaksatParameters {{")
+hhp_lines.append(f"namespace PeakSatParameters {{")
 for acronym, block_lines in namespace_blocks.items():
     if block_lines:
         hhp_lines.extend(

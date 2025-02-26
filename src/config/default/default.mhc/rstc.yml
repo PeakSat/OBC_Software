@@ -45,4 +45,4 @@ children:
       - type: Dynamic
         attributes: {id: rstc, value: '["RSTC_GENERAL_RESET  RSTC_SR_RSTTYP_GENERAL_RST","RSTC_BACKUP_RESET  RSTC_SR_RSTTYP_BACKUP_RST","RSTC_WATCHDOG_RESET  RSTC_SR_RSTTYP_WDT_RST","RSTC_SOFTWARE_RESET  RSTC_SR_RSTTYP_SOFT_RST","RSTC_USER_RESET  RSTC_SR_RSTTYP_USER_RST"]'}
 - type: ElementPosition
-  attributes: {x: '915', y: '241', id: rstc}
+  attributes: {x: '608', y: '125', id: rstc}

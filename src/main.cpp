@@ -7,12 +7,12 @@
 #include "general_definitions.hpp"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
-
+#include "HelperFunctions.hpp"
+#include "mutex_Handler.h"
 
 // ECSS Header Files
 #include "ErrorHandler.hpp"
 #include "Message.hpp"
-
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -24,14 +24,14 @@
 #include "TimeBasedSchedulingTask.hpp"
 #include "StatisticsReportingTask.hpp"
 #include "CANGatekeeperTask.hpp"
-#include "CANTestTask.hpp"
+#include "CANParserTask.hpp"
 #include "TCHandlingTask.hpp"
-#include "NANDTask.hpp"
-//#include "MRAMTask.hpp"
-#include "MemoryManagementTask.hpp"
-#include "PayloadTestTask.hpp"
+
+#include "HeartbeatTask.hpp"
+#include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
+
 // Task Header files end
 
 
@@ -53,8 +53,8 @@ extern "C" void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffe
 #if configGENERATE_RUN_TIME_STATS
 void configureDWTForRunTimeStats(void) {
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT access
-    DWT->CYCCNT = 0; // Reset the cycle counter
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Enable the cycle counter
+    DWT->CYCCNT = 0;                                // Reset the cycle counter
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable the cycle counter
 }
 
 uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
@@ -62,42 +62,42 @@ uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 
 
 extern "C" void main_cpp() {
-    ParameterService param;
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    payloadTestTask.emplace();
+    PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
-    canTestTask.emplace();
-    housekeepingTask.emplace();
+    canParserTask.emplace();
+    // housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
-    // ambientTemperatureTask.emplace();
-    nandTask.emplace();
-    memManTask.emplace();
+    ambientTemperatureTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
+    heartbeatTask.emplace();
 
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-//    payloadTestTask->createTask();
-//    canGatekeeperTask->createTask();
-//    canTestTask->createTask();
-//    housekeepingTask->createTask();
-//    onBoardMonitoringTask->createTask();
-//     tcHandlingTask->createTask();
+    PayloadGatekeeperTask->createTask();
+    canGatekeeperTask->createTask();
+    canParserTask->createTask();
+    // housekeepingTask->createTask();
+    onBoardMonitoringTask->createTask();
+    // tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-//  ambientTemperatureTask->createTask();
-  memManTask->createTask();
-//    nandTask->createTask();
+    ambientTemperatureTask->createTask();
     timeKeepingTask->createTask();
-//    TestTask->createTask();
+    TestTask->createTask();
     watchdogTask->createTask();
+    heartbeatTask->createTask();
 
     __enable_irq();
+
+    initializeSemaphores();
+    HelperFunctions::resetChecks(); // get the last reason of reset
 
     vTaskStartScheduler();
 

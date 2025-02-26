@@ -213,7 +213,6 @@ void AFEC0_InterruptHandler(void)
 {
     uint32_t var_status;
     var_status = AFEC0_REGS->AFEC_ISR;
-    uint16_t clearISR = AFEC0_REGS->AFEC_CDR;
     if (AFEC0_CallbackObj.callback_fn != NULL)
     {
         AFEC0_CallbackObj.callback_fn(var_status, AFEC0_CallbackObj.context);

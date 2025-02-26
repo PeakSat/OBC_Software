@@ -2,9 +2,13 @@
 #include <Logger.hpp>
 #include "OBC_Definitions.hpp"
 #include "Service.hpp"
+
+#include <ApplicationLayer.hpp>
+
 #include "MessageParser.hpp"
 
 void Service::storeMessage(Message& message) {
+
     // appends the remaining bits to complete a byte
     message.finalize();
 
@@ -15,23 +19,23 @@ void Service::storeMessage(Message& message) {
     etl::to_string(message.serviceType, serviceType, formatSpec, false);
     etl::to_string(message.messageType, messageType, formatSpec, false);
 
-    LOG_DEBUG << "New TM Message generated";
+    auto output = String<ECSSMaxMessageSize>("New ");
+    (message.packetType == Message::TM) ? output.append("TM[") : output.append("TC[");
+    output.append(serviceType);
+    output.append(",");
+    output.append(messageType);
+    output.append("] message! ");
 
-    //    auto output = String<ECSSMaxMessageSize>("New ");
-    //    (message.packetType == Message::TM) ? output.append("TM[") : output.append("TC[");
-    //    output.append(serviceType);
-    //    output.append(",");
-    //    output.append(messageType);
-    //    output.append("] message! ");
+    auto data = String<CCSDSMaxMessageSize>("");
+    String<CCSDSMaxMessageSize> createdPacket = MessageParser::compose(message);
+    for (unsigned int i = 0; i < createdPacket.size(); i++) {
+        etl::to_string(createdPacket[i], data, formatSpec, true);
+        data.append(" ");
+    }
+    CAN::Application::createCCSDSPacketMessage(CAN::NodeIDs::COMMS, false, message, false);
+    LOG_DEBUG<<"CAN MESSAGE SIZE: "<<message.dataSize;
 
-    //    auto data = String<CCSDSMaxMessageSize>("");
-    //    String<CCSDSMaxMessageSize> createdPacket = MessageParser::compose(message);
-    //    for (unsigned int i = 0; i < createdPacket.size(); i++) {
-    //        etl::to_string(createdPacket[i], data, formatSpec, true);
-    //        data.append(" ");
-    //    }
-    //
-    //    output.append(data.c_str());
-    //
-    //    LOG_DEBUG << output.c_str();
+    output.append(data.c_str());
+
+    LOG_DEBUG << output.c_str();
 }

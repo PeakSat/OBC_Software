@@ -11,7 +11,7 @@ UARTGatekeeperTask::UARTGatekeeperTask() : Task("UARTGatekeeperTask") {
             BaseType_t xHigherPriorityTaskWoken = pdFALSE;
             configASSERT(uartGatekeeperTaskHandle != nullptr);
             vTaskNotifyGiveFromISR(uartGatekeeperTaskHandle, &xHigherPriorityTaskWoken);
-            portYIELD_FROM_ISR(xHigherPriorityTaskWoken)
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         },
         reinterpret_cast<uintptr_t>(nullptr));
 }

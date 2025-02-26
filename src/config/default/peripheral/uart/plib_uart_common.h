@@ -60,29 +60,31 @@
 // *****************************************************************************
 // *****************************************************************************
 
+typedef enum
+{
+    UART_ERROR_NONE = 0,
+    UART_ERROR_OVERRUN = UART_SR_OVRE_Msk,
+    UART_ERROR_PARITY = UART_SR_PARE_Msk,
+    UART_ERROR_FRAMING = UART_SR_FRAME_Msk
 
-#define     UART_ERROR_NONE         (0U)
-#define     UART_ERROR_OVERRUN      (UART_SR_OVRE_Msk)
-#define     UART_ERROR_PARITY       (UART_SR_PARE_Msk)
-#define     UART_ERROR_FRAMING      (UART_SR_FRAME_Msk)
+} UART_ERROR;
 
-typedef uint32_t UART_ERROR;
+typedef enum
+{
+    UART_PARITY_NONE = UART_MR_PAR_NO,
 
+    UART_PARITY_ODD = UART_MR_PAR_ODD,
 
-#define    UART_PARITY_NONE      (UART_MR_PAR_NO)
+    UART_PARITY_EVEN = UART_MR_PAR_EVEN,
 
-#define    UART_PARITY_ODD       (UART_MR_PAR_ODD)
+    UART_PARITY_MARK = UART_MR_PAR_MARK,
 
-#define    UART_PARITY_EVEN      (UART_MR_PAR_EVEN)
+    UART_PARITY_SPACE = UART_MR_PAR_SPACE,
 
-#define    UART_PARITY_MARK      (UART_MR_PAR_MARK)
+    /* Force the compiler to reserve 32-bit space for each enum */
+    UART_PARITY_INVALID = 0xFFFFFFFF
 
-#define    UART_PARITY_SPACE     (UART_MR_PAR_SPACE)
-
-/* Force the compiler to reserve 32-bit space for each enum */
-#define    UART_PARITY_INVALID   (0xFFFFFFFFU)
-
-typedef uint32_t UART_PARITY;
+} UART_PARITY;
 
 typedef struct
 {
@@ -149,9 +151,9 @@ typedef struct
 
     uintptr_t                               			wrContext;
 
-    uint32_t                       			            wrInIndex;
+    volatile uint32_t                       			wrInIndex;
 
-    uint32_t                       			            wrOutIndex;
+    volatile uint32_t                       			wrOutIndex;
 
     bool                                    			isWrNotificationEnabled;
 
@@ -163,9 +165,9 @@ typedef struct
 
     uintptr_t                               			rdContext;
 
-    uint32_t                       			            rdInIndex;
+    volatile uint32_t                       			rdInIndex;
 
-    uint32_t                       			            rdOutIndex;
+    volatile uint32_t                       			rdOutIndex;
 
     bool                                    			isRdNotificationEnabled;
 

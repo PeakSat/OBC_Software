@@ -1,5 +1,6 @@
 #pragma once
-namespace PeaksatParameters {
+#include <TypeDefinitions.hpp>
+namespace PeakSatParameters {
     constexpr ParameterId OBDH_DEBUG_COUNTER_ID                                            = 20;
     constexpr ParameterId OBDH_PCB_TEMPERATURE_1_ID                                        = 40;
     constexpr ParameterId OBDH_PCB_TEMPERATURE_2_ID                                        = 56;
@@ -22,8 +23,6 @@ namespace PeaksatParameters {
     };
     constexpr ParameterId OBDH_RECONFIGURATION_TIMER_ID                                    = 260;
     constexpr ParameterId OBDH_ON_BOARD_TIME_ID                                            = 294;
-    constexpr ParameterId OBDH_CAN_BUS_LOAD_1_ID                                           = 392;
-    constexpr ParameterId OBDH_CAN_BUS_LOAD_2_ID                                           = 408;
     constexpr ParameterId OBDH_CAN_BUS_ACTIVE_ID                                           = 416;
     enum CAN_BUS_ACTIVE_enum : uint8_t {
         Main=0,
@@ -34,30 +33,30 @@ Redundant = 1
         OBC = 0,
         ADCS = 1
     };
-    constexpr ParameterId OBDH_MCURestartSafeModeThreshold_ID                              = 448;
-    constexpr ParameterId OBDH_NANDFLASHLCLThreshold_ID                                    = 472;
-    constexpr ParameterId OBDH_MRAMLCLThreshold_ID                                         = 488;
-    constexpr ParameterId OBDH_NANDFLASHON_ID                                              = 496;
-    constexpr ParameterId OBDH_MRAMON_ID                                                   = 512;
-    constexpr ParameterId OBDH_FlashInt_ID                                                 = 532;
-    constexpr ParameterId OBDH_SRAMInt_ID                                                  = 548;
-    constexpr ParameterId OBDH_AvailableMRAM_ID                                            = 564;
-    constexpr ParameterId OBDH_AvailableNAND_ID                                            = 580;
-    constexpr ParameterId OBDH_MemoryPartition_ID                                          = 592;
-    enum MemoryPartition_enum : uint8_t {
+    constexpr ParameterId OBDH_MCU_RESTART_SAFE_MODE_THRESHOLD_ID                          = 448;
+    constexpr ParameterId OBDH_NAND_FLASH_LCL_THRESHOLD_ID                                 = 472;
+    constexpr ParameterId OBDH_MRAM_LCL_THRESHOLD_ID                                       = 488;
+    constexpr ParameterId OBDH_NAND_FLASH_ON_ID                                            = 496;
+    constexpr ParameterId OBDH_MRAM_ON_ID                                                  = 512;
+    constexpr ParameterId OBDH_FLASH_INT_ID                                                = 532;
+    constexpr ParameterId OBDH_SRAM_INT_ID                                                 = 548;
+    constexpr ParameterId OBDH_AVAILABLE_MRAM_ID                                           = 564;
+    constexpr ParameterId OBDH_AVAILABLE_NAND_ID                                           = 580;
+    constexpr ParameterId OBDH_MEMORY_PARTITION_ID                                         = 592;
+    enum MEMORY_PARTITION_enum : uint8_t {
         First = 0,
         Second = 1
     };
-    constexpr ParameterId OBDH_NANDFLASHScrubbingFrequency_ID                              = 616;
-    constexpr ParameterId OBDH_ΜRAMScrubbingFrequency_ID                                   = 632;
-    constexpr ParameterId OBDH_ProgramFlashScrubbingFrequency_ID                           = 648;
+    constexpr ParameterId OBDH_NAND_FLASH_SCRUBBING_FREEQUENCY_ID                          = 616;
+    constexpr ParameterId OBDH_ΜRAM_SCRUBBING_FREEQIENCY_ID                                = 632;
+    constexpr ParameterId OBDH_PROGRAM_FLASH_SCRUBBING_FREEQUENCY_ID                       = 648;
     constexpr ParameterId OBDH_COMMIT_HASH_ID                                              = 706;
     constexpr ParameterId OBDH_CAN_ACK_TIMEOUT_ID                                          = 724;
-    constexpr ParameterId OBDH_CAN_FrameRetransimtCount_ID                                 = 740;
-    constexpr ParameterId OBDH_CAN_TransmitFailureCount_ID                                 = 756;
-    constexpr ParameterId OBDH_UseRTT_ID                                                   = 768;
-    constexpr ParameterId OBDH_UseUART_ID                                                  = 784;
-    constexpr ParameterId OBDH_UseCAN_ID                                                   = 800;
+    constexpr ParameterId OBDH_CAN_FRAME_RETRANSMIT_COUNT_ID                               = 740;
+    constexpr ParameterId OBDH_CAN_TRANSMIT_FAILURE_COUNT_ID                               = 756;
+    constexpr ParameterId OBDH_USE_RTT_ID                                                  = 768;
+    constexpr ParameterId OBDH_USE_UART_ID                                                 = 784;
+    constexpr ParameterId OBDH_USE_CAN_ID                                                  = 800;
     constexpr ParameterId OBDH_HEARTBEAT_PERIOD_ID                                         = 820;
     constexpr ParameterId OBDH_LAST_RESET_CAUSE_ID                                         = 836;
     constexpr ParameterId FIRST_PARAM_ID                                                   = 20;

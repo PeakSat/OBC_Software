@@ -1,6 +1,9 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "PayloadGatekeeperTask.hpp"
+#include "ServicePool.hpp"
+#include <MemoryManager.hpp>
 
 /**
  * FreeRTOS task implementing the ST[03] Housekeeping Service.
@@ -14,7 +17,7 @@ public:
       */
     void execute();
 
-    OnBoardMonitoringTask() : Task("OnBoardMonitoring") {}
+    OnBoardMonitoringTask() : Task("OnBoardMonitoring") { }
 
     /**
      * Create freeRTOS Task
@@ -27,4 +30,3 @@ public:
 };
 
 inline std::optional<OnBoardMonitoringTask> onBoardMonitoringTask;
-

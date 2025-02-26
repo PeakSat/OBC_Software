@@ -1,18 +1,16 @@
 #include "FreeRTOSTasks/HousekeepingTask.hpp"
 
 void HousekeepingTask::execute() {
-
-    // LOG_DEBUG << "Runtime init: " << this->TaskName;
-    auto& housekeeping = Services.housekeeping;
-    uint32_t nextCollection = 0;
-    uint32_t timeBeforeDelay = 0;
+    auto &housekeeping = Services.housekeeping;
+    Time::DefaultCUC nextCollection(0);
+    Time::DefaultCUC timeBeforeDelay(0);
     TickType_t xLastWakeTime = xTaskGetTickCount();
+    Time::DefaultCUC TaskGetTickCountCUC(pdTICKS_TO_MS(xTaskGetTickCount()));
 
     while (true) {
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-//        nextCollection = housekeeping.reportPendingStructures(xTaskGetTickCount(), timeBeforeDelay, nextCollection);
-        timeBeforeDelay = xTaskGetTickCount();
-        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
-        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(nextCollection));
+        nextCollection = housekeeping.reportPendingStructures(TaskGetTickCountCUC, timeBeforeDelay, nextCollection);
+        timeBeforeDelay = TaskGetTickCountCUC;
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(nextCollection.formatAsBytes()));
     }
 }
+

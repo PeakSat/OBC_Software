@@ -4,10 +4,20 @@
 #include "CAN/TPProtocol.hpp"
 #include "CANGatekeeperTask.hpp"
 
+#include <ServicePool.hpp>
+#include <TimeGetter.hpp>
+
 namespace CAN::Application {
-    Driver::ActiveBus switchBus(Driver::ActiveBus newBus) {
-        PeakSatParameters::obcCANBUSActive.setValue(newBus);
-        return PeakSatParameters::obcCANBUSActive.getValue();
+    void switchBus() {
+        uint8_t readActiveCANbus = 2;
+        MemoryManager::getParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
+        if (readActiveCANbus == PeakSatParameters::Main) {
+            readActiveCANbus = PeakSatParameters::Redundant;
+            MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
+        } else {
+            readActiveCANbus = PeakSatParameters::Main;
+            MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
+        }
     }
 
     void sendPingMessage(NodeIDs destinationAddress, bool isMulticast) {
@@ -19,7 +29,7 @@ namespace CAN::Application {
     }
 
     void sendPongMessage() {
-        TPMessage message = {{NodeID, OBC, false}};
+        TPMessage message = {{NodeID, COMMS, false}};
 
         message.appendUint8(Pong);
 
@@ -27,24 +37,11 @@ namespace CAN::Application {
     }
 
     void sendHeartbeatMessage() {
-        canGatekeeperTask->send({MessageIDs::Heartbeat + CAN::NodeID}, false);
-    }
+        TPMessage message = {{NodeID, COMMS, false}};
 
-    void sendBusSwitchoverMessage() {
-        Driver::ActiveBus newBus = Driver::Redundant;
-        if (PeakSatParameters::obcCANBUSActive.getValue() == Driver::Redundant) {
-            newBus = Driver::Main;
-        }
+        message.appendUint8(Heartbeat);
 
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
-
-        canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
-    }
-
-    void sendBusSwitchoverMessage(Driver::ActiveBus newBus) {
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {switchBus(newBus)};
-
-        canGatekeeperTask->send({MessageIDs::BusSwitchover + CAN::NodeID, data}, false);
+        CAN::TPProtocol::createCANTPMessage(message, true);
     }
 
     void sendUTCTimeMessageWithElapsedTicks() {
@@ -55,12 +52,12 @@ namespace CAN::Application {
         uint32_t ticksOfDay = static_cast<uint32_t>(msOfDay.count() / 100);
 
         UTCTimestamp utc = now.toUTCtimestamp();
-        etl::array<uint8_t, CAN::Frame::MaxDataLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
-                                                               static_cast<uint8_t>(ticksOfDay >> 8),
-                                                               static_cast<uint8_t>(ticksOfDay >> 16),
-                                                               static_cast<uint8_t>(ticksOfDay >> 24),
-                                                               static_cast<uint8_t>(utc.day),
-                                                               static_cast<uint8_t>(utc.day >> 8)};
+        etl::array<uint8_t, CAN::MaxPayloadLength> data = {0, 0, static_cast<uint8_t>(ticksOfDay),
+                                                           static_cast<uint8_t>(ticksOfDay >> 8),
+                                                           static_cast<uint8_t>(ticksOfDay >> 16),
+                                                           static_cast<uint8_t>(ticksOfDay >> 24),
+                                                           static_cast<uint8_t>(utc.day),
+                                                           static_cast<uint8_t>(utc.day >> 8)};
 
         canGatekeeperTask->send({MessageIDs::UTCTime + CAN::NodeID, data}, false);
     }
@@ -72,9 +69,11 @@ namespace CAN::Application {
         message.appendUint8(MessageIDs::SendParameters);
         message.appendUint16(parameterIDs.size());
         for (auto parameterID: parameterIDs) {
-            if (Services.parameterManagement.getParameter(parameterID)) {
+            if (Services.parameterManagement.parameterExists(parameterID)) {
                 message.append(parameterID);
-                Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
+                Services.parameterManagement.appendParameterToMessage(message, parameterID);
+                LOG_DEBUG << "param: " << MemoryManager::getParameterAsUINT64(parameterID);
+                // LOG_DEBUG<< AcubeSATParameters::obcPCBTemperature1;
             } else if (parameterID == 0) {
                 continue;
             } else {
@@ -170,22 +169,22 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
+    bool createLogMessage(NodeIDs destinationAddress, bool isMulticast, const String<ECSSMaxMessageSize>& log,
                           bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         message.appendUint8(MessageIDs::LogMessage);
         message.appendString(log);
 
-        CAN::TPProtocol::createCANTPMessage(message, isISR);
+        return CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void parseMessage(const CAN::Frame& message) {
+    void parseMessage(const CAN::Packet& message) {
         uint32_t id = filterMessageID(message.id);
         if (id == Heartbeat) {
             //            registerHeartbeat();
         } else if (id == BusSwitchover) {
-            switchBus(static_cast<Driver::ActiveBus>(message.data[0]));
+            switchBus();
         } else if (id == UTCTime) {
             //            registerUTCTime();
         }
@@ -206,16 +205,14 @@ namespace CAN::Application {
                     etl::to_string(parameterID, logString, true);
                     logString.append(" was ");
 
-                    auto parameter = Services.parameterManagement.getParameter(parameterID);
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
-
-                    parameter->get().setValueFromMessage(message);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                     logString.append(" and is now ");
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
 
                     LOG_DEBUG << logString.c_str();
                 } else {
-                    Services.parameterManagement.getParameter(parameterID)->get().setValueFromMessage(message);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                 }
             }
         }
@@ -232,8 +229,7 @@ namespace CAN::Application {
         for (uint16_t idx = 0; idx < parameterCount; idx++) {
             parameterIDs[idx] = message.readUint16();
         }
-
-        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, true);
+        createSendParametersMessage(message.idInfo.sourceAddress, message.idInfo.isMulticast, parameterIDs, false);
     }
 
     void parseTMMessage(TPMessage& message) {
@@ -242,7 +238,7 @@ namespace CAN::Application {
             return;
         }
 
-        String<ECSSMaxMessageSize> logString = message.data.data() + 1;
+        String<ECSSMaxMessageSize> logString = message.data.begin() + 1;
 
         LOG_DEBUG << logString.c_str();
     }
@@ -253,7 +249,7 @@ namespace CAN::Application {
             return;
         }
 
-        Message teleCommand = MessageParser::parseECSSTC(message.data.data() + 1);
+        Message teleCommand = MessageParser::parseECSSTC(message.data.begin() + 1);
 
         MessageParser::execute(teleCommand);
     }

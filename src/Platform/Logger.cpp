@@ -54,13 +54,8 @@ void Logger::log(Logger::LogLevel level, etl::istring& message) {
     output.append(message.c_str());
     output.append("\n");
 
-    if (CommonParameters::useRTT.getValue()) {
-        SEGGER_RTT_printf(0, output.c_str());
-    }
-    if (CommonParameters::useUART.getValue()) {
-        if (uartGatekeeperTask) {
-            uartGatekeeperTask->addToQueue(output);
-        }
+    if (uartGatekeeperTask) {
+        uartGatekeeperTask->addToQueue(output);
     }
 }
 

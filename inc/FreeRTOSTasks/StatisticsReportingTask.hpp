@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "ServicePool.hpp"
 
 class StatisticsReportingTask : public Task {
 public:

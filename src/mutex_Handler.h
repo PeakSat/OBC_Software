@@ -3,7 +3,7 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-enum smphr_groups{
+enum smphr_groups {
     GROUP_A,
     GROUP_B,
     GROUP_C
@@ -14,3 +14,16 @@ void initializeSemaphores();
 bool takeSemaphoreGroup(smphr_groups group);
 
 void releaseSemaphoreGroup(smphr_groups group);
+
+bool takeSemaphoreEPS_ISR();
+
+void releaseSemaphoreEPS_ISR();
+
+bool takeMutexSMC();
+void releaseMutexSMC();
+
+bool takeMutexMRAM();
+void releaseMutexMRAM();
+
+bool takeMutexNAND();
+void releaseMutexNAND();
