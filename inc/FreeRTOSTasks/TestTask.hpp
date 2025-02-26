@@ -5,6 +5,7 @@
 #include "PayloadGatekeeperTask.hpp"
 #include <etl/vector.h>
 #include "TaskConfigs.hpp"
+#include "MemoryManager.hpp"
 
 class TestTask : public Task {
 private:

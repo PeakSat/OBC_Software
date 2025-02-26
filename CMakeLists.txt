@@ -86,7 +86,7 @@ include_directories(
         lib/Peripherals/NANDFlash/inc
         lib/Peripherals/NANDFlash/MT29F_Nand_Driver_Micron
         lib/Peripherals/NANDFlash/src
-        lib/Peripherals/PeakSat_HAL/Memory_HAL
+        lib/Peripherals/PeakSat_HAL/Memory_HAL/inc
         lib/Peripherals/COBS
         lib/Peripherals/ADM
         lib/Peripherals/RS422/inc

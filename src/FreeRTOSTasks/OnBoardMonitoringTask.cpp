@@ -44,11 +44,8 @@ void OnBoardMonitoringTask::execute() {
         LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
         get = eps.getPIUHousekeepingDataRaw();
         updatePayloadParameters();
-        vTaskDelay(10);
         ADM::getADMParameters();
         LOG_INFO<<"ADM Status: "<< MemoryManager::getParameterAsUINT64(PeakSatParameters::COMMS_ANTENNA_DEPLOYMENT_STATUS_ID);
-        vTaskDelay(10);
-
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

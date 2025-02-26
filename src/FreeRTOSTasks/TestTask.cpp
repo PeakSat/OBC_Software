@@ -29,32 +29,33 @@ TestTask::TestTask() : Task("TestTask") {
     // LOG_INFO << "Initialised instance of TestTask";
 }
 
-req_set_time request_time;
-res_set_time response_time;
-
-req_get_ldd_telemetries request_gpo;
-res_get_ldd_telemetries response_gpo;
+// req_set_time request_time;
+// res_set_time response_time;
+//
+// req_get_ldd_telemetries request_gpo;
+// res_get_ldd_telemetries response_gpo;
 
 void TestTask::execute() {
-    vTaskDelay(pdMS_TO_TICKS(this->delayMs));
-    ParameterId param = PeakSatParameters::EPS_UNIX_SECOND_ID;
-    uint8_t temp = 0;
-    MemoryManager::getParameter(param, static_cast<void*>(&temp));
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
-    request_time.timestamp = 1738070674;
-
-    if(PayloadGatekeeperTask->sendrecvPayload(request_time.req_code, static_cast<void*>(&request_time), static_cast<void*>(&response_time))){
-        LOG_DEBUG<<"Payload Responded with time: "<<response_time.timestamp<<" Status: "<<response_time.status;
-    }
+    // ParameterId param = PeakSatParameters::EPS_UNIX_SECOND_ID;
+    // uint8_t temp = 0;
+    // MemoryManager::getParameter(param, static_cast<void*>(&temp));
+    //
+    // request_time.timestamp = 1738070674;
+    //
+    // if(PayloadGatekeeperTask->sendrecvPayload(request_time.req_code, static_cast<void*>(&request_time), static_cast<void*>(&response_time))){
+    //     LOG_DEBUG<<"Payload Responded with time: "<<response_time.timestamp<<" Status: "<<response_time.status;
+    // }
 
     while (true) {
 
-        if(PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))){
-            LOG_DEBUG<<"LDD TM Amp out pow  :"<<response_gpo.amplifier_output_power;
-            LOG_DEBUG<<"LDD TM ld temp      :"<<response_gpo.ld_temperature;
-            LOG_DEBUG<<"LDD TM Time (s)     :"<<response_gpo.time;
-
-        }
+        // if(PayloadGatekeeperTask->sendrecvPayload(request_gpo.req_code, static_cast<void*>(&request_gpo), static_cast<void*>(&response_gpo))){
+        //     LOG_DEBUG<<"LDD TM Amp out pow  :"<<response_gpo.amplifier_output_power;
+        //     LOG_DEBUG<<"LDD TM ld temp      :"<<response_gpo.ld_temperature;
+        //     LOG_DEBUG<<"LDD TM Time (s)     :"<<response_gpo.time;
+        //
+        // }
 
 
 
@@ -76,6 +77,6 @@ void TestTask::execute() {
 
         // LOG_DEBUG << logString.c_str();
         //monitorAllTasks();
-        vTaskDelay(pdMS_TO_TICKS(this->delayMs));
+        vTaskDelay(pdMS_TO_TICKS(3000));
     }
 }

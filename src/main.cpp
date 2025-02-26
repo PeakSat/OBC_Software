@@ -35,7 +35,7 @@
 // Task Header files end
 
 
-#define IDLE_TASK_SIZE 1000
+#define IDLE_TASK_SIZE 2000
 #if configSUPPORT_STATIC_ALLOCATION
 /* static memory allocation for the IDLE task */
 static StaticTask_t xIdleTaskTCBBuffer;
@@ -65,39 +65,40 @@ extern "C" void main_cpp() {
 
     uartGatekeeperTask.emplace();
     PayloadGatekeeperTask.emplace();
-    canGatekeeperTask.emplace();
-    canParserTask.emplace();
+    // canGatekeeperTask.emplace();
+    // canParserTask.emplace();
     // housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
-    mcuTemperatureTask.emplace();
-    ambientTemperatureTask.emplace();
-    timeKeepingTask.emplace();
+    // mcuTemperatureTask.emplace();
+    // ambientTemperatureTask.emplace();
+    // timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
-    heartbeatTask.emplace();
+    // heartbeatTask.emplace();
 
 
     __disable_irq();
     uartGatekeeperTask->createTask();
     PayloadGatekeeperTask->createTask();
-    canGatekeeperTask->createTask();
-    canParserTask->createTask();
+    // canGatekeeperTask->createTask();
+    // canParserTask->createTask();
     // housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
     // tcHandlingTask->createTask();
-    mcuTemperatureTask->createTask();
-    ambientTemperatureTask->createTask();
-    timeKeepingTask->createTask();
+    // mcuTemperatureTask->createTask();
+    // ambientTemperatureTask->createTask();
+    // timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
-    heartbeatTask->createTask();
+    // heartbeatTask->createTask();
 
     __enable_irq();
 
     initializeSemaphores();
     HelperFunctions::resetChecks();             // get the last reason of reset
     HelperFunctions::initialiseMPURegions();    // setup MPU regions for external memories
+    MemoryManager::initialiseMemories();        // initialise Memories (NAND, MRAM) & MountFS
 
     vTaskStartScheduler();
 
