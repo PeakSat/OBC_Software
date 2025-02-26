@@ -1,405 +1,998 @@
 #pragma once
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpsabi" // Suppress: parameter passing for argument of type 'Time::DefaultCUC' {aka 'TimeStamp<4, 0, 1, 10>'} changed in GCC 7.1
-#include <Driver.hpp>
-#include "Helpers/Parameter.hpp"
-namespace OBDHParameters {
-    enum ParameterID : uint16_t {
-        PCBTemperature1ID = 5010,
-        PCBTemperature2ID = 5020,
-        MCUTemperatureID = 5030,
-        MCUInputVoltageID = 5031,
-        MCUSystickID = 5032,
-        LastFailedEventID = 5033,
-        MCUBootCounterID = 5040,
-        OperationalModeID = 5041,
-        SpacecraftTimeRefID = 5100,
-        ReconfigurationTimerID = 5101,
-        OnBoardTimeID = 5120,
-        CANBUSLoad1ID = 5180,
-        CANBUSLoad2ID = 5190,
-        CANBUSActiveID = 5200,
-        MCUFDIRID = 5210,
-        MCURestartSafeModeThresholdID = 5220,
-        NANDFLASHLCLThresholdID = 5230,
-        MRAMLCLThresholdID = 5240,
-        NANDFLASHONID = 5250,
-        MRAMONID = 5260,
-        FlashIntID = 5261,
-        SRAMIntID = 5262,
-        AvailableMRAMID = 5263,
-        AvailableNANDID = 5264,
-        MemoryPartitionID = 5265,
-        NANDFLASHScrubbingFrequencyID = 5270,
-        ΜRAMScrubbingFrequencyID = 5280,
-        ProgramFlashScrubbingFrequencyID = 5290,
-        CommitHashID = 5330,
-        CAN_ACK_timeoutID = 5340,
-        CAN_FrameRetransimtCountID = 5350,
-        CAN_TransmitFailureCountID = 5360,
-        UseRTTID = 5370,
-        UseUARTID = 5380,
-        UseCANID = 5390
-    };
-    inline Parameter<float> PCBTemperature1(0);
-    inline Parameter<float> PCBTemperature2(0);
-    inline Parameter<float> MCUTemperature(0);
-    inline Parameter<float> MCUInputVoltage(0);
-    inline Parameter<uint32_t> MCUSystick(0);
-    inline Parameter<uint16_t> LastFailedEvent(0);
-    inline Parameter<uint16_t> MCUBootCounter(0);
-    enum OperationalMode_enum : uint8_t {
+#include <TypeDefinitions.hpp>
+
+namespace PeakSatParameters {
+    constexpr ParameterId OBDH_DEBUG_COUNTER_ID                                            = 20;
+    constexpr ParameterId OBDH_PCB_TEMPERATURE_1_ID                                        = 40;
+    constexpr ParameterId OBDH_PCB_TEMPERATURE_2_ID                                        = 56;
+    constexpr ParameterId OBDH_MCU_TEMPERATURE_ID                                          = 72;
+    constexpr ParameterId OBDH_MCU_INPUT_VOLTAGE_ID                                        = 88;
+    constexpr ParameterId OBDH_MCU_SYSTICK_ID                                              = 100;
+    constexpr ParameterId OBDH_LAST_FAILED_EVENT_ID                                        = 114;
+    constexpr ParameterId OBDH_MCU_BOOT_COUNTER_ID                                         = 130;
+    constexpr ParameterId OBDH_OPERATIONAL_MODE_ID                                         = 144;
+    enum OPERATIONAL_MODE_enum : uint8_t {
         CommissioningMode = 0,
         NominalMode = 1,
         ScienceMode = 2,
         SafeMode = 3
     };
-    inline Parameter<OperationalMode_enum> OperationalMode(NominalMode);
-    enum SpacecraftTimeRef_enum : uint8_t {
+    constexpr ParameterId OBDH_SPACECRAFT_TIME_REF_ID                                      = 240;
+    enum SPACECRAFT_TIME_REF_enum : uint8_t {
         Spacecraft = 0,
         GroundStation = 1
     };
-    inline Parameter<SpacecraftTimeRef_enum> SpacecraftTimeRef(Spacecraft);
-    inline Parameter<uint32_t> ReconfigurationTimer(0);
-    inline Parameter<Time::DefaultCUC> OnBoardTime(Time::DefaultCUC(0));
-    inline Parameter<float> CANBUSLoad1(0);
-    inline Parameter<float> CANBUSLoad2(0);
-    enum CANBUSActive_enum : uint8_t {
-        Main = 0,
-        Redundant
+    constexpr ParameterId OBDH_RECONFIGURATION_TIMER_ID                                    = 260;
+    constexpr ParameterId OBDH_ON_BOARD_TIME_ID                                            = 294;
+    constexpr ParameterId OBDH_CAN_BUS_LOAD_1_ID                                           = 392;
+    constexpr ParameterId OBDH_CAN_BUS_LOAD_2_ID                                           = 408;
+    constexpr ParameterId OBDH_CAN_BUS_ACTIVE_ID                                           = 416;
+    enum CAN_BUS_ACTIVE_enum : uint8_t {
+        Main=0,
+Redundant = 1
     };
-    inline Parameter<CANBUSActive_enum> CANBUSActive(Main);
-    enum MCUFDIR_enum : uint8_t {
+    constexpr ParameterId OBDH_MCU_FDIR_ID                                                 = 432;
+    enum MCU_FDIR_enum : uint8_t {
         OBC = 0,
         ADCS = 1
     };
-    inline Parameter<MCUFDIR_enum> MCUFDIR(OBC);
-    inline Parameter<uint8_t> MCURestartSafeModeThreshold(0);
-    inline Parameter<float> NANDFLASHLCLThreshold(0);
-    inline Parameter<float> MRAMLCLThreshold(0);
-    inline Parameter<bool> NANDFLASHON(true);
-    inline Parameter<bool> MRAMON(true);
-    inline Parameter<uint32_t> FlashInt(0);
-    inline Parameter<uint32_t> SRAMInt(0);
-    inline Parameter<uint32_t> AvailableMRAM(0);
-    inline Parameter<uint32_t> AvailableNAND(0);
+    constexpr ParameterId OBDH_MCURestartSafeModeThreshold_ID                              = 448;
+    constexpr ParameterId OBDH_NANDFLASHLCLThreshold_ID                                    = 472;
+    constexpr ParameterId OBDH_MRAMLCLThreshold_ID                                         = 488;
+    constexpr ParameterId OBDH_NANDFLASHON_ID                                              = 496;
+    constexpr ParameterId OBDH_MRAMON_ID                                                   = 512;
+    constexpr ParameterId OBDH_FlashInt_ID                                                 = 532;
+    constexpr ParameterId OBDH_SRAMInt_ID                                                  = 548;
+    constexpr ParameterId OBDH_AvailableMRAM_ID                                            = 564;
+    constexpr ParameterId OBDH_AvailableNAND_ID                                            = 580;
+    constexpr ParameterId OBDH_MemoryPartition_ID                                          = 592;
     enum MemoryPartition_enum : uint8_t {
         First = 0,
         Second = 1
     };
-    inline Parameter<MemoryPartition_enum> MemoryPartition(First);
-    inline Parameter<float> NANDFLASHScrubbingFrequency(0);
-    inline Parameter<float> ΜRAMScrubbingFrequency(0);
-    inline Parameter<float> ProgramFlashScrubbingFrequency(0);
-    inline Parameter<uint16_t> CommitHash(0);
-    inline Parameter<uint32_t> CAN_ACK_timeout(0);
-    inline Parameter<uint32_t> CAN_FrameRetransimtCount(0);
-    inline Parameter<uint32_t> CAN_TransmitFailureCount(0);
-    inline Parameter<bool> UseRTT(true);
-    inline Parameter<bool> UseUART(true);
-    inline Parameter<bool> UseCAN(false);
-} // namespace OBDHParameters
-namespace COMMSParameters {
-    enum ParameterID : uint16_t {
-        commsUHFBandPATemperatureID = 10010,
-        commsPCBTemperatureID = 10020,
-        commsGNSSTemperatureID = 10030,
-        Antenna_Deployment_StatusID = 10050,
-        commit_hashID = 10350
-    };
-    inline Parameter<float> commsUHFBandPATemperature(0);
-    inline Parameter<float> commsPCBTemperature(0);
-    inline Parameter<float> commsGNSSTemperature(0);
-    enum Antenna_Deployment_Status_enum : uint8_t {
+    constexpr ParameterId OBDH_NANDFLASHScrubbingFrequency_ID                              = 616;
+    constexpr ParameterId OBDH_ΜRAMScrubbingFrequency_ID                                   = 632;
+    constexpr ParameterId OBDH_ProgramFlashScrubbingFrequency_ID                           = 648;
+    constexpr ParameterId OBDH_COMMIT_HASH_ID                                              = 706;
+    constexpr ParameterId OBDH_CAN_ACK_TIMEOUT_ID                                          = 724;
+    constexpr ParameterId OBDH_CAN_FrameRetransimtCount_ID                                 = 740;
+    constexpr ParameterId OBDH_CAN_TransmitFailureCount_ID                                 = 756;
+    constexpr ParameterId OBDH_UseRTT_ID                                                   = 768;
+    constexpr ParameterId OBDH_UseUART_ID                                                  = 784;
+    constexpr ParameterId OBDH_UseCAN_ID                                                   = 800;
+    constexpr ParameterId OBDH_HEARTBEAT_PERIOD_ID                                         = 820;
+    constexpr ParameterId OBDH_LAST_RESET_CAUSE_ID                                         = 836;
+    constexpr ParameterId FIRST_PARAM_ID                                                   = 20;
+    constexpr ParameterId LAST_PARAM_ID                                                    = 61955;
+    constexpr ParameterId COMMS_UHF_POWER_AMP_TEMP_ID                                      = 13128;
+    constexpr ParameterId COMMS_PCB_TEMP_ID                                                = 13144;
+    constexpr ParameterId COMMS_GNSS_TEMP_ID                                               = 13160;
+    constexpr ParameterId COMMS_ANTENNA_DEPLOYMENT_STATUS_ID                               = 13184;
+    enum ANTENNA_DEPLOYMENT_STATUS_enum : uint8_t {
         Closed = 0,
         OneDoorOpen = 1,
         TwoDoorOpen = 2,
         ThreeDoorOpen = 3,
         FullyDeployed = 4
     };
-    inline Parameter<Antenna_Deployment_Status_enum> Antenna_Deployment_Status(Closed);
-    inline Parameter<uint16_t> commit_hash(0);
-} // namespace COMMSParameters
-namespace PAYParameters {
-    enum ParameterID : uint16_t {
-        xID = 15010,
-        yID = 15020,
-        zID = 15030,
-        uptimeID = 15040,
-        timeID = 15050,
-        psu_12vID = 15060,
-        psu_5vID = 15070,
-        psu_33vID = 15080,
-        mcu_die_temperatureID = 15090,
-        main_board_temperatureID = 15100,
-        seed_ld_output_powerID = 15110,
-        fsm_chamber_temperatureID = 15120,
-        fsm_chamber_pressureID = 15130,
-        fsmd_voltage_converter_temperatureID = 15140,
-        fsmd_drivers_temperatureID = 15150,
-        camera_pcb_temperatureID = 15160,
-        camera_sensor_temperatureID = 15170,
-        fso_aux_temperature_1ID = 15171,
-        fso_aux_temperature_2ID = 15172,
-        oad_temperatureID = 15180,
-        optical_amplifier_combiner_heater_temperatureID = 15181,
-        optical_amplifier_fiber_mirror_temperatureID = 15182,
-        optical_amplifier_circulator_heater_temperatureID = 15183,
-        ldd_temperatureID = 15190,
-        ld_temperatureID = 15200,
-        ldd_12v_currentID = 15210,
-        ldd_psu_12vID = 15211,
-        ldd_converter_input_currentID = 15212,
-        ldd_ld_vID = 15213,
-        ldd_ld_dac_set_vID = 15214,
-        fsm_driver_12v_currentID = 15220,
-        flashes_33v_currentID = 15230,
-        fpga_5v_currentID = 15240,
-        sdd_33v_currentID = 15250,
-        pump_ld_powerID = 15260,
-        mcu_33v_currentID = 15270,
-        fpga_die_temperatureID = 15280,
-        fpga_vdd1_voltageID = 15290,
-        fpga_vdd18_voltageID = 15300,
-        fpga_vdd25_voltageID = 15310,
-        seed_ld_incoming_powerID = 15320,
-        amplifier_output_powerID = 15321,
-        amplifier_output_reflected_powerID = 15322,
-        seed_diode_bias_currentID = 15323,
-        tec_currentID = 15330,
-        ldd_output_currentID = 15340,
-        sd_temperature_violationsID = 15341,
-        end_uptimeID = 15350,
-        responseID = 15360,
-        deviceID = 15390,
-        firmwareID = 15400,
-        firmware_is_confirmedID = 15410,
-        bitstreamID = 15420,
-        softcpu_1_firmwareID = 15430,
-        softcpu_2_firmwareID = 15440,
-        softcpu_3_firmwareID = 15450,
-        softcpu_4_firmwareID = 15460,
-        softcpu_5_firmwareID = 15470,
-        softcpu_6_firmwareID = 15480,
-        softcpu_7_firmwareID = 15490,
-        softcpu_8_firmwareID = 15500,
-        boot_countID = 15510,
-        transmission_countID = 15520,
-        hw_detID = 15530,
-        storage0ID = 15540,
-        storage1ID = 15550,
-        storage2ID = 15560,
-        storage3ID = 15570,
-        ldd_faultID = 15580,
-        fsm_faultID = 15590,
-        fpga_faultID = 15600,
-        v_cam_faultID = 15620,
-        sdd_faultID = 15630
-    };
-    inline Parameter<int32_t> x(0);
-    inline Parameter<int32_t> y(0);
-    inline Parameter<int32_t> z(0);
-    inline Parameter<int32_t> uptime(0);
-    inline Parameter<int32_t> time(0);
-    inline Parameter<int32_t> psu_12v(0);
-    inline Parameter<int32_t> psu_5v(0);
-    inline Parameter<int32_t> psu_33v(0);
-    inline Parameter<int32_t> mcu_die_temperature(0);
-    inline Parameter<int32_t> main_board_temperature(0);
-    inline Parameter<int32_t> seed_ld_output_power(0);
-    inline Parameter<int32_t> fsm_chamber_temperature(0);
-    inline Parameter<int32_t> fsm_chamber_pressure(0);
-    inline Parameter<int32_t> fsmd_voltage_converter_temperature(0);
-    inline Parameter<int32_t> fsmd_drivers_temperature(0);
-    inline Parameter<int32_t> camera_pcb_temperature(0);
-    inline Parameter<int32_t> camera_sensor_temperature(0);
-    inline Parameter<int32_t> fso_aux_temperature_1(0);
-    inline Parameter<int32_t> fso_aux_temperature_2(0);
-    inline Parameter<int32_t> oad_temperature(0);
-    inline Parameter<int32_t> optical_amplifier_combiner_heater_temperature(0);
-    inline Parameter<int32_t> optical_amplifier_fiber_mirror_temperature(0);
-    inline Parameter<int32_t> optical_amplifier_circulator_heater_temperature(0);
-    inline Parameter<int32_t> ldd_temperature(0);
-    inline Parameter<int32_t> ld_temperature(0);
-    inline Parameter<int32_t> ldd_12v_current(0);
-    inline Parameter<int32_t> ldd_psu_12v(0);
-    inline Parameter<int32_t> ldd_converter_input_current(0);
-    inline Parameter<int32_t> ldd_ld_v(0);
-    inline Parameter<int32_t> ldd_ld_dac_set_v(0);
-    inline Parameter<int32_t> fsm_driver_12v_current(0);
-    inline Parameter<int32_t> flashes_33v_current(0);
-    inline Parameter<int32_t> fpga_5v_current(0);
-    inline Parameter<int32_t> sdd_33v_current(0);
-    inline Parameter<int32_t> pump_ld_power(0);
-    inline Parameter<int32_t> mcu_33v_current(0);
-    inline Parameter<int32_t> fpga_die_temperature(0);
-    inline Parameter<int32_t> fpga_vdd1_voltage(0);
-    inline Parameter<int32_t> fpga_vdd18_voltage(0);
-    inline Parameter<int32_t> fpga_vdd25_voltage(0);
-    inline Parameter<int32_t> seed_ld_incoming_power(0);
-    inline Parameter<int32_t> amplifier_output_power(0);
-    inline Parameter<int32_t> amplifier_output_reflected_power(0);
-    inline Parameter<int32_t> seed_diode_bias_current(0);
-    inline Parameter<int32_t> tec_current(0);
-    inline Parameter<int32_t> ldd_output_current(0);
-    inline Parameter<int32_t> sd_temperature_violations(0);
-    inline Parameter<int32_t> end_uptime(0);
-    inline Parameter<int32_t> response(0);
-    inline Parameter<int32_t> device(0);
-    inline Parameter<int32_t> firmware(0);
-    inline Parameter<int32_t> firmware_is_confirmed(0);
-    inline Parameter<int32_t> bitstream(0);
-    inline Parameter<int32_t> softcpu_1_firmware(0);
-    inline Parameter<int32_t> softcpu_2_firmware(0);
-    inline Parameter<int32_t> softcpu_3_firmware(0);
-    inline Parameter<int32_t> softcpu_4_firmware(0);
-    inline Parameter<int32_t> softcpu_5_firmware(0);
-    inline Parameter<int32_t> softcpu_6_firmware(0);
-    inline Parameter<int32_t> softcpu_7_firmware(0);
-    inline Parameter<int32_t> softcpu_8_firmware(0);
-    inline Parameter<int32_t> boot_count(0);
-    inline Parameter<int32_t> transmission_count(0);
-    inline Parameter<int32_t> hw_det(0);
-    inline Parameter<int32_t> storage0(0);
-    inline Parameter<int32_t> storage1(0);
-    inline Parameter<int32_t> storage2(0);
-    inline Parameter<int32_t> storage3(0);
-    inline Parameter<int32_t> ldd_fault(0);
-    inline Parameter<int32_t> fsm_fault(0);
-    inline Parameter<int32_t> fpga_fault(0);
-    inline Parameter<int32_t> v_cam_fault(0);
-    inline Parameter<int32_t> sdd_fault(0);
-} // namespace PAYParameters
-namespace ADCSParameters {
-    enum ParameterID : uint16_t {
-        ResetTypeID = 20010,
-        EstRpyRollID = 20030,
-        EstRpyPitchID = 20040,
-        EstRpyYawID = 20050,
-        EstRateIrcXID = 20060,
-        EstRateIrcYID = 20070,
-        EstRateIrcZID = 20080,
-        EstStdDevQ0ID = 20420,
-        EstStdDevQ1ID = 20430,
-        EstStdDevQ2ID = 20440,
-        Str0Quat1ID = 20740,
-        Str0Quat2ID = 20750,
-        Str0Quat3ID = 20760,
-        Str0Quat4ID = 20770,
-        Str0AngVelXID = 20780,
-        Str0AngVelYID = 20790,
-        Str0AngVelZID = 20800,
-        ConModeSelectID = 20300,
-        ConModeDefaultID = 20301,
-        RWL0_power_stateID = 20801,
-        RWL1_power_stateID = 20802,
-        RWL2_power_stateID = 20803,
-        Mag0PowerID = 20804,
-        Gyro0PowerID = 20805,
-        Gyro1PowerID = 20806,
-        Fss0PowerID = 20807,
-        Hss0PowerID = 20808,
-        Str0PowerID = 20809,
-        SatPosEciXID = 20090,
-        SatPosEciYID = 20100,
-        SatPosEciZID = 20110,
-        SatVelEciXID = 20120,
-        SatVelEciYID = 20130,
-        SatVelEciZID = 20140,
-        TgtTrackBodyVecXID = 20680,
-        TgtTrackBodyVecYID = 20690,
-        TgtTrackBodyVecZID = 20700,
-        TgtRefLatID = 20710,
-        TgtRefLonID = 20720,
-        TgtRefAltID = 20730
-    };
+    constexpr ParameterId COMMS_CW_INTERVAL_ID                                             = 13234;
+    constexpr ParameterId COMMS_BFSK_BEAKON_INTERVAL_ID                                    = 13250;
+    constexpr ParameterId COMMS_UHF_TX_POWER_ID                                            = 13268;
+    constexpr ParameterId COMMS_RSSI_ID                                                    = 13352;
+    constexpr ParameterId COMMS_GNSS_LAT_ID                                                = 13605;
+    constexpr ParameterId COMMS_GNSS_LONG_ID                                               = 13621;
+    constexpr ParameterId COMMS_GNSS_ALT_ID                                                = 13637;
+    constexpr ParameterId COMMS_GNSS_TIME_ID                                               = 13656;
+    constexpr ParameterId COMMS_GNSS_ACK_TIMEOUT_ID                                        = 13666;
+    constexpr ParameterId COMMS_GNSS_CMD_RETRIES_ID                                        = 13680;
+    constexpr ParameterId COMMS_GNSS_ERROR_TIMEOUT_ID                                      = 13698;
+    constexpr ParameterId COMMS_ERROR_TIMEOUT_CNT_THRHD_ID                                 = 13714;
+    constexpr ParameterId COMMS_GNSS_DELAY_CMDS_ID                                         = 13730;
+    constexpr ParameterId COMMS_SATELLITES_TRACKED_ID                                      = 13745;
+    constexpr ParameterId COMMS_GNSS_FIX_QUALITY_ID                                        = 13761;
+    constexpr ParameterId COMMS_GNSS_TM_DATA_PERIOD_ID                                     = 13776;
+    constexpr ParameterId COMMS_COMMIT_HASH_ID                                             = 13796;
+    constexpr ParameterId COMMS_EMMC_USAGE_ID                                              = 14488;
+    constexpr ParameterId PAY_pointing_offset_x_ID                                         = 26229;
+    constexpr ParameterId PAY_pointing_offset_y_ID                                         = 26245;
+    constexpr ParameterId PAY_pointing_offset_z_ID                                         = 26261;
+    constexpr ParameterId PAY_uptime_ID                                                    = 26277;
+    constexpr ParameterId PAY_time_ID                                                      = 26293;
+    constexpr ParameterId PAY_psu_12v_ID                                                   = 26309;
+    constexpr ParameterId PAY_psu_5v_ID                                                    = 26325;
+    constexpr ParameterId PAY_psu_33v_ID                                                   = 26341;
+    constexpr ParameterId PAY_mcu_die_temperature_ID                                       = 26357;
+    constexpr ParameterId PAY_main_board_temperature_ID                                    = 26373;
+    constexpr ParameterId PAY_seed_ld_output_power_ID                                      = 26389;
+    constexpr ParameterId PAY_fsm_chamber_temperature_ID                                   = 26405;
+    constexpr ParameterId PAY_fsm_chamber_pressure_ID                                      = 26421;
+    constexpr ParameterId PAY_fsmd_voltage_converter_temperature_ID                        = 26437;
+    constexpr ParameterId PAY_fsmd_drivers_temperature_ID                                  = 26453;
+    constexpr ParameterId PAY_camera_pcb_temperature_ID                                    = 26469;
+    constexpr ParameterId PAY_camera_sensor_temperature_ID                                 = 26485;
+    constexpr ParameterId PAY_fso_aux_temperature_1_ID                                     = 26501;
+    constexpr ParameterId PAY_fso_aux_temperature_2_ID                                     = 26517;
+    constexpr ParameterId PAY_oad_temperature_ID                                           = 26533;
+    constexpr ParameterId PAY_optical_amplifier_combiner_heater_temperature_ID             = 26549;
+    constexpr ParameterId PAY_optical_amplifier_fiber_mirror_temperature_ID                = 26565;
+    constexpr ParameterId PAY_optical_amplifier_circulator_heater_temperature_ID           = 26581;
+    constexpr ParameterId PAY_ldd_temperature_ID                                           = 26597;
+    constexpr ParameterId PAY_ld_temperature_ID                                            = 26613;
+    constexpr ParameterId PAY_ldd_12v_current_ID                                           = 26629;
+    constexpr ParameterId PAY_ldd_psu_12v_ID                                               = 26645;
+    constexpr ParameterId PAY_ldd_converter_input_current_ID                               = 26661;
+    constexpr ParameterId PAY_ldd_ld_v_ID                                                  = 26677;
+    constexpr ParameterId PAY_ldd_ld_dac_set_v_ID                                          = 26693;
+    constexpr ParameterId PAY_fsm_driver_12v_current_ID                                    = 26709;
+    constexpr ParameterId PAY_flashes_33v_current_ID                                       = 26725;
+    constexpr ParameterId PAY_fpga_5v_current_ID                                           = 26741;
+    constexpr ParameterId PAY_sdd_33v_current_ID                                           = 26757;
+    constexpr ParameterId PAY_pump_ld_power_ID                                             = 26773;
+    constexpr ParameterId PAY_mcu_33v_current_ID                                           = 26789;
+    constexpr ParameterId PAY_fpga_die_temperature_ID                                      = 26805;
+    constexpr ParameterId PAY_fpga_vdd1_voltage_ID                                         = 26821;
+    constexpr ParameterId PAY_fpga_vdd18_voltage_ID                                        = 26837;
+    constexpr ParameterId PAY_fpga_vdd25_voltage_ID                                        = 26853;
+    constexpr ParameterId PAY_seed_ld_incoming_power_ID                                    = 26869;
+    constexpr ParameterId PAY_amplifier_output_power_ID                                    = 26885;
+    constexpr ParameterId PAY_amplifier_output_reflected_power_ID                          = 26901;
+    constexpr ParameterId PAY_seed_diode_bias_current_ID                                   = 26917;
+    constexpr ParameterId PAY_tec_current_ID                                               = 26933;
+    constexpr ParameterId PAY_ldd_output_current_ID                                        = 26949;
+    constexpr ParameterId PAY_sd_temperature_violations_ID                                 = 26965;
+    constexpr ParameterId PAY_end_uptime_ID                                                = 26981;
+    constexpr ParameterId PAY_response_ID                                                  = 26997;
+    constexpr ParameterId PAY_device_ID                                                    = 27013;
+    constexpr ParameterId PAY_firmware_ID                                                  = 27029;
+    constexpr ParameterId PAY_firmware_is_confirmed_ID                                     = 27045;
+    constexpr ParameterId PAY_bitstream_ID                                                 = 27061;
+    constexpr ParameterId PAY_softcpu_1_firmware_ID                                        = 27077;
+    constexpr ParameterId PAY_softcpu_2_firmware_ID                                        = 27093;
+    constexpr ParameterId PAY_softcpu_3_firmware_ID                                        = 27109;
+    constexpr ParameterId PAY_softcpu_4_firmware_ID                                        = 27125;
+    constexpr ParameterId PAY_softcpu_5_firmware_ID                                        = 27141;
+    constexpr ParameterId PAY_softcpu_6_firmware_ID                                        = 27157;
+    constexpr ParameterId PAY_softcpu_7_firmware_ID                                        = 27173;
+    constexpr ParameterId PAY_softcpu_8_firmware_ID                                        = 27189;
+    constexpr ParameterId PAY_boot_count_ID                                                = 27205;
+    constexpr ParameterId PAY_transmission_count_ID                                        = 27221;
+    constexpr ParameterId PAY_hw_det_ID                                                    = 27237;
+    constexpr ParameterId PAY_storage0_ID                                                  = 27253;
+    constexpr ParameterId PAY_storage1_ID                                                  = 27269;
+    constexpr ParameterId PAY_storage2_ID                                                  = 27285;
+    constexpr ParameterId PAY_storage3_ID                                                  = 27301;
+    constexpr ParameterId PAY_ldd_fault_ID                                                 = 27317;
+    constexpr ParameterId PAY_fsm_fault_ID                                                 = 27333;
+    constexpr ParameterId PAY_fpga_fault_ID                                                = 27349;
+    constexpr ParameterId PAY_v_cam_fault_ID                                               = 27381;
+    constexpr ParameterId PAY_sdd_fault_ID                                                 = 27397;
+    constexpr ParameterId ADCS_ResetType_ID                                                = 39328;
     enum ResetType_enum : uint8_t {
-        DoNothng = 0,
-        Soft = 55,
-        Hard = 66
+        DoNothng = 0, 
+Soft = 55, 
+Hard = 66
     };
-    inline Parameter<ResetType_enum> ResetType(DoNothng);
-    inline Parameter<int16_t> EstRpyRoll(0);
-    inline Parameter<int16_t> EstRpyPitch(0);
-    inline Parameter<int16_t> EstRpyYaw(0);
-    inline Parameter<int16_t> EstRateIrcX(0);
-    inline Parameter<int16_t> EstRateIrcY(0);
-    inline Parameter<int16_t> EstRateIrcZ(0);
-    inline Parameter<int16_t> EstStdDevQ0(0);
-    inline Parameter<int16_t> EstStdDevQ1(0);
-    inline Parameter<int16_t> EstStdDevQ2(0);
-    inline Parameter<float> Str0Quat1(0);
-    inline Parameter<float> Str0Quat2(0);
-    inline Parameter<float> Str0Quat3(0);
-    inline Parameter<float> Str0Quat4(0);
-    inline Parameter<uint16_t> Str0AngVelX(0);
-    inline Parameter<uint16_t> Str0AngVelY(0);
-    inline Parameter<uint16_t> Str0AngVelZ(0);
+    constexpr ParameterId ADCS_UnixTimeSeconds_ID                                          = 39348;
+    constexpr ParameterId ADCS_UnixTimeNanoSeconds_ID                                      = 39364;
+    constexpr ParameterId ADCS_AdcsRunModeSelect_ID                                        = 39376;
+    enum AdcsRunModeSelect_enum : uint8_t {
+        AdcsOff = 0,
+AdcsEnabled = 1,
+AdcsTriggered = 2,
+AdcsSimulation = 3
+    };
+    constexpr ParameterId ADCS_RunModeDefault_ID                                           = 39392;
+    constexpr ParameterId ADCS_OpStateDefault_ID                                           = 39408;
+    enum OpStateDefault_enum : uint8_t {
+        OpStateManual = 0,
+OpStateAuto = 1,
+OpStateSafe = 2,
+OpStateFault = 3
+    };
+    constexpr ParameterId ADCS_OpState_ID                                                  = 39424;
+    constexpr ParameterId ADCS_Ixx_ID                                                      = 39448;
+    constexpr ParameterId ADCS_Iyy_ID                                                      = 39464;
+    constexpr ParameterId ADCS_Izz_ID                                                      = 39480;
+    constexpr ParameterId ADCS_Ixy_ID                                                      = 39496;
+    constexpr ParameterId ADCS_Ixz_ID                                                      = 39512;
+    constexpr ParameterId ADCS_Iyz_ID                                                      = 39528;
+    constexpr ParameterId ADCS_RWL0_power_state_ID                                         = 39538;
+    enum RWL0_power_state_enum : uint16_t {
+        PowerOff = 0,
+PowerOn = 1,
+PowerNoChange = 2,
+PowerAuto = 3,
+PowerOnPass = 4,
+PowerOffUpgrade = 5
+    };
+    constexpr ParameterId ADCS_RWL1_power_state_ID                                         = 39554;
+    constexpr ParameterId ADCS_RWL2_power_state_ID                                         = 39570;
+    constexpr ParameterId ADCS_Mag0Power_ID                                                = 39586;
+    constexpr ParameterId ADCS_Gyro0Power_ID                                               = 39602;
+    constexpr ParameterId ADCS_Gyro1Power_ID                                               = 39618;
+    constexpr ParameterId ADCS_Fss0Power_ID                                                = 39634;
+    constexpr ParameterId ADCS_Hss0Power_ID                                                = 39650;
+    constexpr ParameterId ADCS_Str0Power_ID                                                = 39666;
+    constexpr ParameterId ADCS_RwlFailId_ID                                                = 39680;
+    enum RwlFailId_enum : uint8_t {
+        RwlFailNone = 0,
+RwlFail0 = 1,
+RwlFail1 = 2,
+RwlFail2 = 3,
+RwlFail3 = 4
+    };
+    constexpr ParameterId ADCS_MountStackX_ID                                              = 39696;
+    enum MountStackX_enum : uint8_t {
+        AxisNotUsed = 0,
+AxisPosX = 1,
+AxisNegX = 2,
+AxisPosY = 3,
+AxisNegY = 4,
+AxisPosZ = 5,
+AxisNegZ = 6,
+AxisThdA = 7,
+AxisThdB = 8,
+AxisThdC = 9,
+AxisThdD = 10,
+AxisPmdA = 11,
+AxisPmdB = 12,
+AxisPmdC = 13,
+AxisPmdD = 14,
+AxisSkew = 15
+    };
+    constexpr ParameterId ADCS_MountStackY_ID                                              = 39712;
+    constexpr ParameterId ADCS_MountStackZ_ID                                              = 39728;
+    constexpr ParameterId ADCS_MountMtq0_ID                                                = 39744;
+    constexpr ParameterId ADCS_MountMtq1_ID                                                = 39760;
+    constexpr ParameterId ADCS_MountMtq2_ID                                                = 39776;
+    constexpr ParameterId ADCS_MountRwl0_ID                                                = 39792;
+    constexpr ParameterId ADCS_MountRwl1_ID                                                = 39808;
+    constexpr ParameterId ADCS_MountRwl2_ID                                                = 39824;
+    constexpr ParameterId ADCS_MountFss0Alpha_ID                                           = 39843;
+    constexpr ParameterId ADCS_MountFss0Beta_ID                                            = 39859;
+    constexpr ParameterId ADCS_MountFss0Gamma_ID                                           = 39875;
+    constexpr ParameterId ADCS_MountHss0Alpha_ID                                           = 39891;
+    constexpr ParameterId ADCS_MountHss0Beta_ID                                            = 39907;
+    constexpr ParameterId ADCS_MountHss0Gamma_ID                                           = 39923;
+    constexpr ParameterId ADCS_MountMag0Alpha_ID                                           = 39939;
+    constexpr ParameterId ADCS_MountMag0Beta_ID                                            = 39955;
+    constexpr ParameterId ADCS_MountMag0Gamma_ID                                           = 39971;
+    constexpr ParameterId ADCS_MountMag1Alpha_ID                                           = 39987;
+    constexpr ParameterId ADCS_MountMag1Beta_ID                                            = 40003;
+    constexpr ParameterId ADCS_MountMag1Gamma_ID                                           = 40019;
+    constexpr ParameterId ADCS_MountStr0Alpha_ID                                           = 40035;
+    constexpr ParameterId ADCS_MountStr0Beta_ID                                            = 40051;
+    constexpr ParameterId ADCS_MountStr0Gamma_ID                                           = 40067;
+    constexpr ParameterId ADCS_EstModeMainDefault_ID                                       = 40112;
+    enum EstModeMainDefault_enum : uint8_t {
+        EstNone = 0,
+EstGyro = 1, 
+EstMagRkf = 2,
+EstPitchRkf = 3, 
+EstTriad = 4, 
+EstFullEkf = 5,
+EstGyroEkf = 6,
+EstUser = 100
+    };
+    constexpr ParameterId ADCS_EstModeBackupDefault_ID                                     = 40128;
+    constexpr ParameterId ADCS_EstModeMain_ID                                              = 40144;
+    constexpr ParameterId ADCS_EstModeBackup_ID                                            = 40160;
+    constexpr ParameterId ADCS_EkfUseFss_ID                                                = 40176;
+    constexpr ParameterId ADCS_EkfUseCss_ID                                                = 40192;
+    constexpr ParameterId ADCS_EkfUseHss_ID                                                = 40208;
+    constexpr ParameterId ADCS_EkfUseStr_ID                                                = 40224;
+    constexpr ParameterId ADCS_EstRpyRoll_ID                                               = 40243;
+    constexpr ParameterId ADCS_EstRpyPitch_ID                                              = 40259;
+    constexpr ParameterId ADCS_EstRpyYaw_ID                                                = 40275;
+    constexpr ParameterId ADCS_EstRateIrcX_ID                                              = 40291;
+    constexpr ParameterId ADCS_EstRateIrcY_ID                                              = 40307;
+    constexpr ParameterId ADCS_EstRateIrcZ_ID                                              = 40323;
+    constexpr ParameterId ADCS_EstStdDevQ0_ID                                              = 40339;
+    constexpr ParameterId ADCS_EstStdDevQ1_ID                                              = 40355;
+    constexpr ParameterId ADCS_EstStdDevQ2_ID                                              = 40371;
+    constexpr ParameterId ADCS_EstStdDevRateX_ID                                           = 40387;
+    constexpr ParameterId ADCS_EstStdDevRateY_ID                                           = 40403;
+    constexpr ParameterId ADCS_EstStdDevRateZ_ID                                           = 40419;
+    constexpr ParameterId ADCS_Str0Quat1_ID                                                = 40440;
+    constexpr ParameterId ADCS_Str0Quat2_ID                                                = 40456;
+    constexpr ParameterId ADCS_Str0Quat3_ID                                                = 40472;
+    constexpr ParameterId ADCS_Str0Quat4_ID                                                = 40488;
+    constexpr ParameterId ADCS_Str0AngVelX_ID                                              = 40498;
+    constexpr ParameterId ADCS_Str0AngVelY_ID                                              = 40514;
+    constexpr ParameterId ADCS_Str0AngVelZ_ID                                              = 40530;
+    constexpr ParameterId ADCS_OrbMode_ID                                                  = 40544;
+    enum OrbMode_enum : uint8_t {
+        OrbTle = 0, 
+OrbTleGnss = 1,
+OrbAsgp4 = 2,
+OrbAsgp4Gnss = 3
+    };
+    constexpr ParameterId ADCS_BatchSize_ID                                                = 40562;
+    constexpr ParameterId ADCS_MaxTimeBetween_ID                                           = 40580;
+    constexpr ParameterId ADCS_MaxPosErr_ID                                                = 40594;
+    constexpr ParameterId ADCS_TimeGain_ID                                                 = 40616;
+    constexpr ParameterId ADCS_UpdateRaanIncl_ID                                           = 40624;
+    constexpr ParameterId ADCS_UpdateEccen_ID                                              = 40640;
+    constexpr ParameterId ADCS_UpdateApMa_ID                                               = 40656;
+    constexpr ParameterId ADCS_UpdateTime_ID                                               = 40672;
+    constexpr ParameterId ADCS_OrbitEpoch_ID                                               = 40697;
+    constexpr ParameterId ADCS_OrbitIncl_ID                                                = 40713;
+    constexpr ParameterId ADCS_OrbitRaan_ID                                                = 40729;
+    constexpr ParameterId ADCS_OrbitEccen_ID                                               = 40745;
+    constexpr ParameterId ADCS_OrbitAP_ID                                                  = 40761;
+    constexpr ParameterId ADCS_OrbitMA_ID                                                  = 40777;
+    constexpr ParameterId ADCS_OrbitMM_ID                                                  = 40793;
+    constexpr ParameterId ADCS_OrbitBstar_ID                                               = 40809;
+    constexpr ParameterId ADCS_GnssTimeSeconds_ID                                          = 40820;
+    constexpr ParameterId ADCS_GnssTimeNs_ID                                               = 40836;
+    constexpr ParameterId ADCS_GnssSatPosX_ID                                              = 40853;
+    constexpr ParameterId ADCS_GnssSatPosY_ID                                              = 40869;
+    constexpr ParameterId ADCS_GnssSatPosZ_ID                                              = 40885;
+    constexpr ParameterId ADCS_SyncTime_ID                                                 = 40896;
+    constexpr ParameterId ADCS_SatPosEciX_ID                                               = 40917;
+    constexpr ParameterId ADCS_SatPosEciY_ID                                               = 40933;
+    constexpr ParameterId ADCS_SatPosEciZ_ID                                               = 40949;
+    constexpr ParameterId ADCS_SatVelEciX_ID                                               = 40963;
+    constexpr ParameterId ADCS_SatVelEciY_ID                                               = 40979;
+    constexpr ParameterId ADCS_SatVelEciZ_ID                                               = 40995;
+    constexpr ParameterId ADCS_ConModeSelect_ID                                            = 41008;
     enum ConModeSelect_enum : uint8_t {
         ConNone = 0,
-        ConBdot = 1,
-        ConYspin = 2,
-        ConBdot3 = 3,
-        ConDetumble = 4,
-        ConSunYspin = 5,
-        ConZspin = 6,
-        ConSunZspin = 7,
-        ConGGboom = 8,
-        ConGGsun = 9,
-        ConYwheelInit = 10,
-        ConYwheel = 11,
-        ConXYZwheel = 12,
-        ConSunTrack = 13,
-        ConTgtTrack = 14,
-        ConTgtSteer = 15,
-        ConGndTrack = 16,
-        ConIrcTrack = 17,
-        ConMoonTrack = 18,
-        ConSatTrack = 19,
-        ConYawSun = 20,
-        ConYawTarget = 21,
-        ConRollSun = 22,
-        ConRollTarget = 23,
-        ConYawTargetBest = 24,
-        ConFmcTarget = 25,
-        ConYawSunSpin = 26,
-        ConSunDetumble = 27,
-        ConAstroSteer = 28,
-        ConSunPayload = 29,
-        ConStopRW = 50,
-        ConHxyzRW = 51,
-        ConUser = 100
+ConBdot = 1,
+ConYspin = 2,
+ConBdot3 = 3,
+ConDetumble = 4,
+ConSunYspin = 5,
+ConZspin = 6,
+ConSunZspin = 7,
+ConGGboom = 8,
+ConGGsun = 9,
+ConYwheelInit = 10,
+ConYwheel = 11,
+ConXYZwheel = 12,
+ConSunTrack = 13,
+ConTgtTrack = 14,
+ConTgtSteer = 15,
+ConGndTrack = 16,
+ConIrcTrack = 17,
+ConMoonTrack = 18,
+ConSatTrack = 19,
+ConYawSun = 20,
+ConYawTarget = 21,
+ConRollSun = 22,
+ConRollTarget = 23,
+ConYawTargetBest = 24,
+ConFmcTarget = 25,
+ConYawSunSpin = 26,
+ConSunDetumble = 27,
+ConAstroSteer = 28,
+ConSunPayload = 29,
+ConStopRW = 50,
+ConHxyzRW = 51,
+ConUser = 100
     };
-    inline Parameter<ConModeSelect_enum> ConModeSelect(ConNone);
-    inline Parameter<ConModeSelect_enum> ConModeDefault(ConNone);
-    enum RWL0_power_state_enum : uint8_t {
-        PowerOff = 0,
-        PowerOn = 1,
-        PowerNoChange = 2,
-        PowerAuto = 3,
-        PowerOnPass = 4,
-        PowerOffUpgrade = 5
-    };
-    inline Parameter<RWL0_power_state_enum> RWL0_power_state(PowerOff);
-    inline Parameter<RWL0_power_state_enum> RWL1_power_state(PowerOff);
-    inline Parameter<RWL0_power_state_enum> RWL2_power_state(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Mag0Power(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Gyro0Power(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Gyro1Power(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Fss0Power(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Hss0Power(PowerOff);
-    inline Parameter<RWL0_power_state_enum> Str0Power(PowerOff);
-    inline Parameter<int32_t> SatPosEciX(0);
-    inline Parameter<int32_t> SatPosEciY(0);
-    inline Parameter<int32_t> SatPosEciZ(0);
-    inline Parameter<int16_t> SatVelEciX(0);
-    inline Parameter<int16_t> SatVelEciY(0);
-    inline Parameter<int16_t> SatVelEciZ(0);
-    inline Parameter<int16_t> TgtTrackBodyVecX(0);
-    inline Parameter<int16_t> TgtTrackBodyVecY(0);
-    inline Parameter<int16_t> TgtTrackBodyVecZ(0);
-    inline Parameter<float> TgtRefLat(0);
-    inline Parameter<float> TgtRefLon(0);
-    inline Parameter<float> TgtRefAlt(0);
-} // namespace ADCSParameters
-#pragma GCC diagnostic pop
+    constexpr ParameterId ADCS_ConModeDefault_ID                                           = 41024;
+    constexpr ParameterId ADCS_ConModeSafe_ID                                              = 41040;
+    constexpr ParameterId ADCS_ConModeAuto_ID                                              = 41056;
+    constexpr ParameterId ADCS_SunKeepoutAng_ID                                            = 41080;
+    constexpr ParameterId ADCS_SunAvoidEn_ID                                               = 41088;
+    constexpr ParameterId ADCS_RpyCmdRoll_ID                                               = 41107;
+    constexpr ParameterId ADCS_RpyCmdPitch_ID                                              = 41123;
+    constexpr ParameterId ADCS_RpyCmdYaw_ID                                                = 41139;
+    constexpr ParameterId ADCS_Mtq0OnTimeCmd_ID                                            = 41155;
+    constexpr ParameterId ADCS_Mtq1OnTimeCmd_ID                                            = 41171;
+    constexpr ParameterId ADCS_Mtq2OnTimeCmd_ID                                            = 41187;
+    constexpr ParameterId ADCS_Rwl0SpeedCmd_ID                                             = 41208;
+    constexpr ParameterId ADCS_Rwl1SpeedCmd_ID                                             = 41224;
+    constexpr ParameterId ADCS_Rwl2SpeedCmd_ID                                             = 41240;
+    constexpr ParameterId ADCS_TgtTrackBodyVecX_ID                                         = 41251;
+    constexpr ParameterId ADCS_TgtTrackBodyVecY_ID                                         = 41267;
+    constexpr ParameterId ADCS_TgtTrackBodyVecZ_ID                                         = 41283;
+    constexpr ParameterId ADCS_TgtRefLat_ID                                                = 41304;
+    constexpr ParameterId ADCS_TgtRefLon_ID                                                = 41320;
+    constexpr ParameterId ADCS_TgtRefAlt_ID                                                = 41336;
+    constexpr ParameterId ADCS_SunPointBodyVecX_ID                                         = 41347;
+    constexpr ParameterId ADCS_SunPointBodyVecY_ID                                         = 41363;
+    constexpr ParameterId ADCS_SunPointBodyVecZ_ID                                         = 41379;
+    constexpr ParameterId ADCS_ModelMagOrcX_ID                                             = 41395;
+    constexpr ParameterId ADCS_ModelMagOrcY_ID                                             = 41411;
+    constexpr ParameterId ADCS_ModelMagOrcZ_ID                                             = 41427;
+    constexpr ParameterId ADCS_ModelSunOrcX_ID                                             = 41443;
+    constexpr ParameterId ADCS_ModelSunOrcY_ID                                             = 41459;
+    constexpr ParameterId ADCS_ModelSunOrcZ_ID                                             = 41475;
+    constexpr ParameterId EPS_MODE_ID                                                      = 52432;
+    constexpr ParameterId EPS_CONF_ID                                                      = 52448;
+    constexpr ParameterId EPS_RESET_CAUSE_ID                                               = 52464;
+    constexpr ParameterId EPS_UPTIME_ID                                                    = 52484;
+    constexpr ParameterId EPS_ERROR_ID                                                     = 52498;
+    constexpr ParameterId EPS_RC_CNT_PWRON_ID                                              = 52514;
+    constexpr ParameterId EPS_RC_CNT_WDG_ID                                                = 52530;
+    constexpr ParameterId EPS_RC_CNT_CMD_ID                                                = 52546;
+    constexpr ParameterId EPS_RC_CNT_MCU_ID                                                = 52562;
+    constexpr ParameterId EPS_RC_CNT_EMLOPO_ID                                             = 52578;
+    constexpr ParameterId EPS_PREVCMD_ELAPSED_ID                                           = 52594;
+    constexpr ParameterId EPS_UNIX_TIME_ID                                                 = 52612;
+    constexpr ParameterId EPS_UNIX_YEAR_ID                                                 = 52624;
+    constexpr ParameterId EPS_UNIX_MONTH_ID                                                = 52640;
+    constexpr ParameterId EPS_UNIX_DAY_ID                                                  = 52656;
+    constexpr ParameterId EPS_UNIX_HOUR_ID                                                 = 52672;
+    constexpr ParameterId EPS_UNIX_MINUTE_ID                                               = 52688;
+    constexpr ParameterId EPS_UNIX_SECOND_ID                                               = 52704;
+    constexpr ParameterId EPS_STAT_CH_ON_ID                                                = 52722;
+    constexpr ParameterId EPS_STAT_CH_EXT_ON_ID                                            = 52738;
+    constexpr ParameterId EPS_STAT_CH_OCF_ID                                               = 52754;
+    constexpr ParameterId EPS_STAT_CH_EXT_OCF_ID                                           = 52770;
+    constexpr ParameterId EPS_OCF_CNT_CH00_ID                                              = 52786;
+    constexpr ParameterId EPS_OCF_CNT_CH01_ID                                              = 52802;
+    constexpr ParameterId EPS_OCF_CNT_CH02_ID                                              = 52818;
+    constexpr ParameterId EPS_OCF_CNT_CH03_ID                                              = 52834;
+    constexpr ParameterId EPS_OCF_CNT_CH04_ID                                              = 52850;
+    constexpr ParameterId EPS_OCF_CNT_CH05_ID                                              = 52866;
+    constexpr ParameterId EPS_OCF_CNT_CH06_ID                                              = 52882;
+    constexpr ParameterId EPS_OCF_CNT_CH07_ID                                              = 52898;
+    constexpr ParameterId EPS_OCF_CNT_CH08_ID                                              = 52914;
+    constexpr ParameterId EPS_OCF_CNT_CH09_ID                                              = 52930;
+    constexpr ParameterId EPS_OCF_CNT_CH10_ID                                              = 52946;
+    constexpr ParameterId EPS_OCF_CNT_CH11_ID                                              = 52962;
+    constexpr ParameterId EPS_OCF_CNT_CH12_ID                                              = 52978;
+    constexpr ParameterId EPS_OCF_CNT_CH13_ID                                              = 52994;
+    constexpr ParameterId EPS_OCF_CNT_CH14_ID                                              = 53010;
+    constexpr ParameterId EPS_OCF_CNT_CH15_ID                                              = 53026;
+    constexpr ParameterId EPS_ABF_PLACED_0_ID                                              = 53056;
+    constexpr ParameterId EPS_ABF_PLACED_1_ID                                              = 53072;
+    constexpr ParameterId EPS_VOLT_BRDSUP_RAW_ID                                           = 53090;
+    constexpr ParameterId EPS_TEMP_MCU_RAW_ID                                              = 53106;
+    constexpr ParameterId EPS_VIP_VOLT_VD0_RAW_ID                                          = 53123;
+    constexpr ParameterId EPS_VIP_VOLT_VD1_RAW_ID                                          = 53139;
+    constexpr ParameterId EPS_VIP_VOLT_VD2_RAW_ID                                          = 53155;
+    constexpr ParameterId EPS_VIP_VOLT_VD3_RAW_ID                                          = 53171;
+    constexpr ParameterId EPS_VIP_VOLT_VD4_RAW_ID                                          = 53187;
+    constexpr ParameterId EPS_VIP_VOLT_VD5_RAW_ID                                          = 53203;
+    constexpr ParameterId EPS_VIP_VOLT_VD6_RAW_ID                                          = 53219;
+    constexpr ParameterId EPS_VIP_CURR_VD0_RAW_ID                                          = 53235;
+    constexpr ParameterId EPS_VIP_CURR_VD1_RAW_ID                                          = 53251;
+    constexpr ParameterId EPS_VIP_CURR_VD2_RAW_ID                                          = 53267;
+    constexpr ParameterId EPS_VIP_CURR_VD3_RAW_ID                                          = 53283;
+    constexpr ParameterId EPS_VIP_CURR_VD4_RAW_ID                                          = 53299;
+    constexpr ParameterId EPS_VIP_CURR_VD5_RAW_ID                                          = 53315;
+    constexpr ParameterId EPS_VIP_CURR_VD6_RAW_ID                                          = 53331;
+    constexpr ParameterId EPS_VIP_POWE_VD0_RAW_ID                                          = 53347;
+    constexpr ParameterId EPS_VIP_POWE_VD1_RAW_ID                                          = 53363;
+    constexpr ParameterId EPS_VIP_POWE_VD2_RAW_ID                                          = 53379;
+    constexpr ParameterId EPS_VIP_POWE_VD3_RAW_ID                                          = 53395;
+    constexpr ParameterId EPS_VIP_POWE_VD4_RAW_ID                                          = 53411;
+    constexpr ParameterId EPS_VIP_POWE_VD5_RAW_ID                                          = 53427;
+    constexpr ParameterId EPS_VIP_POWE_VD6_RAW_ID                                          = 53443;
+    constexpr ParameterId EPS_VOLT_BRDSUP_ENG_ID                                           = 53459;
+    constexpr ParameterId EPS_TEMP_MCU_ENG_ID                                              = 53475;
+    constexpr ParameterId EPS_VIP_VOLT_INPUT_ENG_ID                                        = 53491;
+    constexpr ParameterId EPS_VIP_CURR_INPUT_ENG_ID                                        = 53507;
+    constexpr ParameterId EPS_VIP_POWE_INPUT_ENG_ID                                        = 53523;
+    constexpr ParameterId EPS_VIP_VOLT_DIST_INPUT_ENG_ID                                   = 53539;
+    constexpr ParameterId EPS_VIP_CURR_DIST_INPUT_ENG_ID                                   = 53555;
+    constexpr ParameterId EPS_VIP_POWE_DIST_INPUT_ENG_ID                                   = 53571;
+    constexpr ParameterId EPS_VIP_VOLT_BAT_INPUT_ENG_ID                                    = 53587;
+    constexpr ParameterId EPS_VIP_CURR_BAT_INPUT_ENG_ID                                    = 53603;
+    constexpr ParameterId EPS_VIP_POWE_BAT_INPUT_ENG_ID                                    = 53619;
+    constexpr ParameterId EPS_VIP_VOLT_VD0_ENG_ID                                          = 53635;
+    constexpr ParameterId EPS_VIP_CURR_VD0_ENG_ID                                          = 53651;
+    constexpr ParameterId EPS_VIP_POWE_VD0_ENG_ID                                          = 53667;
+    constexpr ParameterId EPS_VIP_VOLT_VD1_ENG_ID                                          = 53683;
+    constexpr ParameterId EPS_VIP_CURR_VD1_ENG_ID                                          = 53699;
+    constexpr ParameterId EPS_VIP_POWE_VD1_ENG_ID                                          = 53715;
+    constexpr ParameterId EPS_VIP_VOLT_VD2_ENG_ID                                          = 53731;
+    constexpr ParameterId EPS_VIP_CURR_VD2_ENG_ID                                          = 53747;
+    constexpr ParameterId EPS_VIP_POWE_VD2_ENG_ID                                          = 53763;
+    constexpr ParameterId EPS_VIP_VOLT_VD3_ENG_ID                                          = 53779;
+    constexpr ParameterId EPS_VIP_CURR_VD3_ENG_ID                                          = 53795;
+    constexpr ParameterId EPS_VIP_POWE_VD3_ENG_ID                                          = 53811;
+    constexpr ParameterId EPS_VIP_VOLT_VD4_ENG_ID                                          = 53827;
+    constexpr ParameterId EPS_VIP_CURR_VD4_ENG_ID                                          = 53843;
+    constexpr ParameterId EPS_VIP_POWE_VD4_ENG_ID                                          = 53859;
+    constexpr ParameterId EPS_VIP_VOLT_VD5_ENG_ID                                          = 53875;
+    constexpr ParameterId EPS_VIP_CURR_VD5_ENG_ID                                          = 53891;
+    constexpr ParameterId EPS_VIP_POWE_VD5_ENG_ID                                          = 53907;
+    constexpr ParameterId EPS_VIP_VOLT_VD6_ENG_ID                                          = 53923;
+    constexpr ParameterId EPS_VIP_POWE_VD6_ENG_ID                                          = 53939;
+    constexpr ParameterId EPS_VIP_CH00_VOLT_RAW_ID                                         = 53954;
+    constexpr ParameterId EPS_VIP_CH00_CURR_RAW_ID                                         = 53970;
+    constexpr ParameterId EPS_VIP_CH00_POWE_RAW_ID                                         = 53986;
+    constexpr ParameterId EPS_VIP_CH01_VOLT_RAW_ID                                         = 54002;
+    constexpr ParameterId EPS_VIP_CH01_CURR_RAW_ID                                         = 54018;
+    constexpr ParameterId EPS_VIP_CH01_POWE_RAW_ID                                         = 54034;
+    constexpr ParameterId EPS_VIP_CH02_VOLT_RAW_ID                                         = 54050;
+    constexpr ParameterId EPS_VIP_CH02_CURR_RAW_ID                                         = 54066;
+    constexpr ParameterId EPS_VIP_CH02_POWE_RAW_ID                                         = 54082;
+    constexpr ParameterId EPS_VIP_CH03_VOLT_RAW_ID                                         = 54098;
+    constexpr ParameterId EPS_VIP_CH03_CURR_RAW_ID                                         = 54114;
+    constexpr ParameterId EPS_VIP_CH03_POWE_RAW_ID                                         = 54130;
+    constexpr ParameterId EPS_VIP_CH04_VOLT_RAW_ID                                         = 54146;
+    constexpr ParameterId EPS_VIP_CH04_CURR_RAW_ID                                         = 54162;
+    constexpr ParameterId EPS_VIP_CH04_POWE_RAW_ID                                         = 54178;
+    constexpr ParameterId EPS_VIP_CH05_VOLT_RAW_ID                                         = 54194;
+    constexpr ParameterId EPS_VIP_CH05_CURR_RAW_ID                                         = 54210;
+    constexpr ParameterId EPS_VIP_CH05_POWE_RAW_ID                                         = 54226;
+    constexpr ParameterId EPS_VIP_CH06_VOLT_RAW_ID                                         = 54242;
+    constexpr ParameterId EPS_VIP_CH06_CURR_RAW_ID                                         = 54258;
+    constexpr ParameterId EPS_VIP_CH06_POWE_RAW_ID                                         = 54274;
+    constexpr ParameterId EPS_VIP_CH07_VOLT_RAW_ID                                         = 54290;
+    constexpr ParameterId EPS_VIP_CH07_CURR_RAW_ID                                         = 54306;
+    constexpr ParameterId EPS_VIP_CH07_POWE_RAW_ID                                         = 54322;
+    constexpr ParameterId EPS_VIP_CH08_VOLT_RAW_ID                                         = 54338;
+    constexpr ParameterId EPS_VIP_CH08_CURR_RAW_ID                                         = 54354;
+    constexpr ParameterId EPS_VIP_CH08_POWE_RAW_ID                                         = 54370;
+    constexpr ParameterId EPS_VIP_CH09_VOLT_RAW_ID                                         = 54386;
+    constexpr ParameterId EPS_VIP_CH09_CURR_RAW_ID                                         = 54402;
+    constexpr ParameterId EPS_VIP_CH09_POWE_RAW_ID                                         = 54418;
+    constexpr ParameterId EPS_VIP_CH10_VOLT_RAW_ID                                         = 54434;
+    constexpr ParameterId EPS_VIP_CH10_CURR_RAW_ID                                         = 54450;
+    constexpr ParameterId EPS_VIP_CH10_POWE_RAW_ID                                         = 54466;
+    constexpr ParameterId EPS_VIP_CH11_VOLT_RAW_ID                                         = 54482;
+    constexpr ParameterId EPS_VIP_CH11_CURR_RAW_ID                                         = 54498;
+    constexpr ParameterId EPS_VIP_CH11_POWE_RAW_ID                                         = 54514;
+    constexpr ParameterId EPS_VIP_CH12_VOLT_RAW_ID                                         = 54530;
+    constexpr ParameterId EPS_VIP_CH12_CURR_RAW_ID                                         = 54546;
+    constexpr ParameterId EPS_VIP_CH12_POWE_RAW_ID                                         = 54562;
+    constexpr ParameterId EPS_VIP_CH13_VOLT_RAW_ID                                         = 54578;
+    constexpr ParameterId EPS_VIP_CH13_CURR_RAW_ID                                         = 54594;
+    constexpr ParameterId EPS_VIP_CH13_POWE_RAW_ID                                         = 54610;
+    constexpr ParameterId EPS_VIP_CH14_VOLT_RAW_ID                                         = 54626;
+    constexpr ParameterId EPS_VIP_CH14_CURR_RAW_ID                                         = 54642;
+    constexpr ParameterId EPS_VIP_CH14_POWE_RAW_ID                                         = 54658;
+    constexpr ParameterId EPS_VIP_CH00_VOLT_ENG_ID                                         = 54675;
+    constexpr ParameterId EPS_VIP_CH00_CURR_ENG_ID                                         = 54691;
+    constexpr ParameterId EPS_VIP_CH00_POWE_ENG_ID                                         = 54707;
+    constexpr ParameterId EPS_VIP_CH01_VOLT_ENG_ID                                         = 54723;
+    constexpr ParameterId EPS_VIP_CH01_CURR_ENG_ID                                         = 54739;
+    constexpr ParameterId EPS_VIP_CH01_POWE_ENG_ID                                         = 54755;
+    constexpr ParameterId EPS_VIP_CH02_VOLT_ENG_ID                                         = 54771;
+    constexpr ParameterId EPS_VIP_CH02_CURR_ENG_ID                                         = 54787;
+    constexpr ParameterId EPS_VIP_CH02_POWE_ENG_ID                                         = 54803;
+    constexpr ParameterId EPS_VIP_CH03_VOLT_ENG_ID                                         = 54819;
+    constexpr ParameterId EPS_VIP_CH03_CURR_ENG_ID                                         = 54835;
+    constexpr ParameterId EPS_VIP_CH03_POWE_ENG_ID                                         = 54851;
+    constexpr ParameterId EPS_VIP_CH04_VOLT_ENG_ID                                         = 54867;
+    constexpr ParameterId EPS_VIP_CH04_CURR_ENG_ID                                         = 54883;
+    constexpr ParameterId EPS_VIP_CH04_POWE_ENG_ID                                         = 54899;
+    constexpr ParameterId EPS_VIP_CH05_VOLT_ENG_ID                                         = 54915;
+    constexpr ParameterId EPS_VIP_CH05_CURR_ENG_ID                                         = 54931;
+    constexpr ParameterId EPS_VIP_CH05_POWE_ENG_ID                                         = 54947;
+    constexpr ParameterId EPS_VIP_CH06_VOLT_ENG_ID                                         = 54963;
+    constexpr ParameterId EPS_VIP_CH06_CURR_ENG_ID                                         = 54979;
+    constexpr ParameterId EPS_VIP_CH06_POWE_ENG_ID                                         = 54995;
+    constexpr ParameterId EPS_VIP_CH07_VOLT_ENG_ID                                         = 55011;
+    constexpr ParameterId EPS_VIP_CH07_CURR_ENG_ID                                         = 55027;
+    constexpr ParameterId EPS_VIP_CH07_POWE_ENG_ID                                         = 55043;
+    constexpr ParameterId EPS_VIP_CH08_VOLT_ENG_ID                                         = 55059;
+    constexpr ParameterId EPS_VIP_CH08_CURR_ENG_ID                                         = 55075;
+    constexpr ParameterId EPS_VIP_CH08_POWE_ENG_ID                                         = 55091;
+    constexpr ParameterId EPS_VIP_CH09_VOLT_ENG_ID                                         = 55107;
+    constexpr ParameterId EPS_VIP_CH09_CURR_ENG_ID                                         = 55123;
+    constexpr ParameterId EPS_VIP_CH09_POWE_ENG_ID                                         = 55139;
+    constexpr ParameterId EPS_VIP_CH10_VOLT_ENG_ID                                         = 55155;
+    constexpr ParameterId EPS_VIP_CH10_CURR_ENG_ID                                         = 55171;
+    constexpr ParameterId EPS_VIP_CH10_POWE_ENG_ID                                         = 55187;
+    constexpr ParameterId EPS_VIP_CH11_VOLT_ENG_ID                                         = 55203;
+    constexpr ParameterId EPS_VIP_CH11_CURR_ENG_ID                                         = 55219;
+    constexpr ParameterId EPS_VIP_CH11_POWE_ENG_ID                                         = 55235;
+    constexpr ParameterId EPS_VIP_CH12_VOLT_ENG_ID                                         = 55251;
+    constexpr ParameterId EPS_VIP_CH12_CURR_ENG_ID                                         = 55267;
+    constexpr ParameterId EPS_VIP_CH12_POWE_ENG_ID                                         = 55283;
+    constexpr ParameterId EPS_VIP_CH13_VOLT_ENG_ID                                         = 55299;
+    constexpr ParameterId EPS_VIP_CH13_CURR_ENG_ID                                         = 55315;
+    constexpr ParameterId EPS_VIP_CH13_POWE_ENG_ID                                         = 55331;
+    constexpr ParameterId EPS_VIP_CH14_VOLT_ENG_ID                                         = 55347;
+    constexpr ParameterId EPS_VIP_CH14_CURR_ENG_ID                                         = 55363;
+    constexpr ParameterId EPS_VIP_CH14_POWE_ENG_ID                                         = 55379;
+    constexpr ParameterId EPS_VIP_CH00_VOLT_RA_ID                                          = 55395;
+    constexpr ParameterId EPS_VIP_CH00_CURR_RA_ID                                          = 55411;
+    constexpr ParameterId EPS_VIP_CH00_POWE_RA_ID                                          = 55427;
+    constexpr ParameterId EPS_VIP_CH01_VOLT_RA_ID                                          = 55443;
+    constexpr ParameterId EPS_VIP_CH01_CURR_RA_ID                                          = 55459;
+    constexpr ParameterId EPS_VIP_CH01_POWE_RA_ID                                          = 55475;
+    constexpr ParameterId EPS_VIP_CH02_VOLT_RA_ID                                          = 55491;
+    constexpr ParameterId EPS_VIP_CH02_CURR_RA_ID                                          = 55507;
+    constexpr ParameterId EPS_VIP_CH02_POWE_RA_ID                                          = 55523;
+    constexpr ParameterId EPS_VIP_CH03_VOLT_RA_ID                                          = 55539;
+    constexpr ParameterId EPS_VIP_CH03_CURR_RA_ID                                          = 55555;
+    constexpr ParameterId EPS_VIP_CH03_POWE_RA_ID                                          = 55571;
+    constexpr ParameterId EPS_VIP_CH04_VOLT_RA_ID                                          = 55587;
+    constexpr ParameterId EPS_VIP_CH04_CURR_RA_ID                                          = 55603;
+    constexpr ParameterId EPS_VIP_CH04_POWE_RA_ID                                          = 55619;
+    constexpr ParameterId EPS_VIP_CH05_VOLT_RA_ID                                          = 55635;
+    constexpr ParameterId EPS_VIP_CH05_CURR_RA_ID                                          = 55651;
+    constexpr ParameterId EPS_VIP_CH05_POWE_RA_ID                                          = 55667;
+    constexpr ParameterId EPS_VIP_CH06_VOLT_RA_ID                                          = 55683;
+    constexpr ParameterId EPS_VIP_CH06_CURR_RA_ID                                          = 55699;
+    constexpr ParameterId EPS_VIP_CH06_POWE_RA_ID                                          = 55715;
+    constexpr ParameterId EPS_VIP_CH07_VOLT_RA_ID                                          = 55731;
+    constexpr ParameterId EPS_VIP_CH07_CURR_RA_ID                                          = 55747;
+    constexpr ParameterId EPS_VIP_CH07_POWE_RA_ID                                          = 55763;
+    constexpr ParameterId EPS_VIP_CH08_VOLT_RA_ID                                          = 55779;
+    constexpr ParameterId EPS_VIP_CH08_CURR_RA_ID                                          = 55795;
+    constexpr ParameterId EPS_VIP_CH08_POWE_RA_ID                                          = 55811;
+    constexpr ParameterId EPS_VIP_CH09_VOLT_RA_ID                                          = 55827;
+    constexpr ParameterId EPS_VIP_CH09_CURR_RA_ID                                          = 55843;
+    constexpr ParameterId EPS_VIP_CH09_POWE_RA_ID                                          = 55859;
+    constexpr ParameterId EPS_VIP_CH10_VOLT_RA_ID                                          = 55875;
+    constexpr ParameterId EPS_VIP_CH10_CURR_RA_ID                                          = 55891;
+    constexpr ParameterId EPS_VIP_CH10_POWE_RA_ID                                          = 55907;
+    constexpr ParameterId EPS_VIP_CH11_VOLT_RA_ID                                          = 55923;
+    constexpr ParameterId EPS_VIP_CH11_CURR_RA_ID                                          = 55939;
+    constexpr ParameterId EPS_VIP_CH11_POWE_RA_ID                                          = 55955;
+    constexpr ParameterId EPS_VIP_CH12_VOLT_RA_ID                                          = 55971;
+    constexpr ParameterId EPS_VIP_CH12_CURR_RA_ID                                          = 55987;
+    constexpr ParameterId EPS_VIP_CH12_POWE_RA_ID                                          = 56003;
+    constexpr ParameterId EPS_VIP_CH13_VOLT_RA_ID                                          = 56019;
+    constexpr ParameterId EPS_VIP_CH13_CURR_RA_ID                                          = 56035;
+    constexpr ParameterId EPS_VIP_CH13_POWE_RA_ID                                          = 56051;
+    constexpr ParameterId EPS_VIP_CH14_VOLT_RA_ID                                          = 56067;
+    constexpr ParameterId EPS_VIP_CH14_CURR_RA_ID                                          = 56083;
+    constexpr ParameterId EPS_VIP_CH14_POWE_RA_ID                                          = 56099;
+    constexpr ParameterId EPS_VOLT_BRDSUP_RA_ID                                            = 56115;
+    constexpr ParameterId EPS_TEMP_MCU_RA_ID                                               = 56131;
+    constexpr ParameterId EPS_VIP_VOLT_INPUT_RA_ID                                         = 56147;
+    constexpr ParameterId EPS_VIP_CURR_INPUT_RA_ID                                         = 56163;
+    constexpr ParameterId EPS_VIP_POWE_INPUT_RA_ID                                         = 56179;
+    constexpr ParameterId EPS_VIP_VOLT_DIST_INPUT_RA_ID                                    = 56195;
+    constexpr ParameterId EPS_VIP_CURR_DIST_INPUT_RA_ID                                    = 56211;
+    constexpr ParameterId EPS_VIP_POWE_DIST_INPUT_RA_ID                                    = 56227;
+    constexpr ParameterId EPS_VIP_VOLT_BAT_INPUT_RA_ID                                     = 56243;
+    constexpr ParameterId EPS_VIP_CURR_BAT_INPUT_RA_ID                                     = 56259;
+    constexpr ParameterId EPS_VIP_POWE_BAT_INPUT_RA_ID                                     = 56275;
+    constexpr ParameterId EPS_VIP_VOLT_VD0_RA_ID                                           = 56291;
+    constexpr ParameterId EPS_VIP_CURR_VD0_RA_ID                                           = 56307;
+    constexpr ParameterId EPS_VIP_POWE_VD0_RA_ID                                           = 56323;
+    constexpr ParameterId EPS_VIP_VOLT_VD1_RA_ID                                           = 56339;
+    constexpr ParameterId EPS_VIP_CURR_VD1_RA_ID                                           = 56355;
+    constexpr ParameterId EPS_VIP_POWE_VD1_RA_ID                                           = 56371;
+    constexpr ParameterId EPS_VIP_VOLT_VD2_RA_ID                                           = 56387;
+    constexpr ParameterId EPS_VIP_CURR_VD2_RA_ID                                           = 56403;
+    constexpr ParameterId EPS_VIP_POWE_VD2_RA_ID                                           = 56419;
+    constexpr ParameterId EPS_VIP_VOLT_VD3_RA_ID                                           = 56435;
+    constexpr ParameterId EPS_VIP_CURR_VD3_RA_ID                                           = 56451;
+    constexpr ParameterId EPS_VIP_POWE_VD3_RA_ID                                           = 56467;
+    constexpr ParameterId EPS_VIP_VOLT_VD4_RA_ID                                           = 56483;
+    constexpr ParameterId EPS_VIP_CURR_VD4_RA_ID                                           = 56499;
+    constexpr ParameterId EPS_VIP_POWE_VD4_RA_ID                                           = 56515;
+    constexpr ParameterId EPS_VIP_VOLT_VD5_RA_ID                                           = 56531;
+    constexpr ParameterId EPS_VIP_CURR_VD5_RA_ID                                           = 56547;
+    constexpr ParameterId EPS_VIP_POWE_VD5_RA_ID                                           = 56563;
+    constexpr ParameterId EPS_VIP_VOLT_VD6_RA_ID                                           = 56579;
+    constexpr ParameterId EPS_VIP_CURR_VD6_RA_ID                                           = 56595;
+    constexpr ParameterId EPS_VIP_POWE_VD6_RA_ID                                           = 56611;
+    constexpr ParameterId EPS_STAT_BU_ID                                                   = 56627;
+    constexpr ParameterId EPS_VOLT_BP1_INPUT_RAW_ID                                        = 56643;
+    constexpr ParameterId EPS_CURR_BP1_INPUT_RAW_ID                                        = 56659;
+    constexpr ParameterId EPS_POWE_BP1_INPUT_RAW_ID                                        = 56675;
+    constexpr ParameterId EPS_STAT_BP1_RAW_ID                                              = 56690;
+    constexpr ParameterId EPS_VOLT_BP1_CELL1_RAW_ID                                        = 56706;
+    constexpr ParameterId EPS_VOLT_BP1_CELL2_RAW_ID                                        = 56722;
+    constexpr ParameterId EPS_VOLT_BP1_CELL3_RAW_ID                                        = 56738;
+    constexpr ParameterId EPS_VOLT_BP1_CELL4_RAW_ID                                        = 56754;
+    constexpr ParameterId EPS_BAT_TEMP1_BP1_RAW_ID                                         = 56770;
+    constexpr ParameterId EPS_BAT_TEMP2_BP1_RAW_ID                                         = 56786;
+    constexpr ParameterId EPS_BAT_TEMP3_BP1_RAW_ID                                         = 56802;
+    constexpr ParameterId EPS_VOLT_BP2_INPUT_RAW_ID                                        = 56819;
+    constexpr ParameterId EPS_CURR_BP2_INPUT_RAW_ID                                        = 56835;
+    constexpr ParameterId EPS_POWE_BP2_INPUT_RAW_ID                                        = 56851;
+    constexpr ParameterId EPS_STAT_BP2_RAW_ID                                              = 56866;
+    constexpr ParameterId EPS_VOLT_BP2_CELL1_RAW_ID                                        = 56882;
+    constexpr ParameterId EPS_VOLT_BP2_CELL2_RAW_ID                                        = 56898;
+    constexpr ParameterId EPS_VOLT_BP2_CELL3_RAW_ID                                        = 56914;
+    constexpr ParameterId EPS_VOLT_BP2_CELL4_RAW_ID                                        = 56930;
+    constexpr ParameterId EPS_BAT_TEMP1_BP2_RAW_ID                                         = 56946;
+    constexpr ParameterId EPS_BAT_TEMP2_BP2_RAW_ID                                         = 56962;
+    constexpr ParameterId EPS_BAT_TEMP3_BP2_RAW_ID                                         = 56978;
+    constexpr ParameterId EPS_VOLT_BP3_INPUT_RAW_ID                                        = 56995;
+    constexpr ParameterId EPS_CURR_BP3_INPUT_RAW_ID                                        = 57011;
+    constexpr ParameterId EPS_POWE_BP3_INPUT_RAW_ID                                        = 57027;
+    constexpr ParameterId EPS_STAT_BP3_RAW_ID                                              = 57042;
+    constexpr ParameterId EPS_VOLT_BP3_CELL1_RAW_ID                                        = 57058;
+    constexpr ParameterId EPS_VOLT_BP3_CELL2_RAW_ID                                        = 57074;
+    constexpr ParameterId EPS_VOLT_BP3_CELL3_RAW_ID                                        = 57090;
+    constexpr ParameterId EPS_VOLT_BP3_CELL4_RAW_ID                                        = 57106;
+    constexpr ParameterId EPS_BAT_TEMP1_BP3_RAW_ID                                         = 57122;
+    constexpr ParameterId EPS_BAT_TEMP2_BP3_RAW_ID                                         = 57138;
+    constexpr ParameterId EPS_BAT_TEMP3_BP3_RAW_ID                                         = 57154;
+    constexpr ParameterId EPS_VOLT_BP1_INPUT_ENG_ID                                        = 57171;
+    constexpr ParameterId EPS_CURR_BP1_INPUT_ENG_ID                                        = 57187;
+    constexpr ParameterId EPS_POWE_BP1_INPUT_ENG_ID                                        = 57203;
+    constexpr ParameterId EPS_STAT_BP1_ENG_ID                                              = 57219;
+    constexpr ParameterId EPS_VOLT_BP1_CELL1_ENG_ID                                        = 57235;
+    constexpr ParameterId EPS_VOLT_BP1_CELL2_ENG_ID                                        = 57251;
+    constexpr ParameterId EPS_VOLT_BP1_CELL3_ENG_ID                                        = 57267;
+    constexpr ParameterId EPS_VOLT_BP1_CELL4_ENG_ID                                        = 57283;
+    constexpr ParameterId EPS_BAT_TEMP1_BP1_ENG_ID                                         = 57299;
+    constexpr ParameterId EPS_BAT_TEMP2_BP1_ENG_ID                                         = 57315;
+    constexpr ParameterId EPS_BAT_TEMP3_BP1_ENG_ID                                         = 57331;
+    constexpr ParameterId EPS_VOLT_BP2_INPUT_ENG_ID                                        = 57347;
+    constexpr ParameterId EPS_CURR_BP2_INPUT_ENG_ID                                        = 57363;
+    constexpr ParameterId EPS_POWE_BP2_INPUT_ENG_ID                                        = 57379;
+    constexpr ParameterId EPS_STAT_BP2_ENG_ID                                              = 57395;
+    constexpr ParameterId EPS_VOLT_BP2_CELL1_ENG_ID                                        = 57411;
+    constexpr ParameterId EPS_VOLT_BP2_CELL2_ENG_ID                                        = 57427;
+    constexpr ParameterId EPS_VOLT_BP2_CELL3_ENG_ID                                        = 57443;
+    constexpr ParameterId EPS_VOLT_BP2_CELL4_ENG_ID                                        = 57459;
+    constexpr ParameterId EPS_BAT_TEMP1_BP2_ENG_ID                                         = 57475;
+    constexpr ParameterId EPS_BAT_TEMP2_BP2_ENG_ID                                         = 57491;
+    constexpr ParameterId EPS_BAT_TEMP3_BP2_ENG_ID                                         = 57507;
+    constexpr ParameterId EPS_VOLT_BP3_INPUT_ENG_ID                                        = 57523;
+    constexpr ParameterId EPS_CURR_BP3_INPUT_ENG_ID                                        = 57539;
+    constexpr ParameterId EPS_POWE_BP3_INPUT_ENG_ID                                        = 57555;
+    constexpr ParameterId EPS_STAT_BP3_ENG_ID                                              = 57571;
+    constexpr ParameterId EPS_VOLT_BP3_CELL1_ENG_ID                                        = 57587;
+    constexpr ParameterId EPS_VOLT_BP3_CELL2_ENG_ID                                        = 57603;
+    constexpr ParameterId EPS_VOLT_BP3_CELL3_ENG_ID                                        = 57619;
+    constexpr ParameterId EPS_VOLT_BP3_CELL4_ENG_ID                                        = 57635;
+    constexpr ParameterId EPS_BAT_TEMP1_BP3_ENG_ID                                         = 57651;
+    constexpr ParameterId EPS_BAT_TEMP2_BP3_ENG_ID                                         = 57667;
+    constexpr ParameterId EPS_BAT_TEMP3_BP3_ENG_ID                                         = 57683;
+    constexpr ParameterId EPS_VOLT_BP1_INPUT_RA_ID                                         = 57699;
+    constexpr ParameterId EPS_CURR_BP1_INPUT_RA_ID                                         = 57715;
+    constexpr ParameterId EPS_POWE_BP1_INPUT_RA_ID                                         = 57731;
+    constexpr ParameterId EPS_STAT_BP1_RA_ID                                               = 57747;
+    constexpr ParameterId EPS_VOLT_BP1_CELL1_RA_ID                                         = 57763;
+    constexpr ParameterId EPS_VOLT_BP1_CELL2_RA_ID                                         = 57779;
+    constexpr ParameterId EPS_VOLT_BP1_CELL3_RA_ID                                         = 57795;
+    constexpr ParameterId EPS_VOLT_BP1_CELL4_RA_ID                                         = 57811;
+    constexpr ParameterId EPS_BAT_TEMP1_BP1_RA_ID                                          = 57827;
+    constexpr ParameterId EPS_BAT_TEMP2_BP1_RA_ID                                          = 57843;
+    constexpr ParameterId EPS_BAT_TEMP3_BP1_RA_ID                                          = 57859;
+    constexpr ParameterId EPS_VOLT_BP2_INPUT_RA_ID                                         = 57875;
+    constexpr ParameterId EPS_CURR_BP2_INPUT_RA_ID                                         = 57891;
+    constexpr ParameterId EPS_POWE_BP2_INPUT_RA_ID                                         = 57907;
+    constexpr ParameterId EPS_STAT_BP2_RA_ID                                               = 57923;
+    constexpr ParameterId EPS_VOLT_BP2_CELL1_RA_ID                                         = 57939;
+    constexpr ParameterId EPS_VOLT_BP2_CELL2_RA_ID                                         = 57955;
+    constexpr ParameterId EPS_VOLT_BP2_CELL3_RA_ID                                         = 57971;
+    constexpr ParameterId EPS_VOLT_BP2_CELL4_RA_ID                                         = 57987;
+    constexpr ParameterId EPS_BAT_TEMP1_BP2_RA_ID                                          = 58003;
+    constexpr ParameterId EPS_BAT_TEMP2_BP2_RA_ID                                          = 58019;
+    constexpr ParameterId EPS_BAT_TEMP3_BP2_RA_ID                                          = 58035;
+    constexpr ParameterId EPS_VOLT_BP3_INPUT_RA_ID                                         = 58051;
+    constexpr ParameterId EPS_CURR_BP3_INPUT_RA_ID                                         = 58067;
+    constexpr ParameterId EPS_POWE_BP3_INPUT_RA_ID                                         = 58083;
+    constexpr ParameterId EPS_STAT_BP3_RA_ID                                               = 58099;
+    constexpr ParameterId EPS_VOLT_BP3_CELL1_RA_ID                                         = 58115;
+    constexpr ParameterId EPS_VOLT_BP3_CELL2_RA_ID                                         = 58131;
+    constexpr ParameterId EPS_VOLT_BP3_CELL3_RA_ID                                         = 58147;
+    constexpr ParameterId EPS_VOLT_BP3_CELL4_RA_ID                                         = 58163;
+    constexpr ParameterId EPS_BAT_TEMP1_BP3_RA_ID                                          = 58179;
+    constexpr ParameterId EPS_BAT_TEMP2_BP3_RA_ID                                          = 58195;
+    constexpr ParameterId EPS_BAT_TEMP3_BP3_RA_ID                                          = 58211;
+    constexpr ParameterId EPS_VOLT_VD0_RAW_ID                                              = 58226;
+    constexpr ParameterId EPS_VOLT_VD1_RAW_ID                                              = 58242;
+    constexpr ParameterId EPS_VOLT_VD2_RAW_ID                                              = 58258;
+    constexpr ParameterId EPS_VOLT_VD0_ENG_ID                                              = 58275;
+    constexpr ParameterId EPS_VOLT_VD1_ENG_ID                                              = 58291;
+    constexpr ParameterId EPS_VOLT_VD2_ENG_ID                                              = 58307;
+    constexpr ParameterId EPS_VOLT_VD0_RA_ID                                               = 58323;
+    constexpr ParameterId EPS_VOLT_VD1_RA_ID                                               = 58339;
+    constexpr ParameterId EPS_VOLT_VD2_RA_ID                                               = 58355;
+    constexpr ParameterId EPS_BAT_STAT_ID                                                  = 58371;
+    constexpr ParameterId EPS_BAT_TEMP2_RAW_ID                                             = 58386;
+    constexpr ParameterId EPS_BAT_TEMP3_RAW_ID                                             = 58402;
+    constexpr ParameterId EPS_BAT_TEMP2_ENG_ID                                             = 58419;
+    constexpr ParameterId EPS_BAT_TEMP3_ENG_ID                                             = 58435;
+    constexpr ParameterId EPS_BAT_TEMP2_RA_ID                                              = 58451;
+    constexpr ParameterId EPS_BAT_TEMP3_RA_ID                                              = 58467;
+    constexpr ParameterId EPS_CC1_VOLT_IN_MPPT_RAW_ID                                      = 58482;
+    constexpr ParameterId EPS_CC2_VOLT_IN_MPPT_RAW_ID                                      = 58498;
+    constexpr ParameterId EPS_CC3_VOLT_IN_MPPT_RAW_ID                                      = 58514;
+    constexpr ParameterId EPS_CC4_VOLT_IN_MPPT_RAW_ID                                      = 58530;
+    constexpr ParameterId EPS_CC5_VOLT_IN_MPPT_RAW_ID                                      = 58546;
+    constexpr ParameterId EPS_CC1_CURR_IN_MPPT_RAW_ID                                      = 58562;
+    constexpr ParameterId EPS_CC2_CURR_IN_MPPT_RAW_ID                                      = 58578;
+    constexpr ParameterId EPS_CC3_CURR_IN_MPPT_RAW_ID                                      = 58594;
+    constexpr ParameterId EPS_CC4_CURR_IN_MPPT_RAW_ID                                      = 58610;
+    constexpr ParameterId EPS_CC5_CURR_IN_MPPT_RAW_ID                                      = 58626;
+    constexpr ParameterId EPS_CC1_VOLT_OU_MPPT_RAW_ID                                      = 58642;
+    constexpr ParameterId EPS_CC2_VOLT_OU_MPPT_RAW_ID                                      = 58658;
+    constexpr ParameterId EPS_CC3_VOLT_OU_MPPT_RAW_ID                                      = 58674;
+    constexpr ParameterId EPS_CC4_VOLT_OU_MPPT_RAW_ID                                      = 58690;
+    constexpr ParameterId EPS_CC5_VOLT_OU_MPPT_RAW_ID                                      = 58706;
+    constexpr ParameterId EPS_CC1_CURR_OU_MPPT_RAW_ID                                      = 58722;
+    constexpr ParameterId EPS_CC2_CURR_OU_MPPT_RAW_ID                                      = 58738;
+    constexpr ParameterId EPS_CC3_CURR_OU_MPPT_RAW_ID                                      = 58754;
+    constexpr ParameterId EPS_CC4_CURR_OU_MPPT_RAW_ID                                      = 58770;
+    constexpr ParameterId EPS_CC5_CURR_OU_MPPT_RAW_ID                                      = 58786;
+    constexpr ParameterId EPS_CC1_VOLT_IN_MPPT_ENG_ID                                      = 58803;
+    constexpr ParameterId EPS_CC2_VOLT_IN_MPPT_ENG_ID                                      = 58819;
+    constexpr ParameterId EPS_CC3_VOLT_IN_MPPT_ENG_ID                                      = 58835;
+    constexpr ParameterId EPS_CC4_VOLT_IN_MPPT_ENG_ID                                      = 58851;
+    constexpr ParameterId EPS_CC5_VOLT_IN_MPPT_ENG_ID                                      = 58867;
+    constexpr ParameterId EPS_CC1_CURR_IN_MPPT_ENG_ID                                      = 58883;
+    constexpr ParameterId EPS_CC2_CURR_IN_MPPT_ENG_ID                                      = 58899;
+    constexpr ParameterId EPS_CC3_CURR_IN_MPPT_ENG_ID                                      = 58915;
+    constexpr ParameterId EPS_CC4_CURR_IN_MPPT_ENG_ID                                      = 58931;
+    constexpr ParameterId EPS_CC5_CURR_IN_MPPT_ENG_ID                                      = 58947;
+    constexpr ParameterId EPS_CC1_VOLT_OU_MPPT_ENG_ID                                      = 58963;
+    constexpr ParameterId EPS_CC2_VOLT_OU_MPPT_ENG_ID                                      = 58979;
+    constexpr ParameterId EPS_CC3_VOLT_OU_MPPT_ENG_ID                                      = 58995;
+    constexpr ParameterId EPS_CC4_VOLT_OU_MPPT_ENG_ID                                      = 59011;
+    constexpr ParameterId EPS_CC5_VOLT_OU_MPPT_ENG_ID                                      = 59027;
+    constexpr ParameterId EPS_CC1_CURR_OU_MPPT_ENG_ID                                      = 59043;
+    constexpr ParameterId EPS_CC2_CURR_OU_MPPT_ENG_ID                                      = 59059;
+    constexpr ParameterId EPS_CC3_CURR_OU_MPPT_ENG_ID                                      = 59075;
+    constexpr ParameterId EPS_CC4_CURR_OU_MPPT_ENG_ID                                      = 59091;
+    constexpr ParameterId EPS_CC5_CURR_OU_MPPT_ENG_ID                                      = 59107;
+    constexpr ParameterId EPS_CC1_VOLT_IN_MPPT_RA_ID                                       = 59123;
+    constexpr ParameterId EPS_CC2_VOLT_IN_MPPT_RA_ID                                       = 59139;
+    constexpr ParameterId EPS_CC3_VOLT_IN_MPPT_RA_ID                                       = 59155;
+    constexpr ParameterId EPS_CC4_VOLT_IN_MPPT_RA_ID                                       = 59171;
+    constexpr ParameterId EPS_CC5_VOLT_IN_MPPT_RA_ID                                       = 59187;
+    constexpr ParameterId EPS_CC1_CURR_IN_MPPT_RA_ID                                       = 59203;
+    constexpr ParameterId EPS_CC2_CURR_IN_MPPT_RA_ID                                       = 59219;
+    constexpr ParameterId EPS_CC3_CURR_IN_MPPT_RA_ID                                       = 59235;
+    constexpr ParameterId EPS_CC4_CURR_IN_MPPT_RA_ID                                       = 59251;
+    constexpr ParameterId EPS_CC5_CURR_IN_MPPT_RA_ID                                       = 59267;
+    constexpr ParameterId EPS_CC1_VOLT_OU_MPPT_RA_ID                                       = 59283;
+    constexpr ParameterId EPS_CC2_VOLT_OU_MPPT_RA_ID                                       = 59299;
+    constexpr ParameterId EPS_CC3_VOLT_OU_MPPT_RA_ID                                       = 59315;
+    constexpr ParameterId EPS_CC4_VOLT_OU_MPPT_RA_ID                                       = 59331;
+    constexpr ParameterId EPS_CC5_VOLT_OU_MPPT_RA_ID                                       = 59347;
+    constexpr ParameterId EPS_CC1_CURR_OU_MPPT_RA_ID                                       = 59363;
+    constexpr ParameterId EPS_CC2_CURR_OU_MPPT_RA_ID                                       = 59379;
+    constexpr ParameterId EPS_CC3_CURR_OU_MPPT_RA_ID                                       = 59395;
+    constexpr ParameterId EPS_CC4_CURR_OU_MPPT_RA_ID                                       = 59411;
+    constexpr ParameterId EPS_CC5_CURR_OU_MPPT_RA_ID                                       = 59427;
+    constexpr ParameterId EPS_CH_STARTUP_ENA_BF_ID                                         = 59444;
+    constexpr ParameterId EPS_CH_STARTUP_KEY_ID                                            = 59460;
+    constexpr ParameterId EPS_CH_LATCHOFF_ENA_BF_ID                                        = 59476;
+    constexpr ParameterId EPS_CH_LATCHOFF_KEY_ID                                           = 59492;
+    constexpr ParameterId EPS_TTC_WDG_TIMEOUT_ID                                           = 59506;
+    constexpr ParameterId EPS_TTC_WDG_TIMEOUT_KEY_ID                                       = 59522;
+    constexpr ParameterId EPS_CH_STARTUP_DELAY_CH1_ID                                      = 59538;
+    constexpr ParameterId EPS_CH_LATCHOFF_DELAY_CH1_ID                                     = 59554;
+    constexpr ParameterId EPS_SAFETY_VOLT_LOTHR_ID                                         = 59570;
+    constexpr ParameterId EPS_SAFETY_VOLT_HITHR_ID                                         = 59586;
+    constexpr ParameterId EPS_LOTHR_BP1_HEATER_ID                                          = 59603;
+    constexpr ParameterId EPS_LOTHR_BP2_HEATER_ID                                          = 59619;
+    constexpr ParameterId EPS_LOTHR_BP3_HEATER_ID                                          = 59635;
+    constexpr ParameterId EPS_HITHR_BP1_HEATER_ID                                          = 59651;
+    constexpr ParameterId EPS_HITHR_BP2_HEATER_ID                                          = 59667;
+    constexpr ParameterId EPS_HITHR_BP3_HEATER_ID                                          = 59683;
+    constexpr ParameterId EPS_LOTHR_BP1_UNBAL_ID                                           = 59699;
+    constexpr ParameterId EPS_LOTHR_BP2_UNBAL_ID                                           = 59715;
+    constexpr ParameterId EPS_LOTHR_BP3_UNBAL_ID                                           = 59731;
+    constexpr ParameterId EPS_HITHR_BP1_UNBAL_ID                                           = 59747;
+    constexpr ParameterId EPS_HITHR_BP2_UNBAL_ID                                           = 59763;
+    constexpr ParameterId EPS_HITHR_BP3_UNBAL_ID                                           = 59779;
+    constexpr ParameterId EPS_MCU_TEMP_BIAS_ID                                             = 59795;
+    constexpr ParameterId EPS_MCU_TEMP_PREMUL_ID                                           = 59811;
+    constexpr ParameterId EPS_MCU_TEMP_POSDIV_ID                                           = 59827;
+    constexpr ParameterId EPS_BP1_TEMP1_BIAS_ID                                            = 59843;
+    constexpr ParameterId EPS_BP1_TEMP2_BIAS_ID                                            = 59859;
+    constexpr ParameterId EPS_BP1_TEMP3_BIAS_ID                                            = 59875;
+    constexpr ParameterId EPS_BP2_TEMP1_BIAS_ID                                            = 59891;
+    constexpr ParameterId EPS_BP2_TEMP2_BIAS_ID                                            = 59907;
+    constexpr ParameterId EPS_BP2_TEMP3_BIAS_ID                                            = 59923;
+    constexpr ParameterId EPS_BP3_TEMP1_BIAS_ID                                            = 59939;
+    constexpr ParameterId EPS_BP3_TEMP2_BIAS_ID                                            = 59955;
+    constexpr ParameterId EPS_BP3_TEMP3_BIAS_ID                                            = 59971;
+    constexpr ParameterId EPS_BP1_TEMP1_PREMUL_ID                                          = 59987;
+    constexpr ParameterId EPS_BP1_TEMP2_PREMUL_ID                                          = 60003;
+    constexpr ParameterId EPS_BP1_TEMP3_PREMUL_ID                                          = 60019;
+    constexpr ParameterId EPS_BP2_TEMP1_PREMUL_ID                                          = 60035;
+    constexpr ParameterId EPS_BP2_TEMP2_PREMUL_ID                                          = 60051;
+    constexpr ParameterId EPS_BP2_TEMP3_PREMUL_ID                                          = 60067;
+    constexpr ParameterId EPS_BP3_TEMP1_PREMUL_ID                                          = 60083;
+    constexpr ParameterId EPS_BP3_TEMP2_PREMUL_ID                                          = 60099;
+    constexpr ParameterId EPS_BP3_TEMP3_PREMUL_ID                                          = 60115;
+    constexpr ParameterId EPS_BP1_TEMP1_POSDIV_ID                                          = 60131;
+    constexpr ParameterId EPS_BP1_TEMP2_POSDIV_ID                                          = 60147;
+    constexpr ParameterId EPS_BP1_TEMP3_POSDIV_ID                                          = 60163;
+    constexpr ParameterId EPS_BP2_TEMP1_POSDIV_ID                                          = 60179;
+    constexpr ParameterId EPS_BP2_TEMP2_POSDIV_ID                                          = 60195;
+    constexpr ParameterId EPS_BP2_TEMP3_POSDIV_ID                                          = 60211;
+    constexpr ParameterId EPS_BP3_TEMP1_POSDIV_ID                                          = 60227;
+    constexpr ParameterId EPS_BP3_TEMP2_POSDIV_ID                                          = 60243;
+    constexpr ParameterId EPS_BP3_TEMP3_POSDIV_ID                                          = 60259;
+    constexpr ParameterId EPS_BOARD_IDENTIFIER_ID                                          = 60272;
+    constexpr ParameterId EPS_BOARD_IDENTIFIER_KEY_ID                                      = 60288;
+    constexpr ParameterId EPS_RAVG_STRENGTH_P2_ID                                          = 60304;
+    constexpr ParameterId EPS_AUTO_HEAT_ENA_BP1_ID                                         = 60321;
+    constexpr ParameterId EPS_AUTO_HEAT_ENA_BP2_ID                                         = 60337;
+    constexpr ParameterId EPS_AUTO_HEAT_ENA_BP3_ID                                         = 60353;
+    constexpr ParameterId EPS_AUTO_BAL_ENA_BP1_ID                                          = 60369;
+    constexpr ParameterId EPS_AUTO_BAL_ENA_BP2_ID                                          = 60385;
+    constexpr ParameterId EPS_AUTO_BAL_ENA_BP3_ID                                          = 60401;
+    constexpr ParameterId EPS_VD1_ALWAYS_ENA_ID                                            = 60417;
+    constexpr ParameterId EPS_VD1_ALWAYS_DISA_ID                                           = 60433;
+    constexpr ParameterId EPS_CH_FORCE_ENA_USE_BF_ID                                       = 60452;
+    constexpr ParameterId EPS_CH_STARTUP_ENA_USE_BF_ID                                     = 60468;
+    constexpr ParameterId EPS_CH_LATCHOFF_ENA_USE_BF_ID                                    = 60484;
+    constexpr ParameterId EPS_VD1_ALLOC_CH_BF_ID                                           = 60500;
+    constexpr ParameterId EPS_SWCI_CH_CMD_ENA_BF_ID                                        = 60516;
+    constexpr ParameterId EPS_SWCI_CH_CMD_DISA_BF_ID                                       = 60532;
+    constexpr ParameterId EPS_TTC_I2C_SLAVE_ADDR_ID                                        = 60546;
+    constexpr ParameterId EPS_CONF_NVM_SAVE_CNTR_ID                                        = 60562;
+    constexpr ParameterId EPS_CONF_NVM_SAVE_CHKS_ID                                        = 60578;
+    constexpr ParameterId EPS_RST_CAUSE_ID                                                 = 60594;
+    constexpr ParameterId EPS_RST_CNTR_PWRON_ID                                            = 60610;
+    constexpr ParameterId EPS_RST_CNTR_WDG_ID                                              = 60626;
+    constexpr ParameterId EPS_RST_CNTR_CMD_ID                                              = 60642;
+    constexpr ParameterId EPS_RST_CNTR_MCU_ID                                              = 60658;
+    constexpr ParameterId EPS_RST_CNTR_EMLOPO_ID                                           = 60674;
+    constexpr ParameterId EPS_RST_CODE_MCU_RAW_ID                                          = 60690;
+    constexpr ParameterId EPS_EMLOPO_VOLT_LOTHR_ID                                         = 60706;
+    constexpr ParameterId EPS_EMLOPO_VOLT_HITHR_ID                                         = 60722;
+    constexpr ParameterId EPS_EMLOPO_PERIOD_ID                                             = 60738;
+    constexpr ParameterId EPS_SAFETY_VOLT_LOTHR_USED_ID                                    = 60754;
+    constexpr ParameterId EPS_SAFETY_VOLT_HITHR_USED_ID                                    = 60770;
+    constexpr ParameterId EPS_SAFETY_LINGER_ID                                             = 60786;
+    constexpr ParameterId EPS_TTC_WDG_TIMOUT_USED_ID                                       = 60802;
+    constexpr ParameterId EPS_TTC_PREVCMD_ELAPSED_ID                                       = 60818;
+    constexpr ParameterId EPS_STID_ID                                                      = 60832;
+    constexpr ParameterId EPS_IVID_ID                                                      = 60848;
+    constexpr ParameterId EPS_BID_USED_ID                                                  = 60864;
+    constexpr ParameterId EPS_BOOT_RESUME_SHORT_ID                                         = 60880;
+    constexpr ParameterId EPS_CONF_PARAM_CHANGED_ID                                        = 60897;
+    constexpr ParameterId EPS_VIP_VOLT_INPUT_RAW_ID                                        = 60915;
+    constexpr ParameterId EPS_VIP_CURR_INPUT_RAW_ID                                        = 60931;
+    constexpr ParameterId EPS_VIP_POWE_INPUT_RAW_ID                                        = 60947;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_VOLT_RAW_ID                                   = 60962;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_CURR_RAW_ID                                   = 60979;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_POWE_RAW_ID                                   = 60995;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_VOLT_RAW_ID                                   = 61011;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_CURR_RAW_ID                                   = 61027;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_POWE_RAW_ID                                   = 61043;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_VOLT_RAW_ID                                   = 61059;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_CURR_RAW_ID                                   = 61075;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_POWE_RAW_ID                                   = 61091;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_VOLT_RAW_ID                                   = 61107;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_CURR_RAW_ID                                   = 61123;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_POWE_RAW_ID                                   = 61139;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_VOLT_RAW_ID                                   = 61155;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_CURR_RAW_ID                                   = 61171;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_POWE_RAW_ID                                   = 61187;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_VOLT_ENG_ID                                   = 61203;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_CURR_ENG_ID                                   = 61219;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_POWE_ENG_ID                                   = 61235;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_VOLT_ENG_ID                                   = 61251;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_CURR_ENG_ID                                   = 61267;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_POWE_ENG_ID                                   = 61283;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_VOLT_ENG_ID                                   = 61299;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_CURR_ENG_ID                                   = 61315;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_POWE_ENG_ID                                   = 61331;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_VOLT_ENG_ID                                   = 61347;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_CURR_ENG_ID                                   = 61363;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_POWE_ENG_ID                                   = 61379;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_VOLT_ENG_ID                                   = 61395;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_CURR_ENG_ID                                   = 61411;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_POWE_ENG_ID                                   = 61427;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_VOLT_RA_ID                                    = 61443;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_CURR_RA_ID                                    = 61459;
+    constexpr ParameterId EPS_VIP_CC1_OUTPUT_POWE_RA_ID                                    = 61475;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_VOLT_RA_ID                                    = 61491;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_CURR_RA_ID                                    = 61507;
+    constexpr ParameterId EPS_VIP_CC2_OUTPUT_POWE_RA_ID                                    = 61523;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_VOLT_RA_ID                                    = 61539;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_CURR_RA_ID                                    = 61555;
+    constexpr ParameterId EPS_VIP_CC3_OUTPUT_POWE_RA_ID                                    = 61571;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_VOLT_RA_ID                                    = 61587;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_CURR_RA_ID                                    = 61603;
+    constexpr ParameterId EPS_VIP_CC4_OUTPUT_POWE_RA_ID                                    = 61619;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_VOLT_RA_ID                                    = 61635;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_CURR_RA_ID                                    = 61651;
+    constexpr ParameterId EPS_VIP_CC5_OUTPUT_POWE_RA_ID                                    = 61667;
+    constexpr ParameterId EPS_VIP_VOLT_DIST_INPUT_RAW_ID                                   = 61683;
+    constexpr ParameterId EPS_VIP_CURR_DIST_INPUT_RAW_ID                                   = 61699;
+    constexpr ParameterId EPS_VIP_POWE_DIST_INPUT_RAW_ID                                   = 61715;
+    constexpr ParameterId EPS_VIP_VOLT_BAT_INPUT_RAW_ID                                    = 61731;
+    constexpr ParameterId EPS_VIP_CURR_BAT_INPUT_RAW_ID                                    = 61747;
+    constexpr ParameterId EPS_VIP_POWE_BAT_INPUT_RAW_ID                                    = 61763;
+    constexpr ParameterId EPS_VIP_OUTPUT_VOLT_RAW_ID                                       = 61779;
+    constexpr ParameterId EPS_VIP_OUTPUT_CURR_RAW_ID                                       = 61795;
+    constexpr ParameterId EPS_VIP_OUTPUT_POWE_RAW_ID                                       = 61811;
+    constexpr ParameterId EPS_VIP_OUTPUT_VOLT_ENG_ID                                       = 61827;
+    constexpr ParameterId EPS_VIP_OUTPUT_CURR_ENG_ID                                       = 61843;
+    constexpr ParameterId EPS_VIP_OUTPUT_POWE_ENG_ID                                       = 61859;
+    constexpr ParameterId EPS_VIP_OUTPUT_VOLT_RA_ID                                        = 61875;
+    constexpr ParameterId EPS_VIP_OUTPUT_CURR_RA_ID                                        = 61891;
+    constexpr ParameterId EPS_VIP_OUTPUT_POWE_RA_ID                                        = 61907;
+    constexpr ParameterId EPS_ADC_MCU_TEMP_V25T30_ID                                       = 61923;
+    constexpr ParameterId EPS_ADC_MCU_TEMP_V25T85_ID                                       = 61939;
+    constexpr ParameterId EPS_VIP_CURR_VD6_ENG_ID                                          = 61955;
+}

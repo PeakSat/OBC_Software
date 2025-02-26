@@ -4,6 +4,7 @@
 #include <ApplicationLayer.hpp>
 #include <CANParserTask.hpp>
 #include <TestTask.hpp>
+#include <mutex_Handler.h>
 
 
 CANGatekeeperTask::CANGatekeeperTask() : Task("CANGatekeeperTask") {
@@ -68,7 +69,8 @@ void CANGatekeeperTask::execute() {
                 uint8_t payloadLength = metadata & 0x3F;
                 if (frameType == CAN::TPProtocol::Frame::Single) {
                     if (in_frame_handler.pointerToData[1] == CAN::Application::MessageIDs::ACK) {
-                        xSemaphoreGive(can_ack_handler.CAN_ACK_SEMAPHORE);
+                        releaseSemaphoreGroup(smphr_groups::GROUP_A);
+                        // xSemaphoreGive(can_ack_handler.CAN_ACK_SEMAPHORE);
                     }
                 } else if (frameType == CAN::TPProtocol::Frame::First) {
                     // // debugCounter=0;
@@ -117,7 +119,7 @@ void CANGatekeeperTask::execute() {
                                 CANPacketHandler->TailPointer = 0;
                             }
                         }
-                        xQueueSendToBack(incomingPacketQueue, (void*) &CANPacketHandler, NULL);
+                        xQueueSendToBack(incomingPacketQueue, (void*) &CANPacketHandler, 0);
                         xTaskNotify(canParserTask->taskHandle, 0, eNoAction);
                     } else {
                         // Message not received correctly

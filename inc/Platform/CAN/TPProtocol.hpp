@@ -8,34 +8,10 @@
 /**
  *
  */
-struct CANTransactionHandler {
-    SemaphoreHandle_t CAN_TRANSMIT_SEMAPHORE;
-    StaticSemaphore_t CAN_TRANSMIT_SEMAPHOREBUFFER;
-    void initialize_semaphore() {
-        CAN_TRANSMIT_SEMAPHORE = xSemaphoreCreateMutexStatic(&CAN_TRANSMIT_SEMAPHOREBUFFER);
-    }
-};
 
-inline StaticSemaphore_t xSemaphoreBuffer;
-struct CAN_ACK_HANDLER {
-    SemaphoreHandle_t CAN_ACK_SEMAPHORE;
-    uint32_t TIMEOUT = 1000;
-    void initialize_semaphore() {
-        CAN_ACK_SEMAPHORE = xSemaphoreCreateBinaryStatic(&xSemaphoreBuffer);
-        if (CAN_ACK_SEMAPHORE == nullptr) {
-            LOG_ERROR << "Failed to create semaphore!";
-        }
-    }
-};
-
-extern CANTransactionHandler CAN_TRANSMIT_Handler;
-extern CAN_ACK_HANDLER can_ack_handler;
-
-inline uint32_t OBC_CAN_ID = 0x380;
-inline uint32_t COMMS_CAN_ID = 0x390;
-
-inline CANTransactionHandler CAN_TRANSMIT_Handler;
-inline CAN_ACK_HANDLER can_ack_handler;
+inline const uint32_t OBC_CAN_ID    = 0x380;
+inline const uint32_t COMMS_CAN_ID  = 0x390;
+const uint16_t CAN_TIMEOUT_MS       = 1000;
 
 namespace CAN::TPProtocol {
     /**

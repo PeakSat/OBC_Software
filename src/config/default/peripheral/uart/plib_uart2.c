@@ -48,25 +48,19 @@
 // *****************************************************************************
 // *****************************************************************************
 
-volatile static UART_OBJECT uart2Obj;
+UART_OBJECT uart2Obj;
 
-static void __attribute__((used)) UART2_ISR_RX_Handler( void )
+static void UART2_ISR_RX_Handler( void )
 {
     if(uart2Obj.rxBusyStatus == true)
     {
-        size_t rxSize = uart2Obj.rxSize;
-        size_t rxProcessedSize = uart2Obj.rxProcessedSize;
-
-        while((UART_SR_RXRDY_Msk == (UART2_REGS->UART_SR& UART_SR_RXRDY_Msk)) && (rxSize > rxProcessedSize) )
+        while((UART_SR_RXRDY_Msk == (UART2_REGS->UART_SR& UART_SR_RXRDY_Msk)) && (uart2Obj.rxSize > uart2Obj.rxProcessedSize) )
         {
-            uart2Obj.rxBuffer[rxProcessedSize] = (uint8_t)(UART2_REGS->UART_RHR& UART_RHR_RXCHR_Msk);
-            rxProcessedSize++;
+            uart2Obj.rxBuffer[uart2Obj.rxProcessedSize++] = (UART2_REGS->UART_RHR& UART_RHR_RXCHR_Msk);
         }
 
-        uart2Obj.rxProcessedSize = rxProcessedSize;
-
         /* Check if the buffer is done */
-        if(uart2Obj.rxProcessedSize >= rxSize)
+        if(uart2Obj.rxProcessedSize >= uart2Obj.rxSize)
         {
             uart2Obj.rxBusyStatus = false;
 
@@ -75,9 +69,7 @@ static void __attribute__((used)) UART2_ISR_RX_Handler( void )
 
             if(uart2Obj.rxCallback != NULL)
             {
-                uintptr_t rxContext = uart2Obj.rxContext;
-
-                uart2Obj.rxCallback(rxContext);
+                uart2Obj.rxCallback(uart2Obj.rxContext);
             }
         }
     }
@@ -88,32 +80,24 @@ static void __attribute__((used)) UART2_ISR_RX_Handler( void )
     }
 }
 
-static void __attribute__((used)) UART2_ISR_TX_Handler( void )
+static void UART2_ISR_TX_Handler( void )
 {
     if(uart2Obj.txBusyStatus == true)
     {
-        size_t txSize = uart2Obj.txSize;
-        size_t txProcessedSize = uart2Obj.txProcessedSize;
-
-        while((UART_SR_TXRDY_Msk == (UART2_REGS->UART_SR & UART_SR_TXRDY_Msk)) && (txSize > txProcessedSize) )
+        while((UART_SR_TXRDY_Msk == (UART2_REGS->UART_SR & UART_SR_TXRDY_Msk)) && (uart2Obj.txSize > uart2Obj.txProcessedSize) )
         {
-            UART2_REGS->UART_THR|= uart2Obj.txBuffer[txProcessedSize];
-            txProcessedSize++;
+            UART2_REGS->UART_THR|= uart2Obj.txBuffer[uart2Obj.txProcessedSize++];
         }
 
-        uart2Obj.txProcessedSize = txProcessedSize;
-
         /* Check if the buffer is done */
-        if(uart2Obj.txProcessedSize >= txSize)
+        if(uart2Obj.txProcessedSize >= uart2Obj.txSize)
         {
             uart2Obj.txBusyStatus = false;
             UART2_REGS->UART_IDR = UART_IDR_TXEMPTY_Msk;
 
             if(uart2Obj.txCallback != NULL)
             {
-                uintptr_t txContext = uart2Obj.txContext;
-
-                uart2Obj.txCallback(txContext);
+                uart2Obj.txCallback(uart2Obj.txContext);
             }
         }
     }
@@ -124,12 +108,12 @@ static void __attribute__((used)) UART2_ISR_TX_Handler( void )
     }
 }
 
-void __attribute__((used)) UART2_InterruptHandler( void )
+void UART2_InterruptHandler( void )
 {
     /* Error status */
-    uint32_t errorStatusx = (UART2_REGS->UART_SR & (UART_SR_OVRE_Msk | UART_SR_FRAME_Msk | UART_SR_PARE_Msk));
+    uint32_t errorStatus = (UART2_REGS->UART_SR & (UART_SR_OVRE_Msk | UART_SR_FRAME_Msk | UART_SR_PARE_Msk));
 
-    if(errorStatusx != 0U)
+    if(errorStatus != 0)
     {
         /* Client must call UARTx_ErrorGet() function to clear the errors */
 
@@ -142,9 +126,7 @@ void __attribute__((used)) UART2_InterruptHandler( void )
          * receiver callback */
         if( uart2Obj.rxCallback != NULL )
         {
-            uintptr_t rxContext = uart2Obj.rxContext;
-
-            uart2Obj.rxCallback(rxContext);
+            uart2Obj.rxCallback(uart2Obj.rxContext);
         }
     }
 
@@ -170,7 +152,7 @@ static void UART2_ErrorClear( void )
     /* Flush existing error bytes from the RX FIFO */
     while( UART_SR_RXRDY_Msk == (UART2_REGS->UART_SR & UART_SR_RXRDY_Msk) )
     {
-        dummyData = (uint8_t)(UART2_REGS->UART_RHR & UART_RHR_RXCHR_Msk);
+        dummyData = (UART2_REGS->UART_RHR & UART_RHR_RXCHR_Msk);
     }
 
     /* Ignore the warning */
@@ -186,10 +168,10 @@ void UART2_Initialize( void )
     UART2_REGS->UART_CR = (UART_CR_TXEN_Msk | UART_CR_RXEN_Msk);
 
     /* Configure UART2 mode */
-    UART2_REGS->UART_MR = ((UART_MR_BRSRCCK_PERIPH_CLK) | (UART_MR_PAR_NO) | (0U << UART_MR_FILTER_Pos));
+    UART2_REGS->UART_MR = ((UART_MR_BRSRCCK_PERIPH_CLK) | (UART_MR_PAR_NO) | (0 << UART_MR_FILTER_Pos));
 
     /* Configure UART2 Baud Rate */
-    UART2_REGS->UART_BRGR = UART_BRGR_CD(81);
+    UART2_REGS->UART_BRGR = UART_BRGR_CD(36);
 
     /* Initialize instance object */
     uart2Obj.rxBuffer = NULL;
@@ -227,12 +209,7 @@ bool UART2_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
     uint32_t brgVal = 0;
     uint32_t uartMode;
 
-    if(uart2Obj.rxBusyStatus == true)
-    {
-        /* Transaction is in progress, so return without updating settings */
-        return false;
-    }
-    if(uart2Obj.txBusyStatus == true)
+    if((uart2Obj.rxBusyStatus == true) || (uart2Obj.txBusyStatus == true))
     {
         /* Transaction is in progress, so return without updating settings */
         return false;
@@ -240,16 +217,16 @@ bool UART2_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
     if (setup != NULL)
     {
         baud = setup->baudRate;
-        if(srcClkFreq == 0U)
+        if(srcClkFreq == 0)
         {
             srcClkFreq = UART2_FrequencyGet();
         }
 
         /* Calculate BRG value */
-        brgVal = srcClkFreq / (16U * baud);
+        brgVal = srcClkFreq / (16 * baud);
 
         /* If the target baud rate is acheivable using this clock */
-        if (brgVal <= 65535U)
+        if (brgVal <= 65535)
         {
             /* Configure UART2 mode */
             uartMode = UART2_REGS->UART_MR;
@@ -269,7 +246,6 @@ bool UART2_SerialSetup( UART_SERIAL_SETUP *setup, uint32_t srcClkFreq )
 bool UART2_Read( void *buffer, const size_t size )
 {
     bool status = false;
-    UART_ERROR errorinfo;
 
     uint8_t * lBuffer = (uint8_t *)buffer;
 
@@ -277,12 +253,7 @@ bool UART2_Read( void *buffer, const size_t size )
     {
         /* Clear errors before submitting the request.
          * ErrorGet clears errors internally. */
-         errorinfo = UART2_ErrorGet();
-
-         if(errorinfo != 0U)
-         {
-             /* Nothing to do */
-         }
+        UART2_ErrorGet();
 
         /* Check if receive request is in progress */
         if(uart2Obj.rxBusyStatus == false)
@@ -375,8 +346,7 @@ bool UART2_ReadAbort(void)
         uart2Obj.rxBusyStatus = false;
 
         /* If required application should read the num bytes processed prior to calling the read abort API */
-        uart2Obj.rxSize = 0;
-        uart2Obj.rxProcessedSize = 0;
+        uart2Obj.rxSize = uart2Obj.rxProcessedSize = 0;
     }
 
     return true;

@@ -7,12 +7,12 @@
 #include "general_definitions.hpp"
 #include "OBC_Definitions.hpp"
 #include "FreeRTOSHandlers.hpp"
-
+#include "HelperFunctions.hpp"
+#include "mutex_Handler.h"
 
 // ECSS Header Files
 #include "ErrorHandler.hpp"
 #include "Message.hpp"
-
 
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
@@ -26,13 +26,12 @@
 #include "CANGatekeeperTask.hpp"
 #include "CANParserTask.hpp"
 #include "TCHandlingTask.hpp"
-#include "NANDTask.hpp"
-//#include "MRAMTask.hpp"
+
 #include "HeartbeatTask.hpp"
-#include "MemoryManagementTask.hpp"
-#include "PayloadTestTask.hpp"
+#include "PayloadGatekeeperTask.hpp"
 #include "TestTask.hpp"
 #include "OnBoardMonitoringTask.hpp"
+
 // Task Header files end
 
 
@@ -66,16 +65,14 @@ extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
     uartGatekeeperTask.emplace();
-    // payloadTestTask.emplace();
+    PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
-    housekeepingTask.emplace();
+    // housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
-    // ambientTemperatureTask.emplace();
-    // nandTask.emplace();
-    // memManTask.emplace();
+    ambientTemperatureTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -84,24 +81,24 @@ extern "C" void main_cpp() {
 
     __disable_irq();
     uartGatekeeperTask->createTask();
-    //    payloadTestTask->createTask();
+    PayloadGatekeeperTask->createTask();
     canGatekeeperTask->createTask();
     canParserTask->createTask();
-    //    housekeepingTask->createTask();
-    //    onBoardMonitoringTask->createTask();
-    //     tcHandlingTask->createTask();
+    // housekeepingTask->createTask();
+    onBoardMonitoringTask->createTask();
+    // tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
-    // ambientTemperatureTask->createTask();
-    // memManTask->createTask();
-    //    nandTask->createTask();
+    ambientTemperatureTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();
     heartbeatTask->createTask();
 
     __enable_irq();
-    can_ack_handler.initialize_semaphore();
-    CAN_TRANSMIT_Handler.initialize_semaphore();
+
+    initializeSemaphores();
+    HelperFunctions::resetChecks(); // get the last reason of reset
+
     vTaskStartScheduler();
 
     while (true) {

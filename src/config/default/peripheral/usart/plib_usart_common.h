@@ -44,7 +44,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "device.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -60,12 +59,14 @@
 // *****************************************************************************
 // *****************************************************************************
 
-#define   USART_ERROR_NONE  0U
-#define   USART_ERROR_OVERRUN  US_CSR_USART_OVRE_Msk
-#define   USART_ERROR_PARITY   US_CSR_USART_PARE_Msk
-#define   USART_ERROR_FRAMING  US_CSR_USART_FRAME_Msk
-typedef uint32_t USART_ERROR;
+typedef enum
+{
+    USART_ERROR_NONE = 0,
+    USART_ERROR_OVERRUN = US_CSR_USART_OVRE_Msk,
+    USART_ERROR_PARITY = US_CSR_USART_PARE_Msk,
+    USART_ERROR_FRAMING = US_CSR_USART_FRAME_Msk
 
+} USART_ERROR;
 
 typedef enum
 {
@@ -125,21 +126,21 @@ typedef void (* USART_CALLBACK)( uintptr_t context );
 
 typedef struct
 {
-    void *                  txBuffer;
+    uint8_t *               txBuffer;
     size_t                  txSize;
-    size_t                  txProcessedSize;
+    volatile size_t         txProcessedSize;
     USART_CALLBACK          txCallback;
     uintptr_t               txContext;
     bool                    txBusyStatus;
 
-    void *                  rxBuffer;
+    uint8_t *               rxBuffer;
     size_t                  rxSize;
-    size_t                  rxProcessedSize;
+    volatile size_t         rxProcessedSize;
     USART_CALLBACK          rxCallback;
     uintptr_t               rxContext;
     bool                    rxBusyStatus;
 
-    USART_ERROR             errorStatus;
+    volatile USART_ERROR    errorStatus;
 
 } USART_OBJECT ;
 
@@ -173,9 +174,9 @@ typedef struct
 
     uintptr_t                                           wrContext;
 
-    uint32_t                                            wrInIndex;
+    volatile uint32_t                                   wrInIndex;
 
-    uint32_t                                            wrOutIndex;
+    volatile uint32_t                                   wrOutIndex;
 
     uint32_t                                            wrBufferSize;
 
@@ -189,9 +190,9 @@ typedef struct
 
     uintptr_t                                           rdContext;
 
-    uint32_t                                            rdInIndex;
+    volatile uint32_t                                   rdInIndex;
 
-    uint32_t                                            rdOutIndex;
+    volatile uint32_t                                   rdOutIndex;
 
     uint32_t                                            rdBufferSize;
 
@@ -201,7 +202,7 @@ typedef struct
 
     bool                                                isRdNotifyPersistently;
 
-    USART_ERROR                                         errorStatus;
+    volatile USART_ERROR                                errorStatus;
 
 } USART_RING_BUFFER_OBJECT;
 

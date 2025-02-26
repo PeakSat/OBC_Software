@@ -8,7 +8,6 @@
 #include "Message.hpp"
 #include "MessageParser.hpp"
 #include "OBC_Definitions.hpp"
-#include "MemoryManagementTask.hpp"
 #include "TaskConfigs.hpp"
 
 /**
@@ -34,7 +33,7 @@ private:
     /**
      * The value that signals a message is done being transmitted.1
      */
-    const inline static uint8_t MessageEndDelimiter = 0x41;
+    const inline static uint8_t MessageEndDelimiter = 0x00;
 
     /**
      * Saves incoming bytes by inserting them into a queue.

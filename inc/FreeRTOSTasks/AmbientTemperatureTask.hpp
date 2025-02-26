@@ -2,13 +2,14 @@
 
 #include "TaskConfigs.hpp"
 #include "MCP9808.hpp"
+#include "MemoryManager.hpp"
 
 /**
  * FreeRTOS task for periodically printing the value of the MCP9808 external temperature sensor.
  */
 class AmbientTemperatureTask : public Task {
 private:
-    const uint16_t DelayMs = 1000;
+    const uint16_t DelayMs = 5000;
 
     /**
      * Number of sensors on the PCB

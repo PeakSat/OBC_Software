@@ -4,12 +4,19 @@
 #include "CAN/TPProtocol.hpp"
 #include "CANGatekeeperTask.hpp"
 
+#include <ServicePool.hpp>
+#include <TimeGetter.hpp>
+
 namespace CAN::Application {
     void switchBus() {
-        if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
-            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Redundant);
+        uint8_t readActiveCANbus = 2;
+        MemoryManager::getParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
+        if (readActiveCANbus == PeakSatParameters::Main) {
+            readActiveCANbus = PeakSatParameters::Redundant;
+            MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
         } else {
-            OBDHParameters::CANBUSActive.setValue(OBDHParameters::Main);
+            readActiveCANbus = PeakSatParameters::Main;
+            MemoryManager::setParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&readActiveCANbus));
         }
     }
 
@@ -62,10 +69,10 @@ namespace CAN::Application {
         message.appendUint8(MessageIDs::SendParameters);
         message.appendUint16(parameterIDs.size());
         for (auto parameterID: parameterIDs) {
-            if (Services.parameterManagement.getParameter(parameterID)) {
+            if (Services.parameterManagement.parameterExists(parameterID)) {
                 message.append(parameterID);
-                Services.parameterManagement.getParameter(parameterID)->get().appendValueToMessage(message);
-                LOG_DEBUG << "param: " << Services.parameterManagement.getParameter(parameterID)->get().getValueAsUint64();
+                Services.parameterManagement.appendParameterToMessage(message, parameterID);
+                LOG_DEBUG << "param: " << MemoryManager::getParameterAsUINT64(parameterID);
                 // LOG_DEBUG<< AcubeSATParameters::obcPCBTemperature1;
             } else if (parameterID == 0) {
                 continue;
@@ -198,16 +205,14 @@ namespace CAN::Application {
                     etl::to_string(parameterID, logString, true);
                     logString.append(" was ");
 
-                    auto parameter = Services.parameterManagement.getParameter(parameterID);
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
-
-                    parameter->get().setValueFromMessage(message);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                     logString.append(" and is now ");
-                    etl::to_string(parameter->get().getValueAsDouble(), logString, true);
+                    etl::to_string(MemoryManager::getParameterAsUINT64(parameterID), logString, true);
 
                     LOG_DEBUG << logString.c_str();
                 } else {
-                    Services.parameterManagement.getParameter(parameterID)->get().setValueFromMessage(message);
+                    Services.parameterManagement.updateParameterFromMessage(message, parameterID);
                 }
             }
         }

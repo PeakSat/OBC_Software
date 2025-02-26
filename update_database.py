@@ -9,7 +9,7 @@ spreadsheet_id = "12m4Sq4CMnLB9nn6INxKUdSNSIlTJes_uTbg19RE9-X0"
 xlsx_export_url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=xlsx"
 
 # Output file
-output_file = "prameter_database.xlsx"
+output_file = "parameter_database.xlsx"
 
 try:
     # Send GET request
@@ -36,16 +36,40 @@ subsystem_config = {
     "EPS": 3276,
 }
 
+# Type encoding dictionary for the last 4 bits
+type_encoding = {
+    "uint8_t": 0,
+    "bool" : 0,
+    "int8_t": 1,
+    "uint16_t": 2,
+    "int16_t": 3,
+    "uint32_t": 4,
+    "int32_t": 5,
+    "uint64_t": 6,
+    "int64_t": 7,
+    "float": 8,
+    "double": 9,
+}
+
+# Function to encode the ID
+def encode_id(numeric_id, variable_type):
+    if variable_type not in type_encoding:
+        print(f"Error: Type '{variable_type}' not found in type encoding dictionary. Defaulting to 'uint64_t'.")
+        variable_type = "uint64_t"
+    type_code = type_encoding[variable_type]
+    return (numeric_id << 4) | type_code
+
 # Paths to the Excel file and output directories
-excel_file = "prameter_database.xlsx"
+excel_file = "parameter_database.xlsx"
 inc_folder = "inc/Platform/Parameters"
 output_hhp_file = os.path.join(inc_folder, "PeakSatParameters.hpp")
 
 # Ensure the output directories exist
 os.makedirs(inc_folder, exist_ok=True)
 
-# Set to track unique IDs
+# Set to track unique IDs and store parameter types
 processed_ids = set()
+parameter_types = {}  # Dictionary to store {parameter_name: variable_type}
 
 # Load the workbook
 workbook = openpyxl.load_workbook(excel_file)
@@ -55,10 +79,8 @@ hhp_lines = []
 
 # Add the header lines for the .hpp file
 hhp_lines.append("#pragma once")
-hhp_lines.append("#pragma GCC diagnostic push")
-hhp_lines.append('#pragma GCC diagnostic ignored "-Wpsabi" // Suppress: parameter passing for argument of type \'Time::DefaultCUC\' {aka \'TimeStamp<4, 0, 1, 10>\'} changed in GCC 7.1')
-hhp_lines.append('#include <Driver.hpp>')
-hhp_lines.append('#include "Helpers/Parameter.hpp"')
+
+hhp_lines.append("#include <TypeDefinitions.hpp>")
 
 # Process each subsystem separately
 namespace_blocks = {acronym: [] for acronym in subsystem_config.keys()}
@@ -77,8 +99,10 @@ for sheet_name in workbook.sheetnames:
 
         # Check if the first column contains a valid ID
         if id_cell.value and isinstance(id_cell.value, str):
-            # Add to valid rows
             valid_rows.append(row)
+
+firstParamID = 0
+lastParamID = 0
 
 # Process all valid rows
 for idx, row in enumerate(valid_rows):
@@ -91,7 +115,6 @@ for idx, row in enumerate(valid_rows):
     # Identify the subsystem acronym
     for acronym, offset in subsystem_config.items():
         if id_cell.value.startswith(f"{acronym}-"):
-            # Extract the numeric part of the ID
             numeric_id = id_cell.value[len(acronym) + 1:]  # Remove acronym and '-'
 
             try:
@@ -108,46 +131,62 @@ for idx, row in enumerate(valid_rows):
             # Get variable name and type
             variable_name = variable_cell.value.strip()
             variable_type = type_cell.value.strip() if type_cell.value else "int"
-            enum_items = enum_items_cell.value.strip() if enum_items_cell.value else ""
-            # Handle float values to remove .0 for whole numbers
-            if value_cell.value:
-                if isinstance(value_cell.value, float) and value_cell.value.is_integer():
-                    param_value = str(int(value_cell.value))  # Convert to int if it's a whole number
+
+            # Handle "_enum" type
+            if variable_type.endswith("_enum"):
+                base_param = variable_type[:-5]  # Remove "_enum"
+                if base_param in parameter_types:
+                    variable_type = parameter_types[base_param]
                 else:
-                    param_value = str(value_cell.value).strip()  # Convert to string for other cases
-            else:
-                param_value = "0"
+                    print(f"Error: Parameter '{base_param}' not found for '{variable_name}_enum'. Defaulting to 'uint32_t'.")
+                    variable_type = "uint32_t"
+
+            # Store the type in the parameter_types dictionary
+            parameter_types[variable_name] = variable_type
+
+            # Encode the ID with the new encoding rule
+            encoded_id = encode_id(numeric_id, variable_type)
+
+            if firstParamID == 0 or firstParamID > encoded_id:
+                firstParamID = encoded_id
+
+            if lastParamID < encoded_id:
+                lastParamID = encoded_id
+
 
             # Add to the corresponding namespace block
             block_lines = namespace_blocks[acronym]
-            block_lines.append(f"        {variable_name}ID = {numeric_id}")
+            padding = " " * (60 - (len(variable_name) + len(acronym)))
+            block_lines.append(f"    constexpr ParameterId {acronym}_{variable_name}_ID{padding} = {encoded_id};")
 
             # Enum definitions (if type is "enum")
-            if (variable_type in {"uint8_t", "uint16_t", "uint32_t", "uint64_t",
-                                 "int8_t", "int16_t", "int32_t", "int64_t"} and row[6].value and str(row[6].value).strip()):  # 7th column (index 6)
+            if variable_type in {"uint8_t", "uint16_t", "uint32_t", "uint64_t",
+                                 "int8_t", "int16_t", "int32_t", "int64_t"} and enum_items_cell.value:
                 enum_lines = (
-                    f"    enum {variable_name}_enum : {type_cell.value.strip()} {{\n        {enum_items}\n    }};"
+                    f"    enum {variable_name}_enum : {variable_type} {{\n        {enum_items_cell.value.strip()}\n    }};"
                 )
                 block_lines.append(enum_lines)
 
             break
 
-# Build the .hhp file
+padding = " " * (64 - len("FIRST_PARAM_ID") )
+namespace_blocks["OBDH"].append(f"    constexpr ParameterId FIRST_PARAM_ID{padding} = {firstParamID};")
+padding = " " * (64 - len("LAST_PARAM_ID") )
+namespace_blocks["OBDH"].append(f"    constexpr ParameterId LAST_PARAM_ID{padding} = {lastParamID};")
+
+# Build the .hpp file
+hhp_lines.append(f"namespace PeakSatParameters {{")
 for acronym, block_lines in namespace_blocks.items():
     if block_lines:
-        hhp_lines.append(f"namespace {acronym}Parameters {{")
-        hhp_lines.append("    enum ParamID : ParameterId {")
-        hhp_lines.append(",\n".join(line for line in block_lines if "ID =" in line))
-        hhp_lines.append("    };")
         hhp_lines.extend(
             line for line in block_lines if not line.startswith("        ")
         )
-        hhp_lines.append("}")
 
-# Add footer to the .hhp file
-hhp_lines.append("#pragma GCC diagnostic pop")
+hhp_lines.append("}")
 
-# Write the .hhp file
+# Add footer to the .hpp file
+
+# Write the .hpp file
 with open(output_hhp_file, "w") as hhp_file:
     hhp_file.write("\n".join(hhp_lines))
 

@@ -4,6 +4,9 @@
 #include "TaskConfigs.hpp"
 #include "queue.h"
 #include "Peripheral_Definitions.hpp"
+#include "ECSS_Definitions.hpp"
+
+#include <OBC_Definitions.hpp>
 
 /**
  * Contains functionality of a Gatekeeper Task for the UART resource. It has the sole access to UART, to avoid any

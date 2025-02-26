@@ -181,8 +181,9 @@ void CAN::Driver::send(const CAN::Packet& message) {
 
     etl::copy(message.data.begin(), message.data.end(), Driver::txFifo.data);
 
-
-    if (OBDHParameters::CANBUSActive.getValue() == OBDHParameters::Main) {
+    uint8_t getActiveCANBus = 2;
+    MemoryManager::getParameter(PeakSatParameters::OBDH_CAN_BUS_ACTIVE_ID, static_cast<void*>(&getActiveCANBus));
+    if (getActiveCANBus == PeakSatParameters::Main) {
         if (MCAN0_TxFifoFreeLevelGet() < 1) {
             // LOG_ERROR << "CAN0 Tx FIFO full";
 
@@ -232,7 +233,6 @@ CAN::Packet CAN::Driver::getFrame(const MCAN_RX_BUFFER& rxBuffer) {
 }
 
 void CAN::Driver::initialize() {
-    CAN_TRANSMIT_Handler.CAN_TRANSMIT_SEMAPHORE = xSemaphoreCreateMutex();
     MCAN0_MessageRAMConfigSet(CAN::Driver::mcan0MessageRAM);
     MCAN1_MessageRAMConfigSet(CAN::Driver::mcan1MessageRAM);
 

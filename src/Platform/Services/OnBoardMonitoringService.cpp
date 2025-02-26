@@ -7,18 +7,21 @@
 
 void OnBoardMonitoringService::initializeParameterMonitoringMap() {
     static etl::array<PMONLimitCheck, MaximumNumberOfChecksLimitCheck> limitChecksArray{
-        PMONLimitCheck(OBDHParameters::PCBTemperature1ID, 5, 10, 0, 40, 1)};
+        PMONLimitCheck(PeakSatParameters::OBDH_PCB_TEMPERATURE_1_ID, 5, 10, 0, 40, 1)
+    };
     for (auto& limitCheck: limitChecksArray) {
         limitCheck.monitoringEnabled = true;
         addPMONLimitCheck(limitCheck.monitoredParameterId, limitCheck);
     }
     static etl::array<PMONExpectedValueCheck, MaximumNumberOfChecksDeltaCheck> expectedValueChecksArray{
-        PMONExpectedValueCheck(OBDHParameters::PCBTemperature1ID, 5, 28, 4, 0)};
+        PMONExpectedValueCheck(PeakSatParameters::OBDH_PCB_TEMPERATURE_1_ID, 5, 28, 4, 0)
+    };
     for (auto& expectedValueCheck: expectedValueChecksArray) {
         addPMONExpectedValueCheck(expectedValueCheck.monitoredParameterId, expectedValueCheck);
     }
     static etl::array<PMONDeltaCheck, MaximumNumberOfChecksDeltaCheck> deltaChecksArray{
-        PMONDeltaCheck(OBDHParameters::PCBTemperature1ID, 5, 2, -3, 0, +3, 0)};
+        PMONDeltaCheck(PeakSatParameters::OBDH_PCB_TEMPERATURE_1_ID, 5, 2, -3, 0, +3, 0)
+    };
     for (auto& deltaCheck: deltaChecksArray) {
         addPMONDeltaCheck(deltaCheck.monitoredParameterId, deltaCheck);
     }

@@ -51,8 +51,8 @@
 *******************************************************************************/
 // DOM-IGNORE-END
 
-#ifndef PLIB_SMC_H
-#define PLIB_SMC_H
+#ifndef _PLIB_SMC_H
+#define _PLIB_SMC_H
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -79,7 +79,7 @@ void SMC_Initialize( void );
 }
 #endif
 
-#endif // PLIB_SMC_H
+#endif // _PLIB_SMC_H
 
 /*******************************************************************************
  End of File

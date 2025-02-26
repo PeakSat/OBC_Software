@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include <queue.h>
 #include <etl/vector.h>
+#include <etl/optional.h>
 #include "TaskConfigs.hpp"
 
 inline bool heartbeatReceived = true;
@@ -20,7 +21,7 @@ public:
 
     void createTask() {
         this->taskHandle = xTaskCreateStatic(vClassTask<HeartbeatTask>, this->TaskName,
-                                             HeartbeatTaskStack, this, tskIDLE_PRIORITY + 1,
+                                             HeartbeatTaskStack, this,HeartBeatTaskPriority,
                                              this->taskStack, &(this->taskBuffer));
     }
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TaskConfigs.hpp"
+#include "MemoryManager.hpp"
 
 /**
  * FreeRTOS task for periodically printing the value of the internal temperature sensor.
@@ -11,14 +12,17 @@ private:
 
     StackType_t taskStack[MCUTemperatureTaskStack];
 
-public:
-    void execute();
+    inline static TaskHandle_t AFEC0HandlingTaskHandle = nullptr;
 
-    MCUTemperatureTask() : Task("MCUTemperatureSensor") {}
+public:
+    void execute() const;
+
+    MCUTemperatureTask();
 
     void createTask() {
-        xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName, MCUTemperatureTaskStack, this,
-                          MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
+        AFEC0HandlingTaskHandle = xTaskCreateStatic(vClassTask<MCUTemperatureTask>, this->TaskName,
+                                                    MCUTemperatureTaskStack, this,
+                                                    MCUTemperatureTaskPriority, this->taskStack, &(this->taskBuffer));
     }
 };
 
