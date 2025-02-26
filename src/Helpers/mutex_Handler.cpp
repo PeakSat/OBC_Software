@@ -1,4 +1,4 @@
-#include "mutex_Handler.h"
+#include "../../inc/Helpers/mutex_Handler.h"
 
 SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;

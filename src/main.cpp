@@ -60,7 +60,6 @@ void configureDWTForRunTimeStats(void) {
 uint32_t getTimerValue(void) { return (DWT->CYCCNT); }
 #endif
 
-
 extern "C" void main_cpp() {
     SYS_Initialize(NULL);
 
@@ -97,7 +96,8 @@ extern "C" void main_cpp() {
     __enable_irq();
 
     initializeSemaphores();
-    HelperFunctions::resetChecks(); // get the last reason of reset
+    HelperFunctions::resetChecks();             // get the last reason of reset
+    HelperFunctions::initialiseMPURegions();    // setup MPU regions for external memories
 
     vTaskStartScheduler();
 

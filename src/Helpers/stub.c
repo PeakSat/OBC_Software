@@ -1,11 +1,11 @@
 // Dummy stub functions, so the linker doesnt complain
 // These functions are not intented to be used, if you need them
 // Implement them and adapt them to your needs
-// With love i kai oxi Tats Foundation
+// With love h kai oxi Tats Foundation
 
-#include "stub.h"
+#include "../../inc/Helpers/stub.h"
 
-// _close: Close a file (stub, no filesystem, always fails)
+    // _close: Close a file (stub, no filesystem, always fails)
 int _close(int file) {
     return -1;  // Always fail
 }
