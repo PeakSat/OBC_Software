@@ -9,5 +9,6 @@ repos:
               ^src/(config/|packs/).*\.(c|cpp|h|hpp)$ |   
               ^src/(app|stub).*\.(c|cpp|h|hpp)$ |
               ^src/main.c$ |
+              ^inc/Platform/Parameters/PeakSatParameters.hpp$ |
               ^.vscode/.*$ |
           )$

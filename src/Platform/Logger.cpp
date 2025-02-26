@@ -59,12 +59,12 @@ void Logger::log(Logger::LogLevel level, etl::istring& message) {
     }
 }
 
-    template <>
-    void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE> & message, char* value) {
-        message.append(value);
-    }
+template <>
+void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, char* value) {
+    message.append(value);
+}
 
-    template <>
-    void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE> & message, const char* value) {
-        message.append(value);
-    }
+template <>
+void convertValueToString(String<LOGGER_MAX_MESSAGE_SIZE>& message, const char* value) {
+    message.append(value);
+}

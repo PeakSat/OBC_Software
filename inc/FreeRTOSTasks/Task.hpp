@@ -2,6 +2,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "optional"
 //#include "ServicePool.hpp"
 #include "BootCounter.hpp"
 #include "definitions.h"
