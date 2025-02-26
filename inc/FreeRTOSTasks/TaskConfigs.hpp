@@ -22,7 +22,7 @@ constexpr BaseType_t HeartBeatTaskPriority = tskIDLE_PRIORITY + 1;
 * The stack depth of each FreeRTOS task, defined as the number of words the stack can hold. For example, in an
 * architecture with 4 byte stack, assigning 100 to the usStackDepth argument, will allocate 4x100=400 bytes.
 */
-constexpr uint16_t AmbientTemperatureTaskStack = 1200;
+constexpr uint16_t AmbientTemperatureTaskStack = 1500;
 constexpr uint16_t CANGatekeeperTaskStack = 4500;
 constexpr uint16_t CANParserTaskStack = 5300;
 constexpr uint16_t HousekeepingTaskStack = 3300;

@@ -15,7 +15,8 @@ using namespace EPSParameters::ParameterDescriptors;
 void OnBoardMonitoringTask::execute() {
 
     EPS eps;
-
+    // ADM::admI2CdrvHandle = DRV_I2C_Open(
+    //             DRV_I2C_INDEX_2, static_cast<DRV_IO_INTENT>(DRV_IO_INTENT_READWRITE | DRV_IO_INTENT_BLOCKING));
     auto get = eps.getConfigurationParameter<getTypeSize(EPS_CH_STARTUP_ENA_BF_DESC.type)>(EPS_CH_STARTUP_ENA_BF_DESC);
     if (get != EPS::ErrorCode::None) {
         LOG_ERROR << "EPS_CH_STARTUP_ENA_BF_DESC not set, error:" << static_cast<EPS::ErrorCode_t>(get);

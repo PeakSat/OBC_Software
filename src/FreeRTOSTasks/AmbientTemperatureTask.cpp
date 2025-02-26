@@ -8,6 +8,7 @@ void AmbientTemperatureTask::execute() {
         if (not sensor.isDeviceConnected().value()) {
             LOG_ERROR << "Temperature sensor with address " << sensor.getI2CUserAddress()
                       << " was disconnected";
+            LOG_ERROR << "Error " << sensor.isDeviceConnected().value();
             numberOfDisconnectedSensors++;
         }
     }

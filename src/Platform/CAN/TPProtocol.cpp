@@ -180,12 +180,12 @@ bool TPProtocol::createCANTPMessageNoRetransmit(const TPMessage& messageToBeSent
         if (xTaskGetTickCount() - start_ticks > pdMS_TO_TICKS(CAN_TIMEOUT_MS)) {
             LOG_ERROR << "Timeout waiting for CAN ACK";
             releaseSemaphoreGroup(smphr_groups::GROUP_B);
-            return true;
+            return 1;
         }
     }
     LOG_DEBUG << "CAN ACK received!";
     releaseSemaphoreGroup(smphr_groups::GROUP_B);
-    return true;
+    return 0;
 
     // if (xSemaphoreTake(can_ack_handler.CAN_ACK_SEMAPHORE, pdMS_TO_TICKS(can_ack_handler.TIMEOUT)) == pdTRUE) {
     //     LOG_DEBUG << "CAN ACK received!";

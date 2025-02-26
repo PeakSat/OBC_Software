@@ -4,8 +4,6 @@
 #include "Definitions.hpp"
 #include "plib_pio.h"
 
-#define MCP9808_TWI_PORT 1
-
 #define TWIHS0_ENABLED 1
 #define TWIHS1_ENABLED 1
 #define TWIHS2_ENABLED 1
