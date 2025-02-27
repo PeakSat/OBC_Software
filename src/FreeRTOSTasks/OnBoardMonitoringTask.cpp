@@ -85,27 +85,27 @@ void OnBoardMonitoringTask::execute() {
     auto& housekeeping = Services.housekeeping;
     auto& onBoardMonitoring = Services.onBoardMonitoringService;
     get = eps.outputBusChannelOn(EPS::EPSChannels::COMMS_12V);
-    vTaskDelay(10);
+    vTaskDelay(pdMS_TO_TICKS(10));
     get = eps.outputBusChannelOn(EPS::EPSChannels::ADM_5V_1);
-    vTaskDelay(10);
+    vTaskDelay(pdMS_TO_TICKS(10));
     checkAmbientSensors();
 
     while (true) {
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
         get = eps.getSystemStatus();
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
         if (get != EPS::ErrorCode::None) {
             LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
         }
         LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
         get = eps.getPIUHousekeepingDataRaw();
         updatePayloadParameters();
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
         ADM::getADMParameters();
         LOG_INFO << "ADM Status: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::COMMS_ANTENNA_DEPLOYMENT_STATUS_ID);
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
         getAmbientTemperature();
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
         getMCUTemperature();
 
         vTaskDelay(pdMS_TO_TICKS(5000));
