@@ -17,9 +17,7 @@
 // Task Header files start
 #include "UARTGatekeeperTask.hpp"
 #include "TimeKeepingTask.hpp"
-#include "AmbientTemperatureTask.hpp"
 #include "WatchdogTask.hpp"
-#include "MCUTemperatureTask.hpp"
 #include "HousekeepingTask.hpp"
 #include "TimeBasedSchedulingTask.hpp"
 #include "StatisticsReportingTask.hpp"
@@ -68,11 +66,9 @@ extern "C" void main_cpp() {
     PayloadGatekeeperTask.emplace();
     canGatekeeperTask.emplace();
     canParserTask.emplace();
-    // housekeepingTask.emplace();
+    housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
-    // tcHandlingTask.emplace();
-    mcuTemperatureTask.emplace();
-    ambientTemperatureTask.emplace();
+    tcHandlingTask.emplace();
     timeKeepingTask.emplace();
     TestTask.emplace();
     watchdogTask.emplace();
@@ -84,11 +80,9 @@ extern "C" void main_cpp() {
     PayloadGatekeeperTask->createTask();
     canGatekeeperTask->createTask();
     canParserTask->createTask();
-    // housekeepingTask->createTask();
+    housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
-    // tcHandlingTask->createTask();
-    mcuTemperatureTask->createTask();
-    ambientTemperatureTask->createTask();
+    tcHandlingTask->createTask();
     timeKeepingTask->createTask();
     TestTask->createTask();
     watchdogTask->createTask();

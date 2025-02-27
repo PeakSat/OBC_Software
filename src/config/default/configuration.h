@@ -99,7 +99,7 @@ extern "C" {
 
 /* I2C Driver Instance 1 Configuration Options */
 #define DRV_I2C_INDEX_1                       1
-#define DRV_I2C_CLIENTS_NUMBER_IDX1           1
+#define DRV_I2C_CLIENTS_NUMBER_IDX1           2
 #define DRV_I2C_CLOCK_SPEED_IDX1              400000
 
 /* I2C Driver Instance 2 Configuration Options */
