@@ -2,6 +2,8 @@
 
 #include "Task.hpp"
 
+#include "optional"
+
 constexpr BaseType_t CANGatekeeperTaskPriority = tskIDLE_PRIORITY + 2;
 constexpr BaseType_t CANParserTaskPriority = tskIDLE_PRIORITY + 1;
 constexpr BaseType_t HousekeepingTaskPriority = tskIDLE_PRIORITY + 2;
@@ -26,7 +28,7 @@ constexpr uint16_t HousekeepingTaskStack = 3000;
 constexpr uint16_t StatisticsReportingTaskStack = 2000;
 constexpr uint16_t TCHandlingTaskStack = 1000;
 constexpr uint16_t TimeBasedSchedulingTaskStack = 500;
-constexpr uint16_t TimeKeepingTaskStack = 1000;
+constexpr uint16_t TimeKeepingTaskStack = 1300;
 constexpr uint16_t PayloadGatekeeperTaskStack = 1000;
 constexpr uint16_t UARTGatekeeperTaskStack = 1000;
 constexpr uint16_t WatchdogTaskStack = 1000;

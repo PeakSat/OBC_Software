@@ -1,26 +1,44 @@
 #include "TimeKeepingTask.hpp"
 #include "TimeStamp.tpp"
 
+#include <ApplicationLayer.hpp>
+#include <MemoryManager.hpp>
+
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
-Time::DefaultCUC TimeKeepingTask::getSavedTime(){
-    return _onBoardTimeKeeper;
+void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    auto* instance = reinterpret_cast<TimeKeepingTask*>(context);
+    configASSERT(instance != nullptr);
+    vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void TimeKeepingTask::execute() {
-    // LOG_DEBUG << "Runtime init: " << this->TaskName;
-    static tm dateTime;
-    setEpoch(dateTime);
-    RTC_TimeSet(&dateTime);
+int TimeKeepingTask::timeToSeconds(const tm& time) {
+    return (time.tm_hour * 3600) + (time.tm_min * 60) + time.tm_sec;
+}
 
-    while (true) {
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
-        RTC_TimeGet(&dateTime);
-        setTimePlatformParameters(dateTime);
-        printOnBoardTime();
-        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
-        vTaskDelay(pdMS_TO_TICKS(DelayMs));
+void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
+    const int rtcSeconds = timeToSeconds(rtcTime);
+    const int ppsSeconds = timeToSeconds(ppsTime);
+
+    const int drift = rtcSeconds - ppsSeconds; // Drift in seconds
+    uint8_t RTCOffsetThreshold = 0U;
+    if (abs(drift) > MemoryManager::getParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&RTCOffsetThreshold))) {
+        LOG_DEBUG << "Clock drift detected: " << drift << "s. Correcting...";
+        rtcTime = ppsTime; // Align RTC to PPS time
+        RTC_TimeSet(&rtcTime);
     }
+}
+
+TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
+    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, GNSS_PPS_Callback, reinterpret_cast<uintptr_t>(this));
+    PIO_PinInterruptEnable(GNSS_PPS_PIN);
+}
+
+
+Time::DefaultCUC TimeKeepingTask::getSavedTime() {
+    return _onBoardTimeKeeper;
 }
 
 void TimeKeepingTask::printOnBoardTime() {
@@ -40,17 +58,57 @@ void TimeKeepingTask::printOnBoardTime() {
     LOG_DEBUG << printTime.data();
 }
 
-void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
-    UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
-    Time::DefaultCUC timeCUC(timeUTC);
+void TimeKeepingTask::setTimePlatformParameters(const tm& dateTime) const {
+    const UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
+    const Time::DefaultCUC timeCUC(timeUTC);
     _onBoardTimeKeeper = timeCUC;
 }
 
-void TimeKeepingTask::setEpoch(tm& dateTime) {
+void TimeKeepingTask::setEpoch(tm& dateTime) const {
     dateTime.tm_sec = EpochTime.tm_sec;
     dateTime.tm_min = EpochTime.tm_min;
     dateTime.tm_hour = EpochTime.tm_hour;
     dateTime.tm_mday = EpochTime.tm_mday;
     dateTime.tm_mon = EpochTime.tm_mon;
     dateTime.tm_year = EpochTime.tm_year - yearBase;
+}
+
+void TimeKeepingTask::getGNSSTimestamp() {
+    constexpr etl::array<uint16_t, CAN::TPMessageMaximumArguments> parameterIDArray = {PeakSatParameters::COMMS_GNSS_TIME_ID};
+    CAN::Application::createRequestParametersMessage(CAN::COMMS,true, parameterIDArray , false);
+    //TODO: parse GNSS time
+    //TODO: Update RTC time with new GNSS time
+}
+void TimeKeepingTask::execute() {
+    static tm dateTime;
+    bool useGNSS = true;
+    setEpoch(dateTime);
+    RTC_TimeSet(&dateTime);
+    tm ppsTime = dateTime;
+    uint8_t gnssTimeouts  = 0U;
+    MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
+    // MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
+
+    // Clear any pending notifications
+    ulTaskNotifyTake(pdTRUE, 0);
+    while (true) {
+        if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
+            // TODO: Check GNSS
+            LOG_ERROR << "GNSS_PPS timed out";
+            gnssTimeouts++;
+            if (gnssTimeouts == 10) {
+                useGNSS = false;
+            }
+        }
+
+        RTC_TimeGet(&dateTime);
+        if(useGNSS) {
+            ppsTime.tm_sec += 1;
+            (void) mktime(&ppsTime);
+            correctDriftTime(ppsTime, dateTime);
+        }
+
+        setTimePlatformParameters(dateTime);
+        printOnBoardTime();
+    }
 }
