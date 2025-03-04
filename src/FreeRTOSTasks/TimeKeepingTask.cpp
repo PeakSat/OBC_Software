@@ -3,23 +3,60 @@
 
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
+PIO_PIN_CALLBACK TimeKeepingTask::GNSS_PPS_Callback(uintptr_t context) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    configASSERT(timeKeepingTaskHandle != nullptr);
+    vTaskNotifyGiveFromISR(timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+int TimeKeepingTask::timeToSeconds(const tm& time) {
+    return (time.tm_hour * 3600) + (time.tm_min * 60) + time.tm_sec;
+}
+
+void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
+    const int rtcSeconds = timeToSeconds(rtcTime);
+    const int ppsSeconds = timeToSeconds(ppsTime);
+
+    const int drift = rtcSeconds - ppsSeconds;  // Drift in seconds
+
+    if (abs(drift) > DRIFT_THRESHOLD) {  // Only correct if drift is significant
+        LOG_DEBUG << "Clock drift detected: " << drift << "s. Correcting...";
+        rtcTime = ppsTime;  // Align RTC to PPS time
+        RTC_TimeSet(&rtcTime);
+    }
+}
+
+TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
+    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, reinterpret_cast<PIO_PIN_CALLBACK>(GNSS_PPS_Callback), reinterpret_cast<uintptr_t>(nullptr));
+}
+
+
 Time::DefaultCUC TimeKeepingTask::getSavedTime(){
     return _onBoardTimeKeeper;
 }
 
 void TimeKeepingTask::execute() {
-    // LOG_DEBUG << "Runtime init: " << this->TaskName;
     static tm dateTime;
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
 
+    // Clear any pending notifications
+    ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
-        //        LOG_DEBUG << "Runtime entered: " << this->TaskName;
+        const BaseType_t notifyResult = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        if (notifyResult == 0) {
+            continue;  // No valid notification, skip this cycle
+        }
+
         RTC_TimeGet(&dateTime);
+
+        tm ppsTime = dateTime;
+        ppsTime.tm_sec += 1;
+        (void)mktime(&ppsTime);
+
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
-        //        LOG_DEBUG << "Runtime exit: " << this->TaskName;
-        vTaskDelay(pdMS_TO_TICKS(DelayMs));
     }
 }
 
@@ -40,13 +77,13 @@ void TimeKeepingTask::printOnBoardTime() {
     LOG_DEBUG << printTime.data();
 }
 
-void TimeKeepingTask::setTimePlatformParameters(tm& dateTime) {
-    UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
-    Time::DefaultCUC timeCUC(timeUTC);
+void TimeKeepingTask::setTimePlatformParameters(const tm& dateTime) const {
+    const UTCTimestamp timeUTC(dateTime.tm_year + yearBase, dateTime.tm_mon + 1, dateTime.tm_mday, dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec);
+    const Time::DefaultCUC timeCUC(timeUTC);
     _onBoardTimeKeeper = timeCUC;
 }
 
-void TimeKeepingTask::setEpoch(tm& dateTime) {
+void TimeKeepingTask::setEpoch(tm& dateTime) const {
     dateTime.tm_sec = EpochTime.tm_sec;
     dateTime.tm_min = EpochTime.tm_min;
     dateTime.tm_hour = EpochTime.tm_hour;
