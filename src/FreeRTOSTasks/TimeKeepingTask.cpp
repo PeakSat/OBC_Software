@@ -81,12 +81,13 @@ void TimeKeepingTask::getGNSSTimestamp() {
 }
 void TimeKeepingTask::execute() {
     static tm dateTime;
-    bool useGNSS = false;
+    bool useGNSS = true;
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
     tm ppsTime = dateTime;
+    uint8_t gnssTimeouts  = 0U;
     MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
-    MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
+    // MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
 
     // Clear any pending notifications
     ulTaskNotifyTake(pdTRUE, 0);
@@ -94,6 +95,10 @@ void TimeKeepingTask::execute() {
         if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
             // TODO: Check GNSS
             LOG_ERROR << "GNSS_PPS timed out";
+            gnssTimeouts++;
+            if (gnssTimeouts == 10) {
+                useGNSS = false;
+            }
         }
 
         RTC_TimeGet(&dateTime);
