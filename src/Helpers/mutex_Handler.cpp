@@ -4,14 +4,14 @@ SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
 SemaphoreHandle_t Semaphore_EPS     = NULL;
-SemaphoreHandle_t Mutex_SMC     = NULL;
+SemaphoreHandle_t Semaphore_SMC     = NULL;
 
 
 StaticSemaphore_t Semaphore_Group_A_buffer;
 StaticSemaphore_t Semaphore_Group_B_buffer;
 StaticSemaphore_t Semaphore_Group_C_buffer;
 StaticSemaphore_t Semaphore_EPS_buffer;
-StaticSemaphore_t Mutex_SMC_buffer;
+StaticSemaphore_t Semaphore_SMC_buffer;
 
 
 void initializeSemaphores() {
@@ -19,14 +19,13 @@ void initializeSemaphores() {
     Semaphore_Group_B = xSemaphoreCreateMutexStatic(&Semaphore_Group_B_buffer);
     Semaphore_Group_C = xSemaphoreCreateMutexStatic(&Semaphore_Group_C_buffer);
     Semaphore_EPS     = xSemaphoreCreateBinaryStatic(&Semaphore_EPS_buffer);
-    Mutex_SMC  = xSemaphoreCreateMutexStatic(&Mutex_SMC_buffer);
-
+    Semaphore_SMC     = xSemaphoreCreateMutexStatic(&Semaphore_SMC_buffer);
 
     configASSERT(Semaphore_Group_A);
     configASSERT(Semaphore_Group_B);
     configASSERT(Semaphore_Group_C);
     configASSERT(Semaphore_EPS);
-    configASSERT(Mutex_SMC);
+    configASSERT(Semaphore_SMC);
 
 }
 
@@ -87,10 +86,10 @@ void releaseSemaphoreEPS_ISR() {
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-bool takeMutexSMC() {
-    return xSemaphoreTake(Mutex_SMC, (TickType_t) portMAX_DELAY) == pdTRUE;
+bool takeSemaphoreSMC() {
+    return (xSemaphoreTake(Semaphore_SMC, (TickType_t) 10) == pdTRUE);
 }
 
-void releaseMutexSMC() {
-    xSemaphoreGive(Mutex_SMC);
+void releaseSemaphoreSMC() {
+    xSemaphoreGive(Semaphore_SMC);
 }

@@ -99,7 +99,6 @@ extern "C" void main_cpp() {
     HelperFunctions::resetChecks();             // get the last reason of reset
     HelperFunctions::initialiseMPURegions();    // setup MPU regions for external memories
     MemoryManager::initialiseMemories();        // initialise Memories (NAND, MRAM) & MountFS
-
     vTaskStartScheduler();
 
     while (true) {

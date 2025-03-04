@@ -19,11 +19,7 @@ bool takeSemaphoreEPS_ISR();
 
 void releaseSemaphoreEPS_ISR();
 
-bool takeMutexSMC();
-void releaseMutexSMC();
+bool takeSemaphoreSMC();
 
-bool takeMutexMRAM();
-void releaseMutexMRAM();
+void releaseSemaphoreSMC();
 
-bool takeMutexNAND();
-void releaseMutexNAND();
