@@ -1,6 +1,7 @@
 #include "TimeKeepingTask.hpp"
 #include "TimeStamp.tpp"
 
+#include <ApplicationLayer.hpp>
 #include <MemoryManager.hpp>
 
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
@@ -40,30 +41,6 @@ Time::DefaultCUC TimeKeepingTask::getSavedTime() {
     return _onBoardTimeKeeper;
 }
 
-void TimeKeepingTask::execute() {
-    static tm dateTime;
-    setEpoch(dateTime);
-    RTC_TimeSet(&dateTime);
-    tm ppsTime = dateTime;
-    MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
-    // Clear any pending notifications
-    ulTaskNotifyTake(pdTRUE, 0);
-    while (true) {
-        if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
-            // TODO: Check GNSS
-            LOG_ERROR << "GNSS_PPS timed out";
-        }
-
-        RTC_TimeGet(&dateTime);
-        ppsTime.tm_sec += 1;
-        (void) mktime(&ppsTime);
-
-        correctDriftTime(ppsTime, dateTime);
-        setTimePlatformParameters(dateTime);
-        printOnBoardTime();
-    }
-}
-
 void TimeKeepingTask::printOnBoardTime() {
     UTCTimestamp timestamp = _onBoardTimeKeeper.toUTCtimestamp();
     etl::string<29> printTime = "Time:";
@@ -94,4 +71,39 @@ void TimeKeepingTask::setEpoch(tm& dateTime) const {
     dateTime.tm_mday = EpochTime.tm_mday;
     dateTime.tm_mon = EpochTime.tm_mon;
     dateTime.tm_year = EpochTime.tm_year - yearBase;
+}
+
+void TimeKeepingTask::getGNSSTimestamp() {
+    constexpr etl::array<uint16_t, CAN::TPMessageMaximumArguments> parameterIDArray = {PeakSatParameters::COMMS_GNSS_TIME_ID};
+    CAN::Application::createRequestParametersMessage(CAN::COMMS,true, parameterIDArray , false);
+    //TODO: parse GNSS time
+    //TODO: Update RTC time with new GNSS time
+}
+void TimeKeepingTask::execute() {
+    static tm dateTime;
+    bool useGNSS = false;
+    setEpoch(dateTime);
+    RTC_TimeSet(&dateTime);
+    tm ppsTime = dateTime;
+    MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
+    MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
+
+    // Clear any pending notifications
+    ulTaskNotifyTake(pdTRUE, 0);
+    while (true) {
+        if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
+            // TODO: Check GNSS
+            LOG_ERROR << "GNSS_PPS timed out";
+        }
+
+        RTC_TimeGet(&dateTime);
+        if(useGNSS) {
+            ppsTime.tm_sec += 1;
+            (void) mktime(&ppsTime);
+            correctDriftTime(ppsTime, dateTime);
+        }
+
+        setTimePlatformParameters(dateTime);
+        printOnBoardTime();
+    }
 }

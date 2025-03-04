@@ -47,6 +47,8 @@ public:
      */
     void printOnBoardTime();
 
+    void getGNSSTimestamp();
+
     Time::DefaultCUC getSavedTime();
 
     TimeKeepingTask();

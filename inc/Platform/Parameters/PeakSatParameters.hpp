@@ -60,6 +60,7 @@ Redundant = 1
     constexpr ParameterId OBDH_HEARTBEAT_PERIOD_ID                                         = 820;
     constexpr ParameterId OBDH_LAST_RESET_CAUSE_ID                                         = 836;
     constexpr ParameterId OBDH_RTC_OFFSET_THRESHOLD_ID                                     = 848;
+    constexpr ParameterId OBDH_USE_GNSS_PPS_ID                                             = 864;
     constexpr ParameterId FIRST_PARAM_ID                                                   = 20;
     constexpr ParameterId LAST_PARAM_ID                                                    = 61955;
     constexpr ParameterId COMMS_UHF_POWER_AMP_TEMP_ID                                      = 13128;
