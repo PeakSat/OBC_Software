@@ -204,6 +204,8 @@
 #define GNSS_PPS_InputEnable()       (PIOA_REGS->PIO_ODR = (1<<13))
 #define GNSS_PPS_Get()               ((PIOA_REGS->PIO_PDSR >> 13) & 0x1)
 #define GNSS_PPS_PIN                  PIO_PIN_PA13
+#define GNSS_PPS_InterruptEnable()   (PIOA_REGS->PIO_IER = (1<<13))
+#define GNSS_PPS_InterruptDisable()  (PIOA_REGS->PIO_IDR = (1<<13))
 
 /*** Macros for LCL_CAN_1_SET pin ***/
 #define LCL_CAN_1_SET_Set()               (PIOA_REGS->PIO_SODR = (1<<16))
@@ -687,6 +689,7 @@ typedef uint32_t PIO_PORT;
 
 typedef uint32_t PIO_PIN;
 
+typedef  void (*PIO_PIN_CALLBACK) ( PIO_PIN pin, uintptr_t context);
 
 void PIO_Initialize(void);
 
@@ -711,6 +714,29 @@ void PIO_PortToggle(PIO_PORT port, uint32_t mask);
 void PIO_PortInputEnable(PIO_PORT port, uint32_t mask);
 
 void PIO_PortOutputEnable(PIO_PORT port, uint32_t mask);
+
+void PIO_PortInterruptEnable(PIO_PORT port, uint32_t mask);
+
+void PIO_PortInterruptDisable(PIO_PORT port, uint32_t mask);
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: Local Data types and Prototypes
+// *****************************************************************************
+// *****************************************************************************
+
+typedef struct {
+
+    /* target pin */
+    PIO_PIN                 pin;
+
+    /* Callback for event on target pin*/
+    PIO_PIN_CALLBACK        callback;
+
+    /* Callback Context */
+    uintptr_t               context;
+
+} PIO_PIN_CALLBACK_OBJ;
 
 // *****************************************************************************
 // *****************************************************************************
@@ -758,6 +784,21 @@ static inline void PIO_PinOutputEnable(PIO_PIN pin)
     PIO_PortOutputEnable((PIO_PORT)(PIOA_BASE_ADDRESS + (0x200U * (pin>>5U))), 0x1UL << (pin & 0x1FU));
 }
 
+static inline void PIO_PinInterruptEnable(PIO_PIN pin)
+{
+    PIO_PortInterruptEnable((PIO_PORT)(PIOA_BASE_ADDRESS + (0x200U * (pin>>5U))), 0x1UL << (pin & 0x1FU));
+}
+
+static inline void PIO_PinInterruptDisable(PIO_PIN pin)
+{
+    PIO_PortInterruptDisable((PIO_PORT)(PIOA_BASE_ADDRESS + (0x200U * (pin>>5U))), 0x1UL << (pin & 0x1FU));
+}
+
+bool PIO_PinInterruptCallbackRegister(
+    PIO_PIN pin,
+    const PIO_PIN_CALLBACK callback,
+    uintptr_t context
+);
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
