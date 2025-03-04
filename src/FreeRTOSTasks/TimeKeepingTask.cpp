@@ -55,6 +55,7 @@ void TimeKeepingTask::execute() {
         ppsTime.tm_sec += 1;
         (void)mktime(&ppsTime);
 
+        correctDriftTime(ppsTime, dateTime);
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
     }
