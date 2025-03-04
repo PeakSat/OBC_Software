@@ -1,6 +1,8 @@
 #include "TimeKeepingTask.hpp"
 #include "TimeStamp.tpp"
 
+#include <MemoryManager.hpp>
+
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
 void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
@@ -19,11 +21,11 @@ void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
     const int rtcSeconds = timeToSeconds(rtcTime);
     const int ppsSeconds = timeToSeconds(ppsTime);
 
-    const int drift = rtcSeconds - ppsSeconds;  // Drift in seconds
-
-    if (abs(drift) > DRIFT_THRESHOLD) {  // Only correct if drift is significant
+    const int drift = rtcSeconds - ppsSeconds; // Drift in seconds
+    uint8_t RTCOffsetThreshold = 0U;
+    if (abs(drift) > MemoryManager::getParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&RTCOffsetThreshold))) {
         LOG_DEBUG << "Clock drift detected: " << drift << "s. Correcting...";
-        rtcTime = ppsTime;  // Align RTC to PPS time
+        rtcTime = ppsTime; // Align RTC to PPS time
         RTC_TimeSet(&rtcTime);
     }
 }
@@ -34,7 +36,7 @@ TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
 }
 
 
-Time::DefaultCUC TimeKeepingTask::getSavedTime(){
+Time::DefaultCUC TimeKeepingTask::getSavedTime() {
     return _onBoardTimeKeeper;
 }
 
@@ -43,17 +45,18 @@ void TimeKeepingTask::execute() {
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
     tm ppsTime = dateTime;
+    MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
     // Clear any pending notifications
     ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
         if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
             // TODO: Check GNSS
-            LOG_ERROR<<"GNSS_PPS timed out";
+            LOG_ERROR << "GNSS_PPS timed out";
         }
 
         RTC_TimeGet(&dateTime);
-        ppsTime.tm_sec+=1;
-        (void)mktime(&ppsTime);
+        ppsTime.tm_sec += 1;
+        (void) mktime(&ppsTime);
 
         correctDriftTime(ppsTime, dateTime);
         setTimePlatformParameters(dateTime);

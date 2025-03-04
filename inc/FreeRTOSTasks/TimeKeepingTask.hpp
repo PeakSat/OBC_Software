@@ -19,7 +19,6 @@ private:
 
     static void correctDriftTime(const tm& ppsTime, tm& rtcTime);
 
-    static constexpr uint8_t DRIFT_THRESHOLD = 2;
 
 public:
     void execute();
@@ -28,6 +27,8 @@ public:
      * Sets the year base, used to acquire the current time from a tm structure.
      */
     uint16_t yearBase = 1900;
+
+    uint8_t DRIFT_THRESHOLD = 2;
 
     /**
      * This function sets the epoch time.
