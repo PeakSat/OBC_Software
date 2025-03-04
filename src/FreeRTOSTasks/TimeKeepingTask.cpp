@@ -3,10 +3,11 @@
 
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
-PIO_PIN_CALLBACK TimeKeepingTask::GNSS_PPS_Callback(uintptr_t context) {
+void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    configASSERT(timeKeepingTaskHandle != nullptr);
-    vTaskNotifyGiveFromISR(timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
+    auto* instance = reinterpret_cast<TimeKeepingTask*>(context);
+    configASSERT(instance != nullptr);
+    vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
@@ -28,7 +29,8 @@ void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
 }
 
 TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
-    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, reinterpret_cast<PIO_PIN_CALLBACK>(GNSS_PPS_Callback), reinterpret_cast<uintptr_t>(nullptr));
+    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, GNSS_PPS_Callback, reinterpret_cast<uintptr_t>(this));
+    PIO_PinInterruptEnable(GNSS_PPS_PIN);
 }
 
 
@@ -40,19 +42,17 @@ void TimeKeepingTask::execute() {
     static tm dateTime;
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
-
+    tm ppsTime = dateTime;
     // Clear any pending notifications
     ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
-        const BaseType_t notifyResult = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        if (notifyResult == 0) {
-            continue;  // No valid notification, skip this cycle
+        if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
+            // TODO: Check GNSS
+            LOG_ERROR<<"GNSS_PPS timed out";
         }
 
         RTC_TimeGet(&dateTime);
-
-        tm ppsTime = dateTime;
-        ppsTime.tm_sec += 1;
+        ppsTime.tm_sec+=1;
         (void)mktime(&ppsTime);
 
         correctDriftTime(ppsTime, dateTime);

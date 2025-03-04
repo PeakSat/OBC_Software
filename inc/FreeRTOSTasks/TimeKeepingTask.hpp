@@ -13,7 +13,7 @@ private:
 
     inline static TaskHandle_t timeKeepingTaskHandle = nullptr;
 
-    static PIO_PIN_CALLBACK GNSS_PPS_Callback(uintptr_t context);
+    static void GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context);
 
     static int timeToSeconds(const tm& time);
 
