@@ -192,6 +192,13 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '150000000'}
+  - type: Boolean
+    attributes: {id: INTERRUPT_ACTIVE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
   - type: Integer
     attributes: {id: ISI_CLOCK_FREQUENCY}
     children:
@@ -638,6 +645,27 @@ children:
       - type: Dynamic
         attributes: {id: FreeRTOS, value: 'true'}
   - type: Boolean
+    attributes: {id: NVIC_10_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: NVIC_10_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: PIOA_InterruptHandler}
+  - type: Boolean
+    attributes: {id: NVIC_10_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
     attributes: {id: NVIC_14_0_ENABLE}
     children:
     - type: Values
@@ -884,6 +912,27 @@ children:
         attributes: {id: core, value: MCAN1_INT0_InterruptHandler}
   - type: Boolean
     attributes: {id: NVIC_37_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: NVIC_3_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: NVIC_3_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: RTT_InterruptHandler}
+  - type: Boolean
+    attributes: {id: NVIC_3_0_HANDLER_LOCK}
     children:
     - type: Values
       children:
@@ -2528,6 +2577,20 @@ children:
       - type: User
         attributes: {value: GPIO}
   - type: String
+    attributes: {id: PIN_42_PIO_INTERRUPT}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: Raising Edge}
+  - type: String
+    attributes: {id: PIN_42_PU}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: ''}
+  - type: String
     attributes: {id: PIN_45_DIR}
     children:
     - type: Values
@@ -3822,6 +3885,13 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '2174484483'}
+  - type: Hex
+    attributes: {id: PIOA_AIMER_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '8192'}
   - type: Boolean
     attributes: {id: PIOA_CLOCK_ENABLE}
     children:
@@ -3836,6 +3906,41 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '150000000'}
+  - type: Boolean
+    attributes: {id: PIOA_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: PIOA_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: PIOA_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: PIOA_InterruptHandler}
+  - type: Boolean
+    attributes: {id: PIOA_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Hex
+    attributes: {id: PIOA_LSR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '0'}
   - type: Hex
     attributes: {id: PIOA_MDER_VALUE}
     children:
@@ -3857,6 +3962,20 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '2744911387'}
+  - type: Hex
+    attributes: {id: PIOA_PUER_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '0'}
+  - type: Hex
+    attributes: {id: PIOA_REHLSR_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '8192'}
   - type: Hex
     attributes: {id: PIOA_SODR_VALUE}
     children:
@@ -4067,6 +4186,13 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '16'}
+  - type: Boolean
+    attributes: {id: PIO_A_INTERRUPT_USED}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
   - type: Hex
     attributes: {id: PIO_CCFG_SYSIO_VALUE}
     children:
@@ -4383,6 +4509,34 @@ children:
       children:
       - type: Dynamic
         attributes: {id: rtc, value: 'true'}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: 'true'}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: RTT_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: RTT_InterruptHandler}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: 'true'}
   - type: Integer
     attributes: {id: SLOW_CLK_FREQ}
     children:

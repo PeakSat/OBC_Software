@@ -33,7 +33,7 @@
 39,PC2,MEM_D2,EBI_D2,n/a,n/a,No,Disabled,No,No,Disabled,Low
 40,PC3,MEM_D3,EBI_D3,n/a,n/a,No,Disabled,No,No,Disabled,Low
 41,PC4,MEM_D4,EBI_D4,n/a,n/a,No,Disabled,No,No,Disabled,Low
-42,PA13,GNSS_PPS,GPIO,In,n/a,No,Disabled,No,No,Disabled,Low
+42,PA13,GNSS_PPS,GPIO,In,n/a,No,Raising Edge,No,No,Disabled,Low
 45,PA16,LCL_CAN_1_SET,GPIO,Out,Low,No,Disabled,No,No,Disabled,Low
 46,PA23,MEM_A19,EBI_A19,n/a,n/a,No,Disabled,No,No,Disabled,Low
 47,PD27,I2C_MTQ_SDA,TWIHS2_TWD2,n/a,n/a,No,Disabled,No,No,Disabled,Low

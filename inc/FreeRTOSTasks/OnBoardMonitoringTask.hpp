@@ -3,7 +3,6 @@
 #include "TaskConfigs.hpp"
 #include <OBC_Definitions.hpp>
 #include "PayloadGatekeeperTask.hpp"
-#include "ServicePool.hpp"
 #include <MemoryManager.hpp>
 #include "MCP9808.hpp"
 
@@ -56,3 +55,4 @@ private:
 };
 
 inline std::optional<OnBoardMonitoringTask> onBoardMonitoringTask;
+

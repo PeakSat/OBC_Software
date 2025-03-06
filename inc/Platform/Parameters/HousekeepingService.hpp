@@ -19,7 +19,7 @@ namespace HousekeepingStructures {
                     OBDH_PCB_TEMPERATURE_2_ID,
                     OBDH_SPACECRAFT_TIME_REF_ID,
                     OBDH_OPERATIONAL_MODE_ID,
-                    OBDH_MemoryPartition_ID,
+                    OBDH_MEMORY_PARTITION_ID,
                     OBDH_RECONFIGURATION_TIMER_ID,
                     OBDH_LAST_FAILED_EVENT_ID,
                     OBDH_MCU_SYSTICK_ID,
