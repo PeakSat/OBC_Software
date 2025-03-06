@@ -3,6 +3,7 @@
 
 #include <ApplicationLayer.hpp>
 #include <MemoryManager.hpp>
+#include <OnBoardMonitoringTask.hpp>
 
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
@@ -13,6 +14,28 @@ void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
     vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
+
+void TimeKeepingTask::RTT_InterruptHandler(RTT_INTERRUPT_TYPE type, uintptr_t context) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    configASSERT(context != nullptr);
+    auto taskHandle = static_cast<TaskHandle_t>((void*) (context));
+    switch (type) {
+        case RTT_PERIODIC:
+            LOG_INFO << "RTT_PERIODIC";
+            break;
+        case RTT_ALARM:
+            LOG_INFO << "RTT_ALARM";
+            vTaskNotifyGiveFromISR(taskHandle, &xHigherPriorityTaskWoken);
+            break;
+        case RTT_INTERRUPT_INVALID:
+            LOG_INFO << "RTT_INTERRUPT_INVALID";
+            break;
+        default:
+            LOG_INFO << "ERROR";
+    }
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
 
 int TimeKeepingTask::timeToSeconds(const tm& time) {
     return (time.tm_hour * 3600) + (time.tm_min * 60) + time.tm_sec;
@@ -34,6 +57,10 @@ void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
 TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
     PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, GNSS_PPS_Callback, reinterpret_cast<uintptr_t>(this));
     PIO_PinInterruptEnable(GNSS_PPS_PIN);
+    RTT_CallbackRegister(RTT_InterruptHandler, reinterpret_cast<uintptr_t>(OnBoardMonitoringTask::onBoardMonitoringTaskHandle));
+    RTT_Enable();
+    RTT_EnableInterrupt(RTT_ALARM);
+    RTT_EnableInterrupt(RTT_PERIODIC);
 }
 
 
@@ -75,7 +102,7 @@ void TimeKeepingTask::setEpoch(tm& dateTime) const {
 
 void TimeKeepingTask::getGNSSTimestamp() {
     constexpr etl::array<uint16_t, CAN::TPMessageMaximumArguments> parameterIDArray = {PeakSatParameters::COMMS_GNSS_TIME_ID};
-    CAN::Application::createRequestParametersMessage(CAN::COMMS,true, parameterIDArray , false);
+    CAN::Application::createRequestParametersMessage(CAN::COMMS, true, parameterIDArray, false);
     //TODO: parse GNSS time
     //TODO: Update RTC time with new GNSS time
 }
@@ -85,7 +112,7 @@ void TimeKeepingTask::execute() {
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
     tm ppsTime = dateTime;
-    uint8_t gnssTimeouts  = 0U;
+    uint8_t gnssTimeouts = 0U;
     MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
     // MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
 
@@ -102,7 +129,7 @@ void TimeKeepingTask::execute() {
         }
 
         RTC_TimeGet(&dateTime);
-        if(useGNSS) {
+        if (useGNSS) {
             ppsTime.tm_sec += 1;
             (void) mktime(&ppsTime);
             correctDriftTime(ppsTime, dateTime);

@@ -89,8 +89,9 @@ void OnBoardMonitoringTask::execute() {
     get = eps.outputBusChannelOn(EPS::EPSChannels::ADM_5V_1);
     vTaskDelay(pdMS_TO_TICKS(10));
     checkAmbientSensors();
-
+    RTT_AlarmValueSet(120);
     while (true) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         vTaskDelay(pdMS_TO_TICKS(10));
         get = eps.getSystemStatus();
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -107,7 +108,5 @@ void OnBoardMonitoringTask::execute() {
         getAmbientTemperature();
         vTaskDelay(pdMS_TO_TICKS(10));
         getMCUTemperature();
-
-        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

@@ -66,6 +66,7 @@ void UsageFault_Handler (void);
 void DebugMonitor_Handler (void);
 void xPortSysTickHandler (void);
 void RTC_InterruptHandler (void);
+void RTT_InterruptHandler (void);
 void UART0_InterruptHandler (void);
 void PIOA_InterruptHandler (void);
 void USART1_InterruptHandler (void);

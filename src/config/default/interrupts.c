@@ -85,7 +85,6 @@ extern void vPortSVCHandler            ( void ) __attribute__((weak, alias("Dumm
 extern void xPortPendSVHandler         ( void ) __attribute__((weak, alias("Dummy_Handler")));
 extern void SUPC_Handler               ( void ) __attribute__((weak, alias("Dummy_Handler")));
 extern void RSTC_Handler               ( void ) __attribute__((weak, alias("Dummy_Handler")));
-extern void RTT_Handler                ( void ) __attribute__((weak, alias("Dummy_Handler")));
 extern void WDT_Handler                ( void ) __attribute__((weak, alias("Dummy_Handler")));
 extern void PMC_Handler                ( void ) __attribute__((weak, alias("Dummy_Handler")));
 extern void EFC_Handler                ( void ) __attribute__((weak, alias("Dummy_Handler")));
@@ -165,7 +164,7 @@ const H3DeviceVectors exception_table=
     .pfnSUPC_Handler               = SUPC_Handler,
     .pfnRSTC_Handler               = RSTC_Handler,
     .pfnRTC_Handler                = RTC_InterruptHandler,
-    .pfnRTT_Handler                = RTT_Handler,
+    .pfnRTT_Handler                = RTT_InterruptHandler,
     .pfnWDT_Handler                = WDT_Handler,
     .pfnPMC_Handler                = PMC_Handler,
     .pfnEFC_Handler                = EFC_Handler,

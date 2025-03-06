@@ -57,6 +57,10 @@
               <itemPath>../src/config/default/peripheral/rtc/plib_rtc_common.h</itemPath>
               <itemPath>../src/config/default/peripheral/rtc/plib_rtc.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="f18" displayName="rtt" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/rtt/plib_rtt_common.h</itemPath>
+              <itemPath>../src/config/default/peripheral/rtt/plib_rtt.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="f15" displayName="smc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/smc/plib_smc.h</itemPath>
             </logicalFolder>
@@ -332,6 +336,9 @@
             <logicalFolder name="f9" displayName="rtc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/rtc/plib_rtc.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="f18" displayName="rtt" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/rtt/plib_rtt.c</itemPath>
+            </logicalFolder>
             <logicalFolder name="f15" displayName="smc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/smc/plib_smc.c</itemPath>
             </logicalFolder>
@@ -417,6 +424,7 @@
       <logicalFolder name="f1" displayName="default.mhc" projectFiles="true">
         <itemPath>../src/config/default/default.mhc/HarmonyCore.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/project.yml</itemPath>
+        <itemPath>../src/config/default/default.mhc/rtt.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/GraphSettings.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/uart0.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/uart2.yml</itemPath>
@@ -424,7 +432,6 @@
         <itemPath>../src/config/default/default.mhc/core.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/mcan1.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/FreeRTOS.yml</itemPath>
-        <itemPath>../src/config/default/default.mhc/drv_i2c.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/dfp.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tc0.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/sys_time.yml</itemPath>

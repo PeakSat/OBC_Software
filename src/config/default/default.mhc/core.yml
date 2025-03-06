@@ -918,6 +918,27 @@ children:
       - type: Dynamic
         attributes: {id: core, value: 'true'}
   - type: Boolean
+    attributes: {id: NVIC_3_0_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: NVIC_3_0_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: RTT_InterruptHandler}
+  - type: Boolean
+    attributes: {id: NVIC_3_0_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
     attributes: {id: NVIC_41_0_ENABLE}
     children:
     - type: Values
@@ -4488,6 +4509,34 @@ children:
       children:
       - type: Dynamic
         attributes: {id: rtc, value: 'true'}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: 'true'}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: RTT_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: RTT_InterruptHandler}
+  - type: Boolean
+    attributes: {id: RTT_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: rtt, value: 'true'}
   - type: Integer
     attributes: {id: SLOW_CLK_FREQ}
     children:
