@@ -96,9 +96,8 @@ void OnBoardMonitoringTask::execute() {
         switch (timerID) {
             case TimerID::TEN_SEC:
                 get = eps.watchdogReset();
+                break;
             case TimerID::ONE_MIN:
-                vTaskDelay(pdMS_TO_TICKS(10));
-                getAmbientTemperature();
                 vTaskDelay(pdMS_TO_TICKS(10));
                 getMCUTemperature();
                 vTaskDelay(pdMS_TO_TICKS(10));

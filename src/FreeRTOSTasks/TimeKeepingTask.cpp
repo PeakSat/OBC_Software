@@ -26,7 +26,7 @@ void TimeKeepingTask::RTT_InterruptHandler(RTT_INTERRUPT_TYPE type, uintptr_t co
             break;
         case RTT_ALARM:
             LOG_INFO << "RTT_ALARM";
-            vTaskNotifyGiveFromISR(taskHandle, &xHigherPriorityTaskWoken);
+            // vTaskNotifyGiveFromISR(taskHandle, &xHigherPriorityTaskWoken);
             break;
         case RTT_INTERRUPT_INVALID:
             LOG_INFO << "RTT_INTERRUPT_INVALID";
@@ -111,6 +111,7 @@ void TimeKeepingTask::execute() {
     TimerManagement::TimerManager timerManager;
     timerManager.createTimer(TimerID::TEN_SEC, pdMS_TO_TICKS(10000));
     timerManager.createTimer(TimerID::ONE_MIN, pdMS_TO_TICKS(60000));
+
     static tm dateTime;
     bool useGNSS = true;
     setEpoch(dateTime);
@@ -123,15 +124,16 @@ void TimeKeepingTask::execute() {
     // Clear any pending notifications
     ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
-        if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
-            // TODO: Check GNSS
-            LOG_ERROR << "GNSS_PPS timed out";
-            gnssTimeouts++;
-            if (gnssTimeouts == 10) {
-                useGNSS = false;
+        if (useGNSS) {
+            if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
+                // TODO: Check GNSS
+                LOG_ERROR << "GNSS_PPS timed out";
+                gnssTimeouts++;
+                if (gnssTimeouts == 10) {
+                    useGNSS = false;
+                }
             }
         }
-
         RTC_TimeGet(&dateTime);
         if (useGNSS) {
             ppsTime.tm_sec += 1;
@@ -141,5 +143,9 @@ void TimeKeepingTask::execute() {
 
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
+
+        if (not useGNSS) {
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
     }
 }

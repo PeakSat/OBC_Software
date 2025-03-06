@@ -4,19 +4,19 @@
 #include "task.h"
 #include "timers.h"
 #include "etl/array.h"
-
 #include "OnBoardMonitoringTask.hpp"
 
-namespace TimerManagement{
+namespace TimerManagement {
 
-    enum class TimerID:uint32_t {
+    enum class TimerID : uint32_t {
         TEN_SEC,
         ONE_MIN,
         FIVE_MIN,
         TEN_MIN,
         // Add more as needed
     };
-    using TimerID_t = std::underlying_type_t<TimerID>;;
+    using TimerID_t = std::underlying_type_t<TimerID>;
+    ;
 
     constexpr uint8_t MAX_TIMERS = 10;
 
@@ -29,11 +29,11 @@ namespace TimerManagement{
         void createTimer(TimerID id, TickType_t period) {
             auto timerIndex = static_cast<size_t>(id);
             TimerHandle_t xTimer = xTimerCreate(
-                "Timer",            // Timer name
-                period,             // Timer period in ticks
-                pdTRUE,             // Auto-reload
+                "Timer",                                                     // Timer name
+                period,                                                      // Timer period in ticks
+                pdTRUE,                                                      // Auto-reload
                 reinterpret_cast<void*>(static_cast<uintptr_t>(timerIndex)), // Store TimerID as void*,
-                TimerCallback       // Callback function
+                TimerCallback                                                // Callback function
             );
 
 
@@ -50,19 +50,21 @@ namespace TimerManagement{
             auto timerID = static_cast<TimerID>(timerIndex);
 
             switch (timerID) {
-                case TimerID::TEN_SEC:
-                        xTaskNotify(OnBoardMonitoringTask::onBoardMonitoringTaskHandle, static_cast<TimerID_t>(timerID), eSetValueWithOverwrite);
-                        break;
+                case TimerID::TEN_SEC: {
+                    xTaskNotify(OnBoardMonitoringTask::onBoardMonitoringTaskHandle, static_cast<TimerID_t>(timerID), eSetValueWithOverwrite);
+                    break;
+                }
                 case TimerID::ONE_MIN:
                     // Notify or perform actions for Task 2
-                        break;
+                    xTaskNotify(OnBoardMonitoringTask::onBoardMonitoringTaskHandle, static_cast<TimerID_t>(timerID), eSetValueWithOverwrite);
+                    break;
                 case TimerID::TEN_MIN:
                     // Notify or perform actions for Task 3
-                        break;
+                    break;
                 // Add more cases as needed
                 default:
                     // Handle unexpected timer IDs
-                        break;
+                    break;
             }
         }
 
@@ -70,4 +72,4 @@ namespace TimerManagement{
         etl::array<TimerHandle_t, MAX_TIMERS> timers_{};
     };
 
-}
+} // namespace TimerManagement

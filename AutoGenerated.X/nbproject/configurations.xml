@@ -432,6 +432,7 @@
         <itemPath>../src/config/default/default.mhc/core.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/mcan1.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/FreeRTOS.yml</itemPath>
+        <itemPath>../src/config/default/default.mhc/drv_i2c.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/dfp.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tc0.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/sys_time.yml</itemPath>
