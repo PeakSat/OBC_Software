@@ -6,7 +6,7 @@
 using namespace EPSConfiguration;
 using namespace EPSParameters;
 using namespace EPSParameters::ParameterDescriptors;
-
+using namespace TimerManagement;
 
 void OnBoardMonitoringTask::getMCUTemperature() {
     uint32_t adc_conversion = 0U; // Variable to store ADC result
@@ -75,9 +75,7 @@ OnBoardMonitoringTask::OnBoardMonitoringTask() : Task("OnBoardMonitoring") {
 }
 
 void OnBoardMonitoringTask::execute() {
-
     EPS eps;
-
     auto get = eps.getConfigurationParameter<getTypeSize(EPS_CH_STARTUP_ENA_BF_DESC.type)>(EPS_CH_STARTUP_ENA_BF_DESC);
     if (get != EPS::ErrorCode::None) {
         LOG_ERROR << "EPS_CH_STARTUP_ENA_BF_DESC not set, error:" << static_cast<EPS::ErrorCode_t>(get);
@@ -89,24 +87,39 @@ void OnBoardMonitoringTask::execute() {
     get = eps.outputBusChannelOn(EPS::EPSChannels::ADM_5V_1);
     vTaskDelay(pdMS_TO_TICKS(10));
     checkAmbientSensors();
-    RTT_AlarmValueSet(120);
+
+    uint32_t ulNotifiedValue = 0;
     while (true) {
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        vTaskDelay(pdMS_TO_TICKS(10));
-        get = eps.getSystemStatus();
-        vTaskDelay(pdMS_TO_TICKS(10));
-        if (get != EPS::ErrorCode::None) {
-            LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
+        xTaskNotifyWait(pdFALSE, pdTRUE, &ulNotifiedValue, portMAX_DELAY);
+        auto timerID = static_cast<TimerID>(ulNotifiedValue);
+
+        switch (timerID) {
+            case TimerID::TEN_SEC:
+                get = eps.watchdogReset();
+            case TimerID::ONE_MIN:
+                vTaskDelay(pdMS_TO_TICKS(10));
+                getAmbientTemperature();
+                vTaskDelay(pdMS_TO_TICKS(10));
+                getMCUTemperature();
+                vTaskDelay(pdMS_TO_TICKS(10));
+                getAmbientTemperature();
+                updatePayloadParameters();
+                break;
+            case TimerID::FIVE_MIN:
+                vTaskDelay(pdMS_TO_TICKS(10));
+                get = eps.getSystemStatus();
+                vTaskDelay(pdMS_TO_TICKS(10));
+                if (get != EPS::ErrorCode::None) {
+                    LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
+                }
+                LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
+                break;
+            case TimerID::TEN_MIN:
+                get = eps.getPIUHousekeepingDataRaw();
+                break;
+            default:
+                LOG_ERROR << "Unknown notification code: " << ulNotifiedValue;
+                break;
         }
-        LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
-        get = eps.getPIUHousekeepingDataRaw();
-        updatePayloadParameters();
-        vTaskDelay(pdMS_TO_TICKS(10));
-        ADM::getADMParameters();
-        LOG_INFO << "ADM Status: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::COMMS_ANTENNA_DEPLOYMENT_STATUS_ID);
-        vTaskDelay(pdMS_TO_TICKS(10));
-        getAmbientTemperature();
-        vTaskDelay(pdMS_TO_TICKS(10));
-        getMCUTemperature();
     }
 }

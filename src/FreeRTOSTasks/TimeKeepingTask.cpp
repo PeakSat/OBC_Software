@@ -5,6 +5,7 @@
 #include <MemoryManager.hpp>
 #include <OnBoardMonitoringTask.hpp>
 
+using namespace TimerManagement;
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
 void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
@@ -107,6 +108,9 @@ void TimeKeepingTask::getGNSSTimestamp() {
     //TODO: Update RTC time with new GNSS time
 }
 void TimeKeepingTask::execute() {
+    TimerManagement::TimerManager timerManager;
+    timerManager.createTimer(TimerID::TEN_SEC, pdMS_TO_TICKS(10000));
+    timerManager.createTimer(TimerID::ONE_MIN, pdMS_TO_TICKS(60000));
     static tm dateTime;
     bool useGNSS = true;
     setEpoch(dateTime);

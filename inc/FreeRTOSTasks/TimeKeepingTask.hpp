@@ -4,6 +4,7 @@
 #include "TimeStamp.hpp"
 #include "UTCTimestamp.hpp"
 #include "Time.hpp"
+#include "SoftwareTimers.hpp"
 
 class TimeKeepingTask : public Task {
 private:
