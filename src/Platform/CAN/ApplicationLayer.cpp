@@ -157,8 +157,7 @@ namespace CAN::Application {
         CAN::TPProtocol::createCANTPMessage(message, isISR);
     }
 
-    void
-    createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message& incomingMessage, bool isISR) {
+    void createCCSDSPacketMessage(NodeIDs destinationAddress, bool isMulticast, const Message& incomingMessage, bool isISR) {
         TPMessage message = {{CAN::NodeID, destinationAddress, isMulticast}};
 
         auto ccsdsMessage = MessageParser::compose(incomingMessage);

@@ -65,15 +65,15 @@ extern "C" void main_cpp() {
 
     uartGatekeeperTask.emplace();
     PayloadGatekeeperTask.emplace();
-    // canGatekeeperTask.emplace();
-    // canParserTask.emplace();
+    canGatekeeperTask.emplace();
+    canParserTask.emplace();
     housekeepingTask.emplace();
     onBoardMonitoringTask.emplace();
     // tcHandlingTask.emplace();
     mcuTemperatureTask.emplace();
     ambientTemperatureTask.emplace();
     timeKeepingTask.emplace();
-    TestTask.emplace();
+    // TestTask.emplace();
     watchdogTask.emplace();
     // heartbeatTask.emplace();
 
@@ -81,15 +81,15 @@ extern "C" void main_cpp() {
     __disable_irq();
     uartGatekeeperTask->createTask();
     PayloadGatekeeperTask->createTask();
-    // canGatekeeperTask->createTask();
-    // canParserTask->createTask();
+    canGatekeeperTask->createTask();
+    canParserTask->createTask();
     housekeepingTask->createTask();
     onBoardMonitoringTask->createTask();
     // tcHandlingTask->createTask();
     mcuTemperatureTask->createTask();
     ambientTemperatureTask->createTask();
     timeKeepingTask->createTask();
-    TestTask->createTask();
+    // TestTask->createTask();
     watchdogTask->createTask();
     // heartbeatTask->createTask();
 
@@ -100,6 +100,10 @@ extern "C" void main_cpp() {
     HelperFunctions::initialiseMPURegions();    // setup MPU regions for external memories
     MemoryManager::initialiseMemories();        // initialise Memories (NAND, MRAM) & MountFS
     vTaskStartScheduler();
+
+    while (true) {  // Should never be reached, used to stop execution if stack overflow is detected
+        __NOP();
+    }
 
     while (true) {
         /* Maintain state machines of all polled MPLAB Harmony modules. */

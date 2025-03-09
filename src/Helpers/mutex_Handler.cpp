@@ -1,5 +1,8 @@
 #include "../../inc/Helpers/mutex_Handler.h"
 
+#include <Logger.hpp>
+#include <cstring>
+
 SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
@@ -13,6 +16,7 @@ StaticSemaphore_t Semaphore_Group_C_buffer;
 StaticSemaphore_t Semaphore_EPS_buffer;
 StaticSemaphore_t Semaphore_SMC_buffer;
 
+// char taskName[26]={0};   // Max Task name is 25
 
 void initializeSemaphores() {
     Semaphore_Group_A = xSemaphoreCreateMutexStatic(&Semaphore_Group_A_buffer);
@@ -87,6 +91,12 @@ void releaseSemaphoreEPS_ISR() {
 }
 
 bool takeSemaphoreSMC() {
+    // if (xSemaphoreTake(Semaphore_SMC, (TickType_t) 10) == pdTRUE) {
+    //     memcpy(taskName, pcTaskGetName(NULL), 25);
+    //     return true;
+    // }
+    // LOG_DEBUG<<"SMC HELD BY: "<<taskName;
+    // return false;
     return (xSemaphoreTake(Semaphore_SMC, (TickType_t) 10) == pdTRUE);
 }
 

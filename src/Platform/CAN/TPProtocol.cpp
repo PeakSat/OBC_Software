@@ -106,7 +106,7 @@ bool TPProtocol::createCANTPMessageWithRetry(const TPMessage& message, bool isIS
         }
         if (i > 0) {
             //number of retransmits ++
-            LOG_ERROR << "Retranmitted CAN packet";
+            LOG_ERROR << "Retransmitted CAN packet";
         }
     }
     return 1;
