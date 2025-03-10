@@ -4,6 +4,7 @@
 #include "task.h"
 #include "timers.h"
 #include "etl/array.h"
+#include "etl/vector.h"
 #include "OnBoardMonitoringTask.hpp"
 
 
@@ -75,6 +76,21 @@ namespace TimerManagement {
         uint32_t notificationValue;
         bool active;
     };
+
+    /**
+     * @brief Notification bits for different timer events
+     */
+    enum class NotificationType : uint8_t {
+        NOTIFICATION_NONE = 0,
+        NOTIFICATION_10_SEC_TYPE = 1,
+        NOTIFICATION_1_MIN_TYPE = 2,
+        NOTIFICATION_5_MIN_TYPE = 3,
+        NOTIFICATION_10_MIN_TYPE = 4,
+        NOTIFICATION_UNKNOWN = 5
+    };
+
+    /** @brief Underlying type of TimerID for conversion purposes */
+    using NotificationType_t = std::underlying_type_t<NotificationType>;
 
     /**
      * @brief Timer management class for FreeRTOS
@@ -150,7 +166,7 @@ namespace TimerManagement {
         }
 
         /**
-         * @brief Register a task to be notified when a specific timer expires
+         * @brief Register a task to be notified when a specific timer expires, one timer can be registered to up to 5 task Notifications
          *
          * @param id The timer ID
          * @param taskHandle Handle of the task to be notified
@@ -423,3 +439,13 @@ namespace TimerManagement {
     };
 
 } // namespace TimerManagement
+
+/**
+ * @brief Standard system timer periods in milliseconds
+ */
+namespace TimerPeriods {
+    constexpr uint32_t TEN_SECONDS = 10000;
+    constexpr uint32_t ONE_MINUTE = 60000;
+    constexpr uint32_t FIVE_MINUTES = 300000;
+    constexpr uint32_t TEN_MINUTES = 600000;
+} // namespace TimerPeriods

@@ -7,16 +7,6 @@
 #include "SoftwareTimers.hpp"
 
 
-/**
- * @brief Standard system timer periods in milliseconds
- */
-namespace TimerPeriods {
-    constexpr uint32_t TEN_SECONDS = 10000;
-    constexpr uint32_t ONE_MINUTE = 60000;
-    constexpr uint32_t FIVE_MINUTES = 300000;
-    constexpr uint32_t TEN_MINUTES = 600000;
-}
-
 
 class TimeKeepingTask : public Task {
 private:
@@ -33,6 +23,26 @@ private:
     static int timeToSeconds(const tm& time);
 
     static void correctDriftTime(const tm& ppsTime, tm& rtcTime);
+
+
+
+    /**
+     * @brief Initialize all commonly used timers
+     *
+     * Creates standard system timers with predefined periods.
+     *
+     * @return TimerManagement::ErrorCode indicating success or the first failure encountered
+     */
+    static TimerManagement::ErrorCode initializeStandardTimers();
+
+    /**
+     * @brief Register this task for timer notifications
+     *
+     * Registers the TimeKeepingTask to receive notifications for standard timers
+     *
+     * @return true if all registrations succeeded, false otherwise
+     */
+    static bool registerForTimerNotifications(TaskHandle_t taskToNotify);
 
 
 public:
@@ -70,34 +80,8 @@ public:
 
     void createTask() {
         timeKeepingTaskHandle = xTaskCreateStatic(vClassTask<TimeKeepingTask>, this->TaskName, TimeKeepingTaskStack, this,
-                          TimeKeepingTaskPriority, this->taskStack, &(this->taskBuffer));
+                                                  TimeKeepingTaskPriority, this->taskStack, &(this->taskBuffer));
     }
-
-    /**
-     * @brief Notification bits for different timer events
-     */
-    static constexpr uint32_t NOTIFICATION_10_SEC = (1UL << 0);
-    static constexpr uint32_t NOTIFICATION_1_MIN = (1UL << 1);
-    static constexpr uint32_t NOTIFICATION_5_MIN = (1UL << 2);
-    static constexpr uint32_t NOTIFICATION_10_MIN = (1UL << 3);
-
-    /**
-     * @brief Initialize all commonly used timers
-     *
-     * Creates standard system timers with predefined periods.
-     *
-     * @return TimerManagement::ErrorCode indicating success or the first failure encountered
-     */
-    static TimerManagement::ErrorCode initializeStandardTimers();
-
-    /**
-     * @brief Register this task for timer notifications
-     *
-     * Registers the TimeKeepingTask to receive notifications for standard timers
-     *
-     * @return true if all registrations succeeded, false otherwise
-     */
-    static bool registerForTimerNotifications() ;
 };
 
 inline std::optional<TimeKeepingTask> timeKeepingTask;

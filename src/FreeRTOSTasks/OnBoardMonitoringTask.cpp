@@ -91,20 +91,21 @@ void OnBoardMonitoringTask::execute() {
     uint32_t ulNotifiedValue = 0;
     while (true) {
         xTaskNotifyWait(pdFALSE, pdTRUE, &ulNotifiedValue, portMAX_DELAY);
-        auto timerID = static_cast<TimerID>(ulNotifiedValue);
+        const auto notificationType = static_cast<NotificationType>(ulNotifiedValue);
 
-        switch (timerID) {
-            case TimerID::TEN_SEC:
+        switch (notificationType) {
+            case NotificationType::NOTIFICATION_10_SEC_TYPE:
                 get = eps.watchdogReset();
+                LOG_DEBUG<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
                 break;
-            case TimerID::ONE_MIN:
+            case NotificationType::NOTIFICATION_1_MIN_TYPE:
                 vTaskDelay(pdMS_TO_TICKS(10));
                 getMCUTemperature();
                 vTaskDelay(pdMS_TO_TICKS(10));
                 getAmbientTemperature();
                 updatePayloadParameters();
                 break;
-            case TimerID::FIVE_MIN:
+            case NotificationType::NOTIFICATION_5_MIN_TYPE:
                 vTaskDelay(pdMS_TO_TICKS(10));
                 get = eps.getSystemStatus();
                 vTaskDelay(pdMS_TO_TICKS(10));
@@ -113,7 +114,7 @@ void OnBoardMonitoringTask::execute() {
                 }
                 LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
                 break;
-            case TimerID::TEN_MIN:
+            case NotificationType::NOTIFICATION_10_MIN_TYPE:
                 get = eps.getPIUHousekeepingDataRaw();
                 break;
             default:

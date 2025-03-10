@@ -9,11 +9,16 @@ using namespace TimerManagement;
 Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 
 void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    // Ignore unused parameters
+    (void) pin;
+    (void) context;
+
     auto* instance = reinterpret_cast<TimeKeepingTask*>(context);
-    configASSERT(instance != nullptr);
-    vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    if (timeKeepingTaskHandle != nullptr) {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
 }
 
 void TimeKeepingTask::RTT_InterruptHandler(RTT_INTERRUPT_TYPE type, uintptr_t context) {
@@ -108,7 +113,7 @@ void TimeKeepingTask::getGNSSTimestamp() {
     //TODO: Update RTC time with new GNSS time
 }
 
-TimerManagement::ErrorCode initializeStandardTimers() {
+TimerManagement::ErrorCode TimeKeepingTask::initializeStandardTimers() {
     auto& timerMgr = TimerManagement::TimerManager::getInstance();
 
     // Define timer configurations as a direct struct array
@@ -118,14 +123,13 @@ TimerManagement::ErrorCode initializeStandardTimers() {
     };
 
     TimerConfig timerConfigs[] = {
-        { TimerManagement::TimerID::TIMER_10_SEC, pdMS_TO_TICKS(TimerPeriods::TEN_SECONDS) },
-        { TimerManagement::TimerID::TIMER_1_MIN,  pdMS_TO_TICKS(TimerPeriods::ONE_MINUTE) },
-        { TimerManagement::TimerID::TIMER_5_MIN,  pdMS_TO_TICKS(TimerPeriods::FIVE_MINUTES) },
-        { TimerManagement::TimerID::TIMER_10_MIN, pdMS_TO_TICKS(TimerPeriods::TEN_MINUTES) }
-    };
+        {TimerManagement::TimerID::TIMER_10_SEC, pdMS_TO_TICKS(TimerPeriods::TEN_SECONDS)},
+        {TimerManagement::TimerID::TIMER_1_MIN, pdMS_TO_TICKS(TimerPeriods::ONE_MINUTE)},
+        {TimerManagement::TimerID::TIMER_5_MIN, pdMS_TO_TICKS(TimerPeriods::FIVE_MINUTES)},
+        {TimerManagement::TimerID::TIMER_10_MIN, pdMS_TO_TICKS(TimerPeriods::TEN_MINUTES)}};
 
     // Create all timers in a loop
-    for (const auto& config : timerConfigs) {
+    for (const auto& config: timerConfigs) {
         TimerManagement::ErrorCode result = timerMgr.createTimer(config.id, config.period);
         if (result != TimerManagement::ErrorCode::SUCCESS) {
             return result; // Return first error encountered
@@ -135,28 +139,26 @@ TimerManagement::ErrorCode initializeStandardTimers() {
     return TimerManagement::ErrorCode::SUCCESS;
 }
 
-bool TimeKeepingTask::registerForTimerNotifications() {
+bool TimeKeepingTask::registerForTimerNotifications(TaskHandle_t taskToNotify) {
     auto& timerMgr = TimerManagement::TimerManager::getInstance();
 
     // Define notification configurations as a direct struct array
     struct NotifConfig {
-        TimerManagement::TimerID id=TimerID::TIMER_NOT_INITIALIZED;
-        uint32_t notification=0U;
+        TimerManagement::TimerID id = TimerID::TIMER_NOT_INITIALIZED;
+        uint32_t notification = 0U;
     };
 
     NotifConfig notifConfigs[] = {
-        { TimerManagement::TimerID::TIMER_10_SEC, NOTIFICATION_10_SEC },
-        { TimerManagement::TimerID::TIMER_1_MIN,  NOTIFICATION_1_MIN },
-        { TimerManagement::TimerID::TIMER_5_MIN,  NOTIFICATION_5_MIN },
-        { TimerManagement::TimerID::TIMER_10_MIN, NOTIFICATION_10_MIN }
-    };
+        {TimerManagement::TimerID::TIMER_10_SEC, static_cast<NotificationType_t>(NotificationType::NOTIFICATION_10_SEC_TYPE)},
+        {TimerManagement::TimerID::TIMER_1_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_1_MIN_TYPE)},
+        {TimerManagement::TimerID::TIMER_5_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_5_MIN_TYPE)},
+        {TimerManagement::TimerID::TIMER_10_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_10_MIN_TYPE)}};
 
     // Register for all timer notifications in a loop
-    for (const auto& config : notifConfigs) {
-        if (timerMgr.registerTaskForTimer(config.id, timeKeepingTaskHandle, config.notification)
-            != TimerManagement::ErrorCode::SUCCESS) {
+    for (const auto& config: notifConfigs) {
+        if (timerMgr.registerTaskForTimer(config.id, taskToNotify, config.notification) != TimerManagement::ErrorCode::SUCCESS) {
             return false; // Return false on first failure
-            }
+        }
     }
 
     return true;
@@ -169,11 +171,7 @@ void TimeKeepingTask::execute() {
     }
 
     // Register for timer notifications
-    bool registrationResult = registerForTimerNotifications();
-    if (!registrationResult) {
-        LOG_ERROR << "Timer registration failed";
-    }
-
+    bool registrationResult = registerForTimerNotifications(OnBoardMonitoringTask::onBoardMonitoringTaskHandle);
     // Original time-keeping initialization
     static tm dateTime;
     bool useGNSS = true;
@@ -182,6 +180,8 @@ void TimeKeepingTask::execute() {
     tm ppsTime = dateTime;
     uint8_t gnssTimeouts = 0U;
     MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
+    // MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
+
     ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
         if (useGNSS) {
