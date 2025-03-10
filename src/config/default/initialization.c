@@ -311,6 +311,8 @@ void SYS_Initialize ( void* data )
 
 	TWIHS2_Initialize();
 
+	RTT_Initialize();
+
     USART1_Initialize();
 
     XDMAC_Initialize();

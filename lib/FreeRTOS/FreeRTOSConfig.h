@@ -81,10 +81,10 @@
 #define configMAX_CO_ROUTINE_PRIORITIES         2
 
 /* Software timer related definitions. */
-#define configUSE_TIMERS                        0
-#define configTIMER_TASK_PRIORITY               0
-#define configTIMER_QUEUE_LENGTH                0
-#define configTIMER_TASK_STACK_DEPTH            0
+#define configUSE_TIMERS                        1
+#define configTIMER_TASK_PRIORITY               (configMAX_PRIORITIES - 1)
+#define configTIMER_QUEUE_LENGTH                10
+#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE)
 #define configUSE_DAEMON_TASK_STARTUP_HOOK      0
 
 /* Misc */
@@ -111,7 +111,7 @@
 #define INCLUDE_uxTaskGetStackHighWaterMark     1
 #define INCLUDE_xTaskGetIdleTaskHandle          0
 #define INCLUDE_eTaskGetState                   0
-#define INCLUDE_xTimerPendFunctionCall          0
+#define INCLUDE_xTimerPendFunctionCall          1
 #define INCLUDE_xTaskAbortDelay                 0
 #define INCLUDE_xTaskGetHandle                  1
 #define INCLUDE_xQueueGetMutexHolder            0

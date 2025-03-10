@@ -4,8 +4,7 @@ SemaphoreHandle_t Semaphore_Group_A = NULL;
 SemaphoreHandle_t Semaphore_Group_B = NULL;
 SemaphoreHandle_t Semaphore_Group_C = NULL;
 SemaphoreHandle_t Semaphore_EPS     = NULL;
-SemaphoreHandle_t Mutex_SMC     = NULL;
-
+SemaphoreHandle_t Mutex_SMC         = NULL;
 
 StaticSemaphore_t Semaphore_Group_A_buffer;
 StaticSemaphore_t Semaphore_Group_B_buffer;
