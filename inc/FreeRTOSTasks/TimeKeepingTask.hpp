@@ -24,8 +24,6 @@ private:
 
     static void correctDriftTime(const tm& ppsTime, tm& rtcTime);
 
-
-
     /**
      * @brief Initialize all commonly used timers
      *

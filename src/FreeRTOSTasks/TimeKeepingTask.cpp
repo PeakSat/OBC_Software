@@ -149,10 +149,10 @@ bool TimeKeepingTask::registerForTimerNotifications(TaskHandle_t taskToNotify) {
     };
 
     NotifConfig notifConfigs[] = {
-        {TimerManagement::TimerID::TIMER_10_SEC, static_cast<NotificationType_t>(NotificationType::NOTIFICATION_10_SEC_TYPE)},
-        {TimerManagement::TimerID::TIMER_1_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_1_MIN_TYPE)},
-        {TimerManagement::TimerID::TIMER_5_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_5_MIN_TYPE)},
-        {TimerManagement::TimerID::TIMER_10_MIN,  static_cast<NotificationType_t>(NotificationType::NOTIFICATION_10_MIN_TYPE)}};
+        {TimerManagement::TimerID::TIMER_10_SEC, NOTIFICATION_10_SEC},
+        {TimerManagement::TimerID::TIMER_1_MIN, NOTIFICATION_1_MIN},
+        {TimerManagement::TimerID::TIMER_5_MIN, NOTIFICATION_5_MIN},
+        {TimerManagement::TimerID::TIMER_10_MIN, NOTIFICATION_10_MIN}};
 
     // Register for all timer notifications in a loop
     for (const auto& config: notifConfigs) {

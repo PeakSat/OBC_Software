@@ -50,7 +50,7 @@ namespace TimerManagement {
      * Defines the available timer types in the system.
      */
     enum class TimerID : uint32_t {
-        TIMER_NOT_INITIALIZED=0,
+        TIMER_NOT_INITIALIZED = 0,
         TIMER_10_SEC,
         TIMER_1_MIN,
         TIMER_5_MIN,
@@ -80,17 +80,34 @@ namespace TimerManagement {
     /**
      * @brief Notification bits for different timer events
      */
+    static constexpr uint32_t NOTIFICATION_10_SEC = (1UL << 0);
+    static constexpr uint32_t NOTIFICATION_1_MIN = (1UL << 1);
+    static constexpr uint32_t NOTIFICATION_5_MIN = (1UL << 2);
+    static constexpr uint32_t NOTIFICATION_10_MIN = (1UL << 3);
+
+    /**
+     * @brief Notification bits for different timer events
+     */
     enum class NotificationType : uint8_t {
         NOTIFICATION_NONE = 0,
         NOTIFICATION_10_SEC_TYPE = 1,
         NOTIFICATION_1_MIN_TYPE = 2,
         NOTIFICATION_5_MIN_TYPE = 3,
-        NOTIFICATION_10_MIN_TYPE = 4,
-        NOTIFICATION_UNKNOWN = 5
+        NOTIFICATION_10_MIN_TYPE = 4 ,
+        NOTIFICATION_TYPE_UNKNOWN = 5,
     };
 
     /** @brief Underlying type of TimerID for conversion purposes */
     using NotificationType_t = std::underlying_type_t<NotificationType>;
+
+    inline NotificationType getHighestPriorityNotification(uint32_t notifiedValue) {
+        if (notifiedValue & NOTIFICATION_10_SEC) return NotificationType::NOTIFICATION_10_SEC_TYPE;
+        if (notifiedValue & NOTIFICATION_1_MIN) return NotificationType::NOTIFICATION_1_MIN_TYPE;
+        if (notifiedValue & NOTIFICATION_5_MIN) return NotificationType::NOTIFICATION_5_MIN_TYPE;
+        if (notifiedValue & NOTIFICATION_10_MIN) return NotificationType::NOTIFICATION_10_MIN_TYPE;
+        if (notifiedValue != 0) return NotificationType::NOTIFICATION_TYPE_UNKNOWN;
+        return NotificationType::NOTIFICATION_NONE;
+    }
 
     /**
      * @brief Timer management class for FreeRTOS
@@ -416,7 +433,7 @@ namespace TimerManagement {
 
             const auto timerIndex = reinterpret_cast<size_t>(pvTimerGetTimerID(xTimer));
             if (timerIndex >= MAX_TIMERS) {
-                return;  // Invalid timer index
+                return; // Invalid timer index
             }
 
             // Get instance to access non-static members
@@ -426,7 +443,7 @@ namespace TimerManagement {
             taskENTER_CRITICAL();
 
             // Notify all active registered tasks
-            for (const auto& taskNotif : instance.timerToTasksMap_[timerIndex]) {
+            for (const auto& taskNotif: instance.timerToTasksMap_[timerIndex]) {
                 if (taskNotif.active && taskNotif.taskHandle != nullptr) {
                     // Use ulTaskNotifyValueClear to preserve other bits in notification value
                     xTaskNotify(taskNotif.taskHandle, taskNotif.notificationValue, eSetValueWithOverwrite);
@@ -435,7 +452,6 @@ namespace TimerManagement {
 
             taskEXIT_CRITICAL();
         }
-
     };
 
 } // namespace TimerManagement

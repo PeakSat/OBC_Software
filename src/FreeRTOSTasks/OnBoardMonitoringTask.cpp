@@ -89,9 +89,10 @@ void OnBoardMonitoringTask::execute() {
     checkAmbientSensors();
 
     uint32_t ulNotifiedValue = 0;
+    NotificationType notificationType = NotificationType::NOTIFICATION_NONE;
     while (true) {
-        xTaskNotifyWait(pdFALSE, pdTRUE, &ulNotifiedValue, portMAX_DELAY);
-        const auto notificationType = static_cast<NotificationType>(ulNotifiedValue);
+        xTaskNotifyWait(pdFALSE, 0xFFFFFFFF, &ulNotifiedValue, portMAX_DELAY);
+        notificationType = getHighestPriorityNotification(ulNotifiedValue);
 
         switch (notificationType) {
             case NotificationType::NOTIFICATION_10_SEC_TYPE:
