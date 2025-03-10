@@ -11,7 +11,6 @@ void HeartbeatTask::execute() {
     uint32_t falseCounter = 0;
 
     while (true) {
-        // LOG_DEBUG << "HeartbeatTask::execute()";
         if (heartbeatReceived == true) {
             heartbeatReceived = false;
             falseCounter = 0;

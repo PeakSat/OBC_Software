@@ -89,38 +89,43 @@ void OnBoardMonitoringTask::execute() {
     checkAmbientSensors();
 
     uint32_t ulNotifiedValue = 0;
-    NotificationType notificationType = NotificationType::NOTIFICATION_NONE;
     while (true) {
         xTaskNotifyWait(pdFALSE, 0xFFFFFFFF, &ulNotifiedValue, portMAX_DELAY);
-        notificationType = getHighestPriorityNotification(ulNotifiedValue);
 
-        switch (notificationType) {
-            case NotificationType::NOTIFICATION_10_SEC_TYPE:
-                get = eps.watchdogReset();
-                LOG_DEBUG<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-                break;
-            case NotificationType::NOTIFICATION_1_MIN_TYPE:
-                vTaskDelay(pdMS_TO_TICKS(10));
-                getMCUTemperature();
-                vTaskDelay(pdMS_TO_TICKS(10));
-                getAmbientTemperature();
-                updatePayloadParameters();
-                break;
-            case NotificationType::NOTIFICATION_5_MIN_TYPE:
-                vTaskDelay(pdMS_TO_TICKS(10));
-                get = eps.getSystemStatus();
-                vTaskDelay(pdMS_TO_TICKS(10));
-                if (get != EPS::ErrorCode::None) {
-                    LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
-                }
-                LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID) << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
-                break;
-            case NotificationType::NOTIFICATION_10_MIN_TYPE:
-                get = eps.getPIUHousekeepingDataRaw();
-                break;
-            default:
-                LOG_ERROR << "Unknown notification code: " << ulNotifiedValue;
-                break;
+        if (ulNotifiedValue & NOTIFICATION_10_SEC) {
+            get = eps.watchdogReset();
         }
+
+        if (ulNotifiedValue & NOTIFICATION_1_MIN) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            getMCUTemperature();
+            vTaskDelay(pdMS_TO_TICKS(10));
+            getAmbientTemperature();
+            updatePayloadParameters();
+        }
+
+        if (ulNotifiedValue & NOTIFICATION_5_MIN) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            get = eps.getSystemStatus();
+            vTaskDelay(pdMS_TO_TICKS(10));
+            if (get != EPS::ErrorCode::None) {
+                LOG_ERROR << "EPS getStatus failed, error:" << static_cast<EPS::ErrorCode_t>(get);
+            }
+            LOG_INFO << "EPS time: " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_MINUTE_ID)
+                     << " : " << MemoryManager::getParameterAsUINT64(PeakSatParameters::EPS_UNIX_SECOND_ID);
+        }
+
+        if (ulNotifiedValue & NOTIFICATION_10_MIN) {
+            get = eps.getPIUHousekeepingDataRaw();
+        }
+
+        // Check for any unrecognized notification bits
+        if (ulNotifiedValue & ~(NOTIFICATION_10_SEC | NOTIFICATION_1_MIN | NOTIFICATION_5_MIN | NOTIFICATION_10_MIN)) {
+            LOG_ERROR << "Unknown notification bits: " <<
+                      (ulNotifiedValue & ~(NOTIFICATION_10_SEC | NOTIFICATION_1_MIN | NOTIFICATION_5_MIN | NOTIFICATION_10_MIN));
+        }
+
+        // Clear all notifications after processing
+        ulNotifiedValue = 0;
     }
 }

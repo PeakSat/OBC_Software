@@ -400,7 +400,6 @@ namespace TimerManagement {
             return ErrorCode::SUCCESS;
         }
 
-
         /** @brief Deleted copy constructor to enforce singleton pattern */
         TimerManager(const TimerManager&) = delete;
 
@@ -417,6 +416,7 @@ namespace TimerManagement {
             timers_.fill(nullptr);
             timerPeriods_.fill(0U);
         }
+
         /** @brief Array of timer handles, indexed by TimerID */
         etl::array<TimerHandle_t, MAX_TIMERS> timers_{};
 
@@ -446,7 +446,7 @@ namespace TimerManagement {
             for (const auto& taskNotif: instance.timerToTasksMap_[timerIndex]) {
                 if (taskNotif.active && taskNotif.taskHandle != nullptr) {
                     // Use ulTaskNotifyValueClear to preserve other bits in notification value
-                    xTaskNotify(taskNotif.taskHandle, taskNotif.notificationValue, eSetValueWithOverwrite);
+                    xTaskNotify(taskNotif.taskHandle, taskNotif.notificationValue, eSetBits);
                 }
             }
 
