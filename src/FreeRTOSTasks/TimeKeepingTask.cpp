@@ -11,12 +11,10 @@ Time::DefaultCUC _onBoardTimeKeeper(Time::DefaultCUC(0));
 void TimeKeepingTask::GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context) {
     // Ignore unused parameters
     (void) pin;
-    (void) context;
 
-    auto* instance = reinterpret_cast<TimeKeepingTask*>(context);
     if (timeKeepingTaskHandle != nullptr) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-        vTaskNotifyGiveFromISR(instance->timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
+        vTaskNotifyGiveFromISR(timeKeepingTaskHandle, &xHigherPriorityTaskWoken);
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
     }
 }
@@ -53,7 +51,8 @@ void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
 
     const int drift = rtcSeconds - ppsSeconds; // Drift in seconds
     uint8_t RTCOffsetThreshold = 0U;
-    if (abs(drift) > MemoryManager::getParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&RTCOffsetThreshold))) {
+    MemoryManager::getParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&RTCOffsetThreshold));
+    if (abs(drift) > RTCOffsetThreshold) {
         LOG_DEBUG << "Clock drift detected: " << drift << "s. Correcting...";
         rtcTime = ppsTime; // Align RTC to PPS time
         RTC_TimeSet(&rtcTime);
@@ -61,7 +60,7 @@ void TimeKeepingTask::correctDriftTime(const tm& ppsTime, tm& rtcTime) {
 }
 
 TimeKeepingTask::TimeKeepingTask() : Task("Timekeeping") {
-    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, GNSS_PPS_Callback, reinterpret_cast<uintptr_t>(this));
+    PIO_PinInterruptCallbackRegister(GNSS_PPS_PIN, GNSS_PPS_Callback, NULL);
     PIO_PinInterruptEnable(GNSS_PPS_PIN);
     RTT_CallbackRegister(RTT_InterruptHandler, reinterpret_cast<uintptr_t>(OnBoardMonitoringTask::onBoardMonitoringTaskHandle));
     RTT_Enable();
@@ -165,46 +164,58 @@ bool TimeKeepingTask::registerForTimerNotifications(TaskHandle_t taskToNotify) {
 }
 void TimeKeepingTask::execute() {
     // Initialize standard timers and register for notifications
-    TimerManagement::ErrorCode timerInitResult = initializeStandardTimers();
+    const TimerManagement::ErrorCode timerInitResult = initializeStandardTimers();
     if (timerInitResult != TimerManagement::ErrorCode::SUCCESS) {
         LOG_ERROR << "Timer initialization failed: ";
     }
 
     // Register for timer notifications
     bool registrationResult = registerForTimerNotifications(OnBoardMonitoringTask::onBoardMonitoringTaskHandle);
+    if (!registrationResult) {
+        LOG_ERROR << "Timer notification registration failed";
+    }
+
     // Original time-keeping initialization
     static tm dateTime;
     bool useGNSS = true;
+
     setEpoch(dateTime);
     RTC_TimeSet(&dateTime);
     tm ppsTime = dateTime;
-    uint8_t gnssTimeouts = 0U;
+
     MemoryManager::setParameter(PeakSatParameters::OBDH_RTC_OFFSET_THRESHOLD_ID, static_cast<void*>(&DRIFT_THRESHOLD));
     // MemoryManager::getParameter(PeakSatParameters::OBDH_USE_GNSS_PPS_ID, static_cast<void*>(&useGNSS));
 
     ulTaskNotifyTake(pdTRUE, 0);
     while (true) {
+        bool ppsReceived = false;
+
         if (useGNSS) {
-            if (ulTaskNotifyTake(pdTRUE, 1200) != pdTRUE) {
+            ppsReceived = (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1100)) == pdTRUE);
+            if (not ppsReceived) {
                 // TODO: Check GNSS
                 LOG_ERROR << "GNSS_PPS timed out";
-                gnssTimeouts++;
-                if (gnssTimeouts == 10) {
+                if (++gnssTimeouts >= GNSS_MAX_TIMEOUTS) {
+                    LOG_WARNING << "Disabling GNSS time sync after " << static_cast<int>(gnssTimeouts) << " timeouts";
                     useGNSS = false;
                 }
+            } else {
+                // Reset timeout counter on successful PPS
+                gnssTimeouts = 0;
             }
         }
+
         RTC_TimeGet(&dateTime);
-        if (useGNSS) {
+        if (useGNSS && ppsReceived) {
             ppsTime.tm_sec += 1;
-            (void) mktime(&ppsTime);
+            (void) mktime(&ppsTime); // Normalize time (handle wrapping)
             correctDriftTime(ppsTime, dateTime);
         }
 
         setTimePlatformParameters(dateTime);
         printOnBoardTime();
 
-        if (not useGNSS) {
+        if (!useGNSS || !ppsReceived) {
             vTaskDelay(pdMS_TO_TICKS(1000));
         }
     }

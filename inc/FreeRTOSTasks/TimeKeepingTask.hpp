@@ -16,6 +16,12 @@ private:
 
     inline static TaskHandle_t timeKeepingTaskHandle = nullptr;
 
+    uint8_t gnssTimeouts = 0;
+
+    bool useGNSS = true;
+
+    static constexpr uint8_t GNSS_MAX_TIMEOUTS = 10;
+
     static void GNSS_PPS_Callback(PIO_PIN pin, uintptr_t context);
 
     static void RTT_InterruptHandler(RTT_INTERRUPT_TYPE type, uintptr_t context);
