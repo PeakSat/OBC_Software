@@ -3,6 +3,8 @@
 #include "CAN/Driver.hpp"
 #include "TaskConfigs.hpp"
 
+#include <optional>
+
 class CANParserTask : public Task {
 private:
 public:

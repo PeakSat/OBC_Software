@@ -2,6 +2,8 @@
 
 #include "TaskConfigs.hpp"
 
+#include <optional>
+
 class WatchdogTask : public Task {
 private:
     /**

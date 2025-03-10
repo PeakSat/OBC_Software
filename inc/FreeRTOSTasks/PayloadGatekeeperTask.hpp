@@ -18,6 +18,8 @@
 #include "ATLAS_Response_Handlers.hpp"
 #include "ATLAS_Request_Handlers.hpp"
 
+#include <optional>
+
 class PayloadGatekeeperTask : public Task {
 private:
 

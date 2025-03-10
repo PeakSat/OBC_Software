@@ -6,6 +6,8 @@
 #include "queue.h"
 #include "Platform/Peripheral_Definitions.hpp"
 #include "CAN/TPProtocol.hpp"
+
+#include <optional>
 #ifdef OBC_EQM_LCL
 #include "LCLDefinitions.hpp"
 #endif

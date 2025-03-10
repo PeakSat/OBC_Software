@@ -5,6 +5,8 @@
 #include "UTCTimestamp.hpp"
 #include "Time.hpp"
 
+#include <optional>
+
 class TimeKeepingTask : public Task {
 private:
     const uint16_t DelayMs = 5000;

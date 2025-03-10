@@ -10,6 +10,8 @@
 #include "OBC_Definitions.hpp"
 #include "TaskConfigs.hpp"
 
+#include <optional>
+
 /**
  * FreeRTOS task implementing TC execution received externally using usart.
  */

@@ -4,6 +4,8 @@
 #include "MCP9808.hpp"
 #include "MemoryManager.hpp"
 
+#include <optional>
+
 /**
  * FreeRTOS task for periodically printing the value of the MCP9808 external temperature sensor.
  */

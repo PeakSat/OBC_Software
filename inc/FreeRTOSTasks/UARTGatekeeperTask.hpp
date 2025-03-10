@@ -7,6 +7,7 @@
 #include "ECSS_Definitions.hpp"
 
 #include <OBC_Definitions.hpp>
+#include <optional>
 
 /**
  * Contains functionality of a Gatekeeper Task for the UART resource. It has the sole access to UART, to avoid any
