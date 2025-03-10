@@ -44,8 +44,8 @@ void Service::storeMessage(Message& message) {
     CAN::Application::createCCSDSPacketMessage(CAN::NodeIDs::COMMS, false, message, false);
     LOG_DEBUG<<"Sent Housekeeping via CAN, size: "<<message.dataSize;
 
-    if (message.serviceType == Message::TM) {
-        LOG_DEBUG<<"Storing TM to Filesystem";
+    if (message.packetType == Message::TM) {
+        LOG_DEBUG<<"[STORAGE] Storing TM to Filesystem";
         auto status = MemoryManager::storeTMToFile(message);
         if (!status.has_value()) {
             MemoryManager::printMemoryError(status.error());
